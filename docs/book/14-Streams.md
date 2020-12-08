@@ -1,17 +1,17 @@
-[TOC]
+﻿[TOC]
 
 <!-- Streams -->
-# 第十四章 流式编程
+# 第十四章 流式編程
 
-> 集合优化了对象的存储，而流和对象的处理有关。
+> 集合最佳化了物件的儲存，而流和物件的處理有關。
 
-流是一系列与特定存储机制无关的元素——实际上，流并没有“存储”之说。
+流是一系列與特定儲存機制無關的元素——實際上，流並沒有“儲存”之說。
 
-使用流，无需迭代集合中的元素，就可以从管道提取和操作元素。这些管道通常被组合在一起，形成一系列对流进行操作的管道。
+使用流，無需疊代集合中的元素，就可以從管道提取和操作元素。這些管道通常被組合在一起，形成一系列對流進行操作的管道。
 
-在大多数情况下，将对象存储在集合中是为了处理他们，因此你将会发现你将把编程的主要焦点从集合转移到了流上。流的一个核心好处是，它使得程序更加短小并且更易理解。当 Lambda 表达式和方法引用（method references）和流一起使用的时候会让人感觉自成一体。流使得 Java 8 更具吸引力。
+在大多數情況下，將物件儲存在集合中是為了處理他們，因此你將會發現你將把編程的主要焦點從集合轉移到了流上。流的一個核心好處是，它使得程式更加短小並且更易理解。當 Lambda 表達式和方法引用（method references）和流一起使用的時候會讓人感覺自成一體。流使得 Java 8 更具吸引力。
 
-举个例子，假如你要随机展示 5 至 20 之间不重复的整数并进行排序。实际上，你的关注点首先是创建一个有序集合。围绕这个集合进行后续的操作。但是使用流式编程，你就可以简单陈述你想做什么：
+舉個例子，假如你要隨機展示 5 至 20 之間不重複的整數並進行排序。實際上，你的關注點首先是建立一個有序集合。圍繞這個集合進行後續的操作。但是使用流式編程，你就可以簡單陳述你想做什麼：
 
 ```java
 // streams/Randoms.java
@@ -28,7 +28,7 @@ public class Randoms {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 6
@@ -40,11 +40,11 @@ public class Randoms {
 19
 ```
 
-首先，我们给 **Random** 对象一个种子（以便程序再次运行时产生相同的输出）。`ints()` 方法产生一个流并且 `ints()` 方法有多种方式的重载 — 两个参数限定了产生的数值的边界。这将生成一个随机整数流。我们用中间流操作（intermediate stream operation） `distinct()` 使流中的整数不重复，然后使用 `limit()` 方法获取前 7 个元素。接下来使用 `sorted()` 方法排序。最终使用 `forEach()` 方法遍历输出，它根据传递给它的函数对流中的每个对象执行操作。在这里，我们传递了一个可以在控制台显示每个元素的方法引用：`System.out::println` 。
+首先，我們給 **Random** 物件一個種子（以便程式再次執行時產生相同的輸出）。`ints()` 方法產生一個流並且 `ints()` 方法有多種方式的重載 — 兩個參數限定了產生的數值的邊界。這將生成一個隨機整數流。我們用中間流操作（intermediate stream operation） `distinct()` 使流中的整數不重複，然後使用 `limit()` 方法獲取前 7 個元素。接下來使用 `sorted()` 方法排序。最終使用 `forEach()` 方法遍歷輸出，它根據傳遞給它的函數對流中的每個物件執行操作。在這裡，我們傳遞了一個可以在控制台顯示每個元素的方法引用：`System.out::println` 。
 
-注意 `Randoms.java` 中没有声明任何变量。流可以在不使用赋值或可变数据的情况下对有状态的系统建模，这非常有用。
+注意 `Randoms.java` 中沒有聲明任何變數。流可以在不使用賦值或可變資料的情況下對有狀態的系統建模，這非常有用。
 
-声明式编程（Declarative programming）是一种编程风格，它声明想要做什么，而非指明如何做。正如我们在函数式编程中所看到的。你会发现命令式编程的形式更难以理解。代码示例：
+聲明式編程（Declarative programming）是一種編程風格，它聲明想要做什麼，而非指明如何做。正如我們在函數式編程中所看到的。你會發現指令式編程的形式更難以理解。程式碼範例：
 
 ```java
 // streams/ImperativeRandoms.java
@@ -63,38 +63,38 @@ public class ImperativeRandoms {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 [7, 8, 9, 11, 13, 15, 18]
 ```
 
-在 `Randoms.java` 中，我们无需定义任何变量，但在这里我们定义了 3 个变量： `rand`，`rints` 和 `r`。由于 `nextInt()` 方法没有下限的原因（其内置的下限永远为 0），这段代码实现起来更复杂。所以我们要生成额外的值来过滤小于 5 的结果。
+在 `Randoms.java` 中，我們無需定義任何變數，但在這裡我們定義了 3 個變數： `rand`，`rints` 和 `r`。由於 `nextInt()` 方法沒有下限的原因（其內建的下限永遠為 0），這段程式碼實現起來更複雜。所以我們要生成額外的值來過濾小於 5 的結果。
 
-注意，你必须用力的研究才能弄明白`ImperativeRandoms.java`程序在干什么。而在 `Randoms.java` 中，代码直接告诉了你它正在做什么。这种语义的清晰性是使用Java 8 流式编程的重要原因之一。
+注意，你必須用力的研究才能弄明白`ImperativeRandoms.java`程式在幹什麼。而在 `Randoms.java` 中，程式碼直接告訴了你它正在做什麼。這種語義的清晰性是使用Java 8 流式編程的重要原因之一。
 
-像在 `ImperativeRandoms.java` 中那样显式地编写迭代过程的方式称为外部迭代。而在 `Randoms.java` 中，你看不到任何上述的迭代过程，所以它被称为内部迭代，这是流式编程的一个核心特征。内部迭代产生的代码可读性更强，而且能更简单的使用多核处理器。通过放弃对迭代过程的控制，可以把控制权交给并行化机制。我们将在[并发编程](24-Concurrent-Programming.md)一章中学习这部分内容。
+像在 `ImperativeRandoms.java` 中那樣顯式地編寫疊代過程的方式稱為外部疊代。而在 `Randoms.java` 中，你看不到任何上述的疊代過程，所以它被稱為內部疊代，這是流式編程的一個核心特徵。內部疊代產生的程式碼可讀性更強，而且能更簡單的使用多核處理器。透過放棄對疊代過程的控制，可以把控制權交給並行化機制。我們將在[並發編程](24-Concurrent-Programming.md)一章中學習這部分內容。
 
-另一个重要方面，流是懒加载的。这代表着它只在绝对必要时才计算。你可以将流看作“延迟列表”。由于计算延迟，流使我们能够表示非常大（甚至无限）的序列，而不需要考虑内存问题。
+另一個重要方面，流是懶載入的。這代表著它只在絕對必要時才計算。你可以將流看作“延遲列表”。由於計算延遲，流使我們能夠表示非常大（甚至無限）的序列，而不需要考慮記憶體問題。
 
 <!-- Java 8 Stream Support -->
 
-## 流支持
+## 流支援
 
-Java 设计者面临着这样一个难题：现存的大量类库不仅为 Java 所用，同时也被应用在整个 Java 生态圈数百万行的代码中。如何将一个全新的流的概念融入到现有类库中呢？
+Java 設計者面臨著這樣一個難題：現存的大量類庫不僅為 Java 所用，同時也被應用在整個 Java 生態圈數百萬行的程式碼中。如何將一個全新的流的概念融入到現有類庫中呢？
 
-比如在 **Random** 中添加更多的方法。只要不改变原有的方法，现有代码就不会受到干扰。
+比如在 **Random** 中添加更多的方法。只要不改變原有的方法，現有程式碼就不會受到干擾。
 
-一个大的挑战来自于使用接口的库。集合类是其中关键的一部分，因为你想把集合转为流。但是如果你将一个新方法添加到接口，那就破坏了每一个实现接口的类，因为这些类都没有实现你添加的新方法。
+一個大的挑戰來自於使用介面的庫。集合類是其中關鍵的一部分，因為你想把集合轉為流。但是如果你將一個新方法添加到介面，那就破壞了每一個實現介面的類，因為這些類都沒有實現你添加的新方法。
 
-Java 8 采用的解决方案是：在[接口](10-Interfaces.md)中添加被 `default`（`默认`）修饰的方法。通过这种方案，设计者们可以将流式（*stream*）方法平滑地嵌入到现有类中。流方法预置的操作几乎已满足了我们平常所有的需求。流操作的类型有三种：创建流，修改流元素（中间操作， Intermediate Operations），消费流元素（终端操作， Terminal Operations）。最后一种类型通常意味着收集流元素（通常是到集合中）。
+Java 8 採用的解決方案是：在[介面](10-Interfaces.md)中添加被 `default`（`預設`）修飾的方法。透過這種方案，設計者們可以將流式（*stream*）方法平滑地嵌入到現有類中。流方法預置的操作幾乎已滿足了我們平常所有的需求。流操作的類型有三種：建立流，修改流元素（中間操作， Intermediate Operations），消費流元素（終端操作， Terminal Operations）。最後一種類型通常意味著收集流元素（通常是到集合中）。
 
-下面我们来看下每种类型的流操作。
+下面我們來看一下每種類型的流操作。
 
 <!-- Stream Creation -->
-## 流创建
+## 流建立
 
-你可以通过 `Stream.of()` 很容易地将一组元素转化成为流（`Bubble` 类在本章的后面定义）：
+你可以透過 `Stream.of()` 很容易地將一組元素轉化成為流（`Bubble` 類在本章的後面定義）：
 
 ```java
 // streams/StreamOf.java
@@ -112,7 +112,7 @@ public class StreamOf {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Bubble(1)
@@ -124,7 +124,7 @@ It's a wonderful day for pie!
 1.618
 ```
 
-除此之外，每个集合都可以通过调用 `stream()` 方法来产生一个流。代码示例：
+除此之外，每個集合都可以透過呼叫 `stream()` 方法來產生一個流。程式碼範例：
 
 ```java
 // streams/CollectionToStream.java
@@ -154,7 +154,7 @@ public class CollectionToStream {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 6
@@ -164,15 +164,15 @@ e: 2.718
 pi: 3.14159
 ```
 
-在创建 `List<Bubble>` 对象之后，我们只需要简单地调用所有集合中都有的 `stream()`。中间操作 `map()` 会获取流中的所有元素，并且对流中元素应用操作从而产生新的元素，并将其传递到后续的流中。通常 `map()` 会获取对象并产生新的对象，但在这里产生了特殊的用于数值类型的流。例如，`mapToInt()` 方法将一个对象流（object stream）转换成为包含整型数字的 `IntStream`。同样，针对 `Float` 和 `Double` 也有类似名字的操作。
+在建立 `List<Bubble>` 物件之後，我們只需要簡單地呼叫所有集合中都有的 `stream()`。中間操作 `map()` 會獲取流中的所有元素，並且對流中元素應用操作從而產生新的元素，並將其傳遞到後續的流中。通常 `map()` 會獲取物件並產生新的物件，但在這裡產生了特殊的用於數值類型的流。例如，`mapToInt()` 方法將一個物件流（object stream）轉換成為包含整型數字的 `IntStream`。同樣，針對 `Float` 和 `Double` 也有類似名字的操作。
 
-我们通过调用字符串的 `split()`（该方法会根据参数来拆分字符串）来获取元素用于定义变量 `w`。稍后你会知道 `split()` 参数可以是十分复杂，但在这里我们只是根据空格来分割字符串。
+我們透過呼叫字串的 `split()`（該方法會根據參數來分割字串）來獲取元素用於定義變數 `w`。稍後你會知道 `split()` 參數可以是十分複雜，但在這裡我們只是根據空格來分割字串。
 
-为了从 **Map** 集合中产生流数据，我们首先调用 `entrySet()` 产生一个对象流，每个对象都包含一个 `key` 键以及与其相关联的 `value` 值。然后分别调用 `getKey()` 和 `getValue()` 获取值。
+為了從 **Map** 集合中產生流資料，我們首先呼叫 `entrySet()` 產生一個物件流，每個物件都包含一個 `key` 鍵以及與其相關聯的 `value` 值。然後分別呼叫 `getKey()` 和 `getValue()` 獲取值。
 
-### 随机数流
+### 隨機數流
 
-`Random` 类被一组生成流的方法增强了。代码示例：
+`Random` 類被一組生成流的方法增強了。程式碼範例：
 
 ```java
 // streams/RandomGenerators.java
@@ -207,7 +207,7 @@ public class RandomGenerators {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 -1172028779
@@ -263,11 +263,11 @@ public class RandomGenerators {
 ++++++++
 ```
 
-为了消除冗余代码，我创建了一个泛型方法 `show(Stream<T> stream)` （在讲解泛型之前就使用这个特性，确实有点作弊，但是回报是值得的）。类型参数 `T` 可以是任何类型，所以这个方法对 **Integer**、**Long** 和 **Double** 类型都生效。但是 **Random** 类只能生成基本类型 **int**， **long**， **double** 的流。幸运的是， `boxed()` 流操作将会自动地把基本类型包装成为对应的装箱类型，从而使得 `show()` 能够接受流。
+為了消除冗餘程式碼，我建立了一個泛型方法 `show(Stream<T> stream)` （在講解泛型之前就使用這個特性，確實有點作弊，但是回報是值得的）。類型參數 `T` 可以是任何類型，所以這個方法對 **Integer**、**Long** 和 **Double** 類型都生效。但是 **Random** 類只能生成基本類型 **int**， **long**， **double** 的流。幸運的是， `boxed()` 流操作將會自動地把基本類型包裝成為對應的裝箱類型，從而使得 `show()` 能夠接受流。
 
-我们可以使用 **Random** 为任意对象集合创建 **Supplier**。如下是一个文本文件提供字符串对象的例子。
+我們可以使用 **Random** 為任意物件集合建立 **Supplier**。如下是一個文字文件提供字串物件的例子。
 
-Cheese.dat 文件内容：
+Cheese.dat 文件內容：
 
 ```
 // streams/Cheese.dat
@@ -278,7 +278,7 @@ Well, it's so clean.
 It's certainly uncontaminated by cheese.
 ```
 
-我们通过 **File** 类将 Cheese.dat 文件的所有行读取到 `List<String>` 中。代码示例：
+我們透過 **File** 類將 Cheese.dat 文件的所有行讀取到 `List<String>` 中。程式碼範例：
 
 ```java
 // streams/RandomWords.java
@@ -292,7 +292,7 @@ public class RandomWords implements Supplier<String> {
     Random rand = new Random(47);
     RandomWords(String fname) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(fname));
-        // 略过第一行
+        // 略過第一行
         for (String line : lines.subList(1, lines.size())) {
             for (String word : line.split("[ .?,]+"))
                 words.add(word.toLowerCase());
@@ -315,36 +315,36 @@ public class RandomWords implements Supplier<String> {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 it shop sir the much cheese by conclusion district is
 ```
 
-在这里可以看到 `split()` 更复杂的运用。在构造器里，每一行都被 `split()` 通过方括号内的空格或其它标点符号分割。在方括号后面的 `+` 表示 `+` 前面的东西可以出现一次或者多次。
+在這裡可以看到 `split()` 更複雜的運用。在構造器裡，每一行都被 `split()` 透過方括號內的空格或其它標點符號分割。在方括號後面的 `+` 表示 `+` 前面的東西可以出現一次或者多次。
 
-你会发现构造函数使用命令式编程（外部迭代）进行循环。在以后的例子中，你会看到我们是如何去除命令式编程的使用。这种旧的形式虽不是特别糟糕，但使用流会让人感觉更好。
+你會發現建構子使用指令式編程（外部疊代）進行循環。在以後的例子中，你會看到我們是如何去除指令式編程的使用。這種舊的形式雖不是特別糟糕，但使用流會讓人感覺更好。
 
-在`toString()` 和`main()`方法中你看到了 `collect()` 操作，它根据参数来结合所有的流元素。当你用 `Collectors.joining()`作为 `collect()` 的参数时，将得到一个`String` 类型的结果，该结果是流中的所有元素被`joining()`的参数隔开。还有很多不同的 `Collectors` 用于产生不同的结果。
+在`toString()` 和`main()`方法中你看到了 `collect()` 操作，它根據參數來結合所有的流元素。當你用 `Collectors.joining()`作為 `collect()` 的參數時，將得到一個`String` 類型的結果，該結果是流中的所有元素被`joining()`的參數隔開。還有很多不同的 `Collectors` 用於產生不同的結果。
 
-在主方法中，我们提前看到了 **Stream.**`generate()` 的用法，它可以把任意  `Supplier<T>` 用于生成 `T` 类型的流。
+在主方法中，我們提前看到了 **Stream.**`generate()` 的用法，它可以把任意  `Supplier<T>` 用於生成 `T` 類型的流。
 
 
-### int 类型的范围
+### int 類型的範圍
 
-`IntStream` 类提供了  `range()` 方法用于生成整型序列的流。编写循环时，这个方法会更加便利：
+`IntStream` 類提供了  `range()` 方法用於生成整型序列的流。編寫循環時，這個方法會更加便利：
 
 ```java
 // streams/Ranges.java
 import static java.util.stream.IntStream.*;
 public class Ranges {
     public static void main(String[] args) {
-        // 传统方法:
+        // 傳統方法:
         int result = 0;
         for (int i = 10; i < 20; i++)
             result += i;
         System.out.println(result);
-        // for-in 循环:
+        // for-in 循環:
         result = 0;
         for (int i : range(10, 20).toArray())
             result += i;
@@ -355,7 +355,7 @@ public class Ranges {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 145
@@ -363,11 +363,11 @@ public class Ranges {
 145
 ```
 
-在主方法中的第一种方式是我们传统编写 `for` 循环的方式；第二种方式，我们使用 `range()` 创建了流并将其转化为数组，然后在 `for-in` 代码块中使用。但是，如果你能像第三种方法那样全程使用流是更好的。我们对范围中的数字进行求和。在流中可以很方便的使用 `sum()` 操作求和。
+在主方法中的第一種方式是我們傳統編寫 `for` 循環的方式；第二種方式，我們使用 `range()` 建立了流並將其轉化為陣列，然後在 `for-in` 程式碼塊中使用。但是，如果你能像第三種方法那樣全程使用流是更好的。我們對範圍中的數字進行求和。在流中可以很方便的使用 `sum()` 操作求和。
 
-注意 **IntStream.**`range()` 相比 `onjava.Range.range()` 拥有更多的限制。这是由于其可选的第三个参数，后者允许步长大于 1，并且可以从大到小来生成。
+注意 **IntStream.**`range()` 相比 `onjava.Range.range()` 擁有更多的限制。這是由於其可選的第三個參數，後者允許步長大於 1，並且可以從大到小來生成。
 
-实用小功能 `repeat()` 可以用来替换简单的 `for` 循环。代码示例：
+實用小功能 `repeat()` 可以用來取代簡單的 `for` 循環。程式碼範例：
 
 ```java
 // onjava/Repeat.java
@@ -380,7 +380,7 @@ public class Repeat {
 }
 ```
 
-其产生的循环更加清晰：
+其產生的循環更加清晰：
 
 ```java
 // streams/Looping.java
@@ -396,7 +396,7 @@ public class Looping {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Looping!
@@ -406,11 +406,11 @@ Hi!
 Hi!
 ```
 
-原则上，在代码中包含并解释 `repeat()` 并不值得。诚然它是一个相当透明的工具，但结果取决于你的团队和公司的运作方式。
+原則上，在程式碼中包含並解釋 `repeat()` 並不值得。誠然它是一個相當透明的工具，但結果取決於你的團隊和公司的運作方式。
 
 ### generate()
 
-参照 `RandomWords.java` 中 **Stream.**`generate()` 搭配 `Supplier<T>` 使用的例子。代码示例：
+參照 `RandomWords.java` 中 **Stream.**`generate()` 搭配 `Supplier<T>` 使用的例子。程式碼範例：
 
 ```java
 // streams/Generator.java
@@ -435,15 +435,15 @@ public class Generator implements Supplier<String> {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 YNZBRNYGCFOWZNTCQRGSEGZMMJMROE
 ```
 
-使用 `Random.nextInt()` 方法来挑选字母表中的大写字母。`Random.nextInt()` 的参数代表可以接受的最大的随机数范围，所以使用数组边界是经过深思熟虑的。
+使用 `Random.nextInt()` 方法來挑選字母表中的大寫字母。`Random.nextInt()` 的參數代表可以接受的最大的隨機數範圍，所以使用陣列邊界是經過深思熟慮的。
 
-如果要创建包含相同对象的流，只需要传递一个生成那些对象的 `lambda` 到 `generate()` 中：
+如果要建立包含相同物件的流，只需要傳遞一個生成那些物件的 `lambda` 到 `generate()` 中：
 
 ```java
 // streams/Duplicator.java
@@ -457,7 +457,7 @@ public class Duplicator {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 duplicate
@@ -465,7 +465,7 @@ duplicate
 duplicate
 ```
 
-如下是在本章之前例子中使用过的 `Bubble` 类。**注意**它包含了自己的静态生成器（Static generator）方法。
+如下是在本章之前例子中使用過的 `Bubble` 類。**注意**它包含了自己的靜態生成器（Static generator）方法。
 
 ```java
 // streams/Bubble.java
@@ -489,7 +489,7 @@ public class Bubble {
 }
 ```
 
-由于 `bubbler()` 与 `Supplier<Bubble>` 是接口兼容的，我们可以将其方法引用直接传递给 **Stream.**`generate()`：
+由於 `bubbler()` 與 `Supplier<Bubble>` 是介面相容的，我們可以將其方法引用直接傳遞給 **Stream.**`generate()`：
 
 ```java
 // streams/Bubbles.java
@@ -503,7 +503,7 @@ public class Bubbles {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Bubble(0)
@@ -513,11 +513,11 @@ Bubble(3)
 Bubble(4)
 ```
 
-这是创建单独工厂类（Separate Factory class）的另一种方式。在很多方面它更加整洁，但是这是一个对于代码组织和品味的问题——你总是可以创建一个完全不同的工厂类。
+這是建立單獨工廠類（Separate Factory class）的另一種方式。在很多方面它更加整潔，但是這是一個對於程式碼組織和品味的問題——你總是可以建立一個完全不同的工廠類。
 
 ### iterate()
 
-`Stream.iterate()` 产生的流的第一个元素是种子（iterate方法的第一个参数），然后将种子传递给方法（iterate方法的第二个参数）。方法运行的结果被添加到流（作为流的第二个元素），并存储起来作为下次调用 `iterate()`时的第一个参数，以此类推。我们可以利用 `iterate()` 生成一个斐波那契数列。代码示例：
+`Stream.iterate()` 產生的流的第一個元素是種子（iterate方法的第一個參數），然後將種子傳遞給方法（iterate方法的第二個參數）。方法執行的結果被添加到流（作為流的第二個元素），並儲存起來作為下次呼叫 `iterate()`時的第一個參數，以此類推。我們可以利用 `iterate()` 生成一個斐波那契數列。程式碼範例：
 
 ```java
 // streams/Fibonacci.java
@@ -535,14 +535,14 @@ public class Fibonacci {
     
     public static void main(String[] args) {
         new Fibonacci().numbers()
-                       .skip(20) // 过滤前 20 个
-                       .limit(10) // 然后取 10 个
+                       .skip(20) // 過濾前 20 個
+                       .limit(10) // 然後取 10 個
                        .forEach(System.out::println);
     }
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 6765
@@ -557,13 +557,13 @@ public class Fibonacci {
 514229
 ```
 
-斐波那契数列将数列中最后两个元素进行求和以产生下一个元素。`iterate()` 只能记忆结果，因此我们需要利用一个变量 `x` 追踪另外一个元素。
+斐波那契數列將數列中最後兩個元素進行求和以產生下一個元素。`iterate()` 只能記憶結果，因此我們需要利用一個變數 `x` 追蹤另外一個元素。
 
-在主方法中，我们使用了一个之前没有见过的 `skip()` 操作。它根据参数丢弃指定数量的流元素。在这里，我们丢弃了前 20 个元素。
+在主方法中，我們使用了一個之前沒有見過的 `skip()` 操作。它根據參數丟棄指定數量的流元素。在這裡，我們丟棄了前 20 個元素。
 
 ### 流的建造者模式
 
-在建造者模式（Builder design pattern）中，首先创建一个 `builder` 对象，然后将创建流所需的多个信息传递给它，最后`builder` 对象执行”创建“流的操作。**Stream** 库提供了这样的 `Builder`。在这里，我们重新审视文件读取并将其转换成为单词流的过程。代码示例：
+在建造者模式（Builder design pattern）中，首先建立一個 `builder` 物件，然後將建立流所需的多個訊息傳遞給它，最後`builder` 物件執行”建立“流的操作。**Stream** 庫提供了這樣的 `Builder`。在這裡，我們重新審視文件讀取並將其轉換成為單詞流的過程。程式碼範例：
 
 ```java
 // streams/FileToWordsBuilder.java
@@ -576,7 +576,7 @@ public class FileToWordsBuilder {
     
     public FileToWordsBuilder(String filePath) throws Exception {
         Files.lines(Paths.get(filePath))
-             .skip(1) // 略过开头的注释行
+             .skip(1) // 略過開頭的注釋行
              .forEach(line -> {
                   for (String w : line.split("[ .?,]+"))
                       builder.add(w);
@@ -597,19 +597,19 @@ public class FileToWordsBuilder {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Not much of a cheese shop really
 ```
 
-**注意**，构造器会添加文件中的所有单词（除了第一行，它是包含文件路径信息的注释），但是其并没有调用 `build()`。只要你不调用 `stream()` 方法，就可以继续向 `builder` 对象中添加单词。
+**注意**，構造器會添加文件中的所有單詞（除了第一行，它是包含文件路徑訊息的注釋），但是其並沒有呼叫 `build()`。只要你不呼叫 `stream()` 方法，就可以繼續向 `builder` 物件中添加單詞。
 
-在该类的更完整形式中，你可以添加一个标志位用于查看 `build()` 是否被调用，并且可能的话增加一个可以添加更多单词的方法。在 `Stream.Builder` 调用 `build()` 方法后继续尝试添加单词会产生一个异常。
+在該類的更完整形式中，你可以添加一個標誌位用於查看 `build()` 是否被呼叫，並且可能的話增加一個可以添加更多單詞的方法。在 `Stream.Builder` 呼叫 `build()` 方法後繼續嘗試添加單詞會產生一個異常。
 
 ### Arrays
 
-`Arrays` 类中含有一个名为 `stream()` 的静态方法用于把数组转换成为流。我们可以重写 `interfaces/Machine.java` 中的主方法用于创建一个流，并将 `execute()` 应用于每一个元素。代码示例：
+`Arrays` 類中含有一個名為 `stream()` 的靜態方法用於把陣列轉換成為流。我們可以重寫 `interfaces/Machine.java` 中的主方法用於建立一個流，並將 `execute()` 應用於每一個元素。程式碼範例：
 
 ```java
 // streams/Machine2.java
@@ -627,7 +627,7 @@ public class Machine2 {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Bing
@@ -636,9 +636,9 @@ Twist
 Pop
 ```
 
-`new Operations[]` 表达式动态创建了 `Operations` 对象的数组。
+`new Operations[]` 表達式動態建立了 `Operations` 物件的陣列。
 
-`stream()` 同样可以产生 **IntStream**，**LongStream** 和 **DoubleStream**。
+`stream()` 同樣可以產生 **IntStream**，**LongStream** 和 **DoubleStream**。
 
 ```java
 // streams/ArrayStreams.java
@@ -659,14 +659,14 @@ public class ArrayStreams {
             .forEach(n -> System.out.format("%d ", n));
         System.out.println();
         
-        // 选择一个子域:
+        // 選擇一個子域:
         Arrays.stream(new int[] { 1, 3, 5, 7, 15, 28, 37 }, 3, 6)
             .forEach(n -> System.out.format("%d ", n));
     }
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 3.141590 2.718000 1.618000
@@ -675,13 +675,13 @@ public class ArrayStreams {
 7 15 28
 ```
 
-最后一次 `stream()` 的调用有两个额外的参数。第一个参数告诉 `stream()` 从数组的哪个位置开始选择元素，第二个参数用于告知在哪里停止。每种不同类型的 `stream()` 都有类似的操作。
+最後一次 `stream()` 的呼叫有兩個額外的參數。第一個參數告訴 `stream()` 從陣列的哪個位置開始選擇元素，第二個參數用於告知在哪裡停止。每種不同類型的 `stream()` 都有類似的操作。
 
-### 正则表达式
+### 正規表示式
 
-Java 的正则表达式将在[字符串](18-Strings.md)这一章节详细介绍。Java 8 在 `java.util.regex.Pattern` 中增加了一个新的方法 `splitAsStream()`。这个方法可以根据传入的公式将字符序列转化为流。但是有一个限制，输入只能是 **CharSequence**，因此不能将流作为 `splitAsStream()` 的参数。
+Java 的正規表示式將在[字串](18-Strings.md)這一章節詳細介紹。Java 8 在 `java.util.regex.Pattern` 中增加了一個新的方法 `splitAsStream()`。這個方法可以根據傳入的公式將字元序列轉化為流。但是有一個限制，輸入只能是 **CharSequence**，因此不能將流作為 `splitAsStream()` 的參數。
 
-我们再一次查看将文件转换为单词的过程。这一次，我们使用流将文件转换为一个字符串，接着使用正则表达式将字符串转化为单词流。
+我們再一次查看將文件轉換為單詞的過程。這一次，我們使用流將文件轉換為一個字串，接著使用正規表示式將字串轉化為單詞流。
 
 ```java
 // streams/FileToWordsRegexp.java
@@ -716,28 +716,28 @@ public class FileToWordsRegexp {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Not much of a cheese shop really is it
 ```
 
-在构造器中我们读取了文件中的所有内容（跳过第一行注释，并将其转化成为单行字符串）。现在，当你调用 `stream()` 的时候，可以像往常一样获取一个流，但这次你可以多次调用 `stream()` 在已存储的字符串中创建一个新的流。这里有个限制，整个文件必须存储在内存中；在大多数情况下这并不是什么问题，但是这损失了流操作非常重要的优势：
+在構造器中我們讀取了文件中的所有內容（跳過第一行注釋，並將其轉化成為單行字串）。現在，當你呼叫 `stream()` 的時候，可以像往常一樣獲取一個流，但這次你可以多次呼叫 `stream()` 在已儲存的字串中建立一個新的流。這裡有個限制，整個文件必須儲存在記憶體中；在大多數情況下這並不是什麼問題，但是這損失了流操作非常重要的優勢：
 
-1. “不需要把流存储起来。”当然，流确实需要一些内部存储，但存储的只是序列的一小部分，和存储整个序列不同。
-2. 它们是懒加载计算的。
+1. “不需要把流儲存起來。”當然，流確實需要一些內部儲存，但儲存的只是序列的一小部分，和儲存整個序列不同。
+2. 它們是懶載入計算的。
 
-幸运的是，我们稍后就会知道如何解决这个问题。
+幸運的是，我們稍後就會知道如何解決這個問題。
 
 <!-- Intermediate Operations -->
 
-## 中间操作
+## 中間操作
 
-中间操作用于从一个流中获取对象，并将对象作为另一个流从后端输出，以连接到其他操作。
+中間操作用於從一個流中獲取物件，並將物件作為另一個流從後端輸出，以連接到其他操作。
 
-### 跟踪和调试
+### 跟蹤和除錯
 
-`peek()` 操作的目的是帮助调试。它允许你无修改地查看流中的元素。代码示例：
+`peek()` 操作的目的是幫助除錯。它允許你無修改地查看流中的元素。程式碼範例：
 
 ```java
 // streams/Peeking.java
@@ -756,19 +756,19 @@ class Peeking {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Well WELL well it IT it s S s so SO so
 ```
 
-`FileToWords` 稍后定义，但它的功能实现貌似和之前我们看到的差不多：产生字符串对象的流。之后在其通过管道时调用 `peek()` 进行处理。
+`FileToWords` 稍後定義，但它的功能實現好像和之前我們看到的差不多：產生字串物件的流。之後在其透過管道時呼叫 `peek()` 進行處理。
 
-因为 `peek()` 符合无返回值的 **Consumer** 函数式接口，所以我们只能观察，无法使用不同的元素来替换流中的对象。
+因為 `peek()` 符合無返回值的 **Consumer** 函數式介面，所以我們只能觀察，無法使用不同的元素來取代流中的物件。
 
 ### 流元素排序
 
-在 `Randoms.java` 中，我们熟识了 `sorted()` 的默认比较器实现。其实它还有另一种形式的实现：传入一个 **Comparator** 参数。代码示例：
+在 `Randoms.java` 中，我們熟識了 `sorted()` 的預設比較器實現。其實它還有另一種形式的實現：傳入一個 **Comparator** 參數。程式碼範例：
 
 ```java
 // streams/SortedComparator.java
@@ -785,21 +785,21 @@ public class SortedComparator {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 you what to the that sir leads in district And
 ```
 
-`sorted()` 预设了一些默认的比较器。这里我们使用的是反转“自然排序”。当然你也可以把 Lambda 函数作为参数传递给 `sorted()`。
+`sorted()` 預設了一些預設的比較器。這裡我們使用的是反轉“自然排序”。當然你也可以把 Lambda 函數作為參數傳遞給 `sorted()`。
 
 ### 移除元素
 
-* `distinct()`：在 `Randoms.java` 类中的 `distinct()` 可用于消除流中的重复元素。相比创建一个 **Set** 集合，该方法的工作量要少得多。
+* `distinct()`：在 `Randoms.java` 類中的 `distinct()` 可用於消除流中的重複元素。相比建立一個 **Set** 集合，該方法的工作量要少得多。
 
-* `filter(Predicate)`：若元素传递给过滤函数产生的结果为`true` ，则过滤操作保留这些元素。
+* `filter(Predicate)`：若元素傳遞給過濾函數產生的結果為`true` ，則過濾操作保留這些元素。
 
-在下例中，`isPrime()` 作为过滤器函数，用于检测质数。
+在下例中，`isPrime()` 作為過濾器函數，用於檢測質數。
 
 ```java
 // streams/Prime.java
@@ -827,26 +827,26 @@ public class Prime {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 2 3 5 7 11 13 17 19 23 29
 467 479 487 491 499 503 509 521 523 541
 ```
 
-`rangeClosed()` 包含了上限值。如果不能整除，即余数不等于 0，则 `noneMatch()` 操作返回 `true`，如果出现任何等于 0 的结果则返回 `false`。 `noneMatch()` 操作一旦有失败就会退出。
+`rangeClosed()` 包含了上限值。如果不能整除，即餘數不等於 0，則 `noneMatch()` 操作返回 `true`，如果出現任何等於 0 的結果則返回 `false`。 `noneMatch()` 操作一旦有失敗就會退出。
 
-### 应用函数到元素
+### 應用函數到元素
 
-- `map(Function)`：将函数操作应用在输入流的元素中，并将返回值传递到输出流中。
+- `map(Function)`：將函數操作應用在輸入流的元素中，並將返回值傳遞到輸出流中。
 
-- `mapToInt(ToIntFunction)`：操作同上，但结果是 **IntStream**。
+- `mapToInt(ToIntFunction)`：操作同上，但結果是 **IntStream**。
 
-- `mapToLong(ToLongFunction)`：操作同上，但结果是 **LongStream**。
+- `mapToLong(ToLongFunction)`：操作同上，但結果是 **LongStream**。
 
-- `mapToDouble(ToDoubleFunction)`：操作同上，但结果是 **DoubleStream**。
+- `mapToDouble(ToDoubleFunction)`：操作同上，但結果是 **DoubleStream**。
 
-在这里，我们使用 `map()` 映射多种函数到一个字符串流中。代码示例：
+在這裡，我們使用 `map()` 映射多種函數到一個字串流中。程式碼範例：
 
 ```java
 // streams/FunctionMap.java
@@ -883,7 +883,7 @@ class FunctionMap {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
  ---( add brackets )---
@@ -909,13 +909,13 @@ class FunctionMap {
 
 ```
 
-在上面的自增示例中，我们用 `Integer.parseInt()` 尝试将一个字符串转化为整数。如果字符串不能被转化成为整数就会抛出 `NumberFormatException` 异常，此时我们就回过头来把原始字符串放到输出流中。
+在上面的自增範例中，我們用 `Integer.parseInt()` 嘗試將一個字串轉化為整數。如果字串不能被轉化成為整數就會拋出 `NumberFormatException` 異常，此時我們就回過頭來把原始字串放到輸出流中。
 
-在以上例子中，`map()` 将一个字符串映射为另一个字符串，但是我们完全可以产生和接收类型完全不同的类型，从而改变流的数据类型。下面代码示例：
+在以上例子中，`map()` 將一個字串映射為另一個字串，但是我們完全可以產生和接收類型完全不同的類型，從而改變流的資料類型。下面程式碼範例：
 
 ```java
 // streams/FunctionMap2.java
-// Different input and output types （不同的输入输出类型）
+// Different input and output types （不同的輸入輸出類型）
 import java.util.*;
 import java.util.stream.*;
 class Numbered {
@@ -937,7 +937,7 @@ class FunctionMap2 {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Numbered(1)
@@ -948,13 +948,13 @@ Numbered(11)
 Numbered(13)
 ```
 
-我们将获取到的整数通过构造器 `Numbered::new` 转化成为 `Numbered` 类型。
+我們將獲取到的整數透過構造器 `Numbered::new` 轉化成為 `Numbered` 類型。
 
-如果使用 **Function** 返回的结果是数值类型的一种，我们必须使用合适的 `mapTo数值类型` 进行替代。代码示例：
+如果使用 **Function** 返回的結果是數值類型的一種，我們必須使用合適的 `mapTo數值類型` 進行替代。程式碼範例：
 
 ```java
 // streams/FunctionMap3.java
-// Producing numeric output streams（ 产生数值输出流）
+// Producing numeric output streams（ 產生數值輸出流）
 import java.util.*;
 import java.util.stream.*;
 class FunctionMap3 {
@@ -974,7 +974,7 @@ class FunctionMap3 {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 5 7 9
@@ -982,23 +982,23 @@ class FunctionMap3 {
 17.000000 1.900000 0.230000
 ```
 
-遗憾的是，Java 设计者并没有尽最大努力去消除基本类型。
+遺憾的是，Java 設計者並沒有盡最大努力去消除基本類型。
 
-### 在 `map()` 中组合流
+### 在 `map()` 中組合流
 
-假设我们现在有了一个传入的元素流，并且打算对流元素使用 `map()` 函数。现在你已经找到了一些可爱并独一无二的函数功能，但是问题来了：这个函数功能是产生一个流。我们想要产生一个元素流，而实际却产生了一个元素流的流。
+假設我們現在有了一個傳入的元素流，並且打算對流元素使用 `map()` 函數。現在你已經找到了一些可愛並獨一無二的函數功能，但是問題來了：這個函數功能是產生一個流。我們想要產生一個元素流，而實際卻產生了一個元素流的流。
 
-`flatMap()` 做了两件事：将产生流的函数应用在每个元素上（与 `map()` 所做的相同），然后将每个流都扁平化为元素，因而最终产生的仅仅是元素。
+`flatMap()` 做了兩件事：將產生流的函數應用在每個元素上（與 `map()` 所做的相同），然後將每個流都扁平化為元素，因而最終產生的僅僅是元素。
 
-`flatMap(Function)`：当 `Function` 产生流时使用。
+`flatMap(Function)`：當 `Function` 產生流時使用。
 
-`flatMapToInt(Function)`：当 `Function` 产生 `IntStream` 时使用。
+`flatMapToInt(Function)`：當 `Function` 產生 `IntStream` 時使用。
 
-`flatMapToLong(Function)`：当 `Function` 产生 `LongStream` 时使用。
+`flatMapToLong(Function)`：當 `Function` 產生 `LongStream` 時使用。
 
-`flatMapToDouble(Function)`：当 `Function` 产生 `DoubleStream` 时使用。
+`flatMapToDouble(Function)`：當 `Function` 產生 `DoubleStream` 時使用。
 
-为了弄清它的工作原理，我们从传入一个刻意设计的函数给  `map()` 开始。该函数接受一个整数并产生一个字符串流：
+為了弄清它的工作原理，我們從傳入一個刻意設計的函數給  `map()` 開始。該函數接受一個整數並產生一個字串流：
 
 ```java
 // streams/StreamOfStreams.java
@@ -1013,7 +1013,7 @@ public class StreamOfStreams {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 java.util.stream.ReferencePipeline$Head
@@ -1021,7 +1021,7 @@ java.util.stream.ReferencePipeline$Head
 java.util.stream.ReferencePipeline$Head
 ```
 
-我们天真地希望能够得到字符串流，但实际得到的却是“Head”流的流。我们可以使用 `flatMap()` 解决这个问题：
+我們天真地希望能夠得到字串流，但實際得到的卻是“Head”流的流。我們可以使用 `flatMap()` 解決這個問題：
 
 ```java
 // streams/FlatMap.java
@@ -1035,7 +1035,7 @@ public class FlatMap {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Gonzo
@@ -1049,9 +1049,9 @@ Fozzie
 Beaker
 ```
 
-从映射返回的每个流都会自动扁平为组成它的字符串。
+從映射返回的每個流都會自動扁平為組成它的字串。
 
-下面是另一个演示，我们从一个整数流开始，然后使用每一个整数去创建更多的随机数。
+下面是另一個示範，我們從一個整數流開始，然後使用每一個整數去建立更多的隨機數。
 
 ```java
 // streams/StreamOfRandoms.java
@@ -1068,19 +1068,19 @@ public class StreamOfRandoms {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 58 -1 55 93 -1 61 61 29 -1 68 0 22 7 -1 88 28 51 89 9 -1
 ```
 
-在这里我们引入了 `concat()`，它以参数顺序组合两个流。 如此，我们在每个随机 `Integer` 流的末尾添加一个 -1 作为标记。你可以看到最终流确实是从一组扁平流中创建的。
+在這裡我們引入了 `concat()`，它以參數順序組合兩個流。 如此，我們在每個隨機 `Integer` 流的末尾添加一個 -1 作為標記。你可以看到最終流確實是從一組扁平流中建立的。
 
-因为 `rand.ints()` 产生的是一个 `IntStream`，所以我必须使用 `flatMap()`、`concat()` 和 `of()` 的特定整数形式。
+因為 `rand.ints()` 產生的是一個 `IntStream`，所以我必須使用 `flatMap()`、`concat()` 和 `of()` 的特定整數形式。
 
-让我们再看一下将文件划分为单词流的任务。我们最后使用到的是 **FileToWordsRegexp.java**，它的问题是需要将整个文件读入行列表中 —— 显然需要存储该列表。而我们真正想要的是创建一个不需要中间存储层的单词流。
+讓我們再看一下將文件劃分為單詞流的任務。我們最後使用到的是 **FileToWordsRegexp.java**，它的問題是需要將整個文件讀入行列表中 —— 顯然需要儲存該列表。而我們真正想要的是建立一個不需要中間儲存層的單詞流。
 
-下面，我们再使用 ` flatMap()` 来解决这个问题：
+下面，我們再使用 ` flatMap()` 來解決這個問題：
 
 ```java
 // streams/FileToWords.java
@@ -1097,17 +1097,17 @@ public class FileToWords {
 }
 ```
 
-`stream()` 现在是一个静态方法，因为它可以自己完成整个流创建过程。
+`stream()` 現在是一個靜態方法，因為它可以自己完成整個流建立過程。
 
-注意：`\\W+` 是一个正则表达式。表示“非单词字符”，`+` 表示“可以出现一次或者多次”。小写形式的 `\\w` 表示“单词字符”。
+注意：`\\W+` 是一個正規表示式。表示“非單詞字元”，`+` 表示“可以出現一次或者多次”。小寫形式的 `\\w` 表示“單詞字元”。
 
-我们之前遇到的问题是 `Pattern.compile().splitAsStream()` 产生的结果为流，这意味着当我们只是想要一个简单的单词流时，在传入的行流（stream of lines）上调用 `map()` 会产生一个单词流的流。幸运的是，`flatMap()`  可以将元素流的流扁平化为一个简单的元素流。或者，我们可以使用 `String.split()` 生成一个数组，其可以被 `Arrays.stream()` 转化成为流：
+我們之前遇到的問題是 `Pattern.compile().splitAsStream()` 產生的結果為流，這意味著當我們只是想要一個簡單的單詞流時，在傳入的行流（stream of lines）上呼叫 `map()` 會產生一個單詞流的流。幸運的是，`flatMap()`  可以將元素流的流扁平化為一個簡單的元素流。或者，我們可以使用 `String.split()` 生成一個陣列，其可以被 `Arrays.stream()` 轉化成為流：
 
 ```java
 .flatMap(line -> Arrays.stream(line.split("\\W+"))))
 ```
 
-因为有了真正的流（而不是`FileToWordsRegexp.java` 中基于集合存储的流），所以每次需要一个新的流时，我们都必须从头开始创建，因为流不能被复用：
+因為有了真正的流（而不是`FileToWordsRegexp.java` 中基於集合儲存的流），所以每次需要一個新的流時，我們都必須從頭開始建立，因為流不能被復用：
 
 ```java
 // streams/FileToWordsTest.java
@@ -1126,31 +1126,31 @@ public class FileToWordsTest {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Not much of a cheese shop really
 is it
 ```
 
-在 `System.out.format()` 中的 `%s` 表明参数为 **String** 类型。
+在 `System.out.format()` 中的 `%s` 表明參數為 **String** 類型。
 
 <!-- Optional -->
-## Optional类
+## Optional類
 
-在我们学习终端操作（Terminal Operations）之前，我们必须考虑在一个空流中获取元素会发生什么。我们喜欢沿着“快乐路径”[^1]把流连接起来，同时假设流不会中断。然而，在流中放置 `null` 却会轻易令其中断。那么是否存在某种对象，可以在持有流元素的同时，即使在我们查找的元素不存在时，也能友好地对我们进行提示（也就是说，不会产生异常）？
+在我們學習終端操作（Terminal Operations）之前，我們必須考慮在一個空流中獲取元素會發生什麼事。我們喜歡沿著“快樂路徑”[^1]把流連接起來，同時假設流不會中斷。然而，在流中放置 `null` 卻會輕易令其中斷。那麼是否存在某種物件，可以在持有流元素的同時，即使在我們尋找的元素不存在時，也能友好地對我們進行提示（也就是說，不會產生異常）？
 
-**Optional** 可以实现这样的功能。一些标准流操作返回 **Optional** 对象，因为它们并不能保证预期结果一定存在。包括：
+**Optional** 可以實現這樣的功能。一些標準流操作返回 **Optional** 物件，因為它們並不能保證預期結果一定存在。包括：
 
-- `findFirst()` 返回一个包含第一个元素的 **Optional** 对象，如果流为空则返回 **Optional.empty**
-- `findAny()` 返回包含任意元素的 **Optional** 对象，如果流为空则返回 **Optional.empty**
-- `max()` 和 `min()` 返回一个包含最大值或者最小值的 **Optional** 对象，如果流为空则返回 **Optional.empty**
+- `findFirst()` 返回一個包含第一個元素的 **Optional** 物件，如果流為空則返回 **Optional.empty**
+- `findAny()` 返回包含任意元素的 **Optional** 物件，如果流為空則返回 **Optional.empty**
+- `max()` 和 `min()` 返回一個包含最大值或者最小值的 **Optional** 物件，如果流為空則返回 **Optional.empty**
 
- `reduce()` 不再以 `identity` 形式开头，而是将其返回值包装在 **Optional** 中。（`identity` 对象成为其他形式的 `reduce()` 的默认结果，因此不存在空结果的风险）
+ `reduce()` 不再以 `identity` 形式開頭，而是將其返回值包裝在 **Optional** 中。（`identity` 物件成為其他形式的 `reduce()` 的預設結果，因此不存在空結果的風險）
 
-对于数字流 **IntStream**、**LongStream** 和 **DoubleStream**，`average()` 会将结果包装在 **Optional** 以防止流为空。
+對於數字流 **IntStream**、**LongStream** 和 **DoubleStream**，`average()` 會將結果包裝在 **Optional** 以防止流為空。
 
-以下是对空流进行所有这些操作的简单测试：
+以下是對空流進行所有這些操作的簡單測試：
 
 ```java
 // streams/OptionalsFromEmptyStreams.java
@@ -1174,7 +1174,7 @@ class OptionalsFromEmptyStreams {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Optional.empty
@@ -1185,17 +1185,17 @@ Optional.empty
 OptionalDouble.empty
 ```
 
-当流为空的时候你会获得一个 **Optional.empty** 对象，而不是抛出异常。**Optional** 拥有 `toString()` 方法可以用于展示有用信息。
+當流為空的時候你會獲得一個 **Optional.empty** 物件，而不是拋出異常。**Optional** 擁有 `toString()` 方法可以用於展示有用訊息。
 
-注意，空流是通过 `Stream.<String>empty()` 创建的。如果你在没有任何上下文环境的情况下调用 `Stream.empty()`，Java 并不知道它的数据类型；这个语法解决了这个问题。如果编译器拥有了足够的上下文信息，比如：
+注意，空流是透過 `Stream.<String>empty()` 建立的。如果你在沒有任何上下文環境的情況下呼叫 `Stream.empty()`，Java 並不知道它的資料類型；這個語法解決了這個問題。如果編譯器擁有了足夠的上下文訊息，比如：
 
 ```java
 Stream<String> s = Stream.empty();
 ```
 
-就可以在调用 `empty()` 时推断类型。
+就可以在呼叫 `empty()` 時推斷類型。
 
-这个示例展示了 **Optional** 的两个基本用法：
+這個範例展示了 **Optional** 的兩個基本用法：
 
 ```java
 // streams/OptionalBasics.java
@@ -1215,27 +1215,27 @@ class OptionalBasics {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Epithets
 Nothing inside!
 ```
 
-当你接收到 **Optional** 对象时，应首先调用 `isPresent()` 检查其中是否包含元素。如果存在，可使用 `get()` 获取。
+當你接收到 **Optional** 物件時，應首先呼叫 `isPresent()` 檢查其中是否包含元素。如果存在，可使用 `get()` 獲取。
 
 <!-- Convenience Functions -->
 
-### 便利函数
+### 便利函數
 
-有许多便利函数可以解包 **Optional** ，这简化了上述“对所包含的对象的检查和执行操作”的过程：
+有許多便利函數可以解包 **Optional** ，這簡化了上述“對所包含的物件的檢查和執行操作”的過程：
 
-- `ifPresent(Consumer)`：当值存在时调用 **Consumer**，否则什么也不做。
-- `orElse(otherObject)`：如果值存在则直接返回，否则生成 **otherObject**。
-- `orElseGet(Supplier)`：如果值存在则直接返回，否则使用 **Supplier** 函数生成一个可替代对象。
-- `orElseThrow(Supplier)`：如果值存在直接返回，否则使用 **Supplier** 函数生成一个异常。
+- `ifPresent(Consumer)`：當值存在時呼叫 **Consumer**，否則什麼也不做。
+- `orElse(otherObject)`：如果值存在則直接返回，否則生成 **otherObject**。
+- `orElseGet(Supplier)`：如果值存在則直接返回，否則使用 **Supplier** 函數生成一個可替代物件。
+- `orElseThrow(Supplier)`：如果值存在直接返回，否則使用 **Supplier** 函數生成一個異常。
 
-如下是针对不同便利函数的简单演示：
+如下是針對不同便利函數的簡單示範：
 
 ```java
 // streams/Optionals.java
@@ -1282,7 +1282,7 @@ public class Optionals {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 === basics ===
@@ -1301,21 +1301,21 @@ Epithets
 Caught java.lang.Exception: Supplied
 ```
 
-`test()` 通过传入所有方法都适用的 **Consumer** 来避免重复代码。
+`test()` 透過傳入所有方法都適用的 **Consumer** 來避免重複程式碼。
 
-`orElseThrow()` 通过 **catch** 关键字来捕获抛出的异常。更多细节，将在 [异常](./15-Exceptions.md) 这一章节中学习。
+`orElseThrow()` 通過 **catch** 關鍵字來捕獲拋出的異常。更多細節，將在 [異常](./15-Exceptions.md) 這一章節中學習。
 
 <!-- Creating Optionals -->
 
-### 创建 Optional
+### 建立 Optional
 
-当我们在自己的代码中加入 **Optional** 时，可以使用下面 3 个静态方法：
+當我們在自己的程式碼中加入 **Optional** 時，可以使用下面 3 個靜態方法：
 
-- `empty()`：生成一个空 **Optional**。
-- `of(value)`：将一个非空值包装到 **Optional** 里。
-- `ofNullable(value)`：针对一个可能为空的值，为空时自动生成 **Optional.empty**，否则将值包装在 **Optional** 中。
+- `empty()`：生成一個空 **Optional**。
+- `of(value)`：將一個非空值包裝到 **Optional** 裡。
+- `ofNullable(value)`：針對一個可能為空的值，為空時自動生成 **Optional.empty**，否則將值包裝在 **Optional** 中。
 
-下面来看看它是如何工作的。代码示例：
+下面來看看它是如何工作的。程式碼範例：
 
 ```java
 // streams/CreatingOptionals.java
@@ -1341,7 +1341,7 @@ class CreatingOptionals {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 === empty ===
@@ -1355,19 +1355,19 @@ Hi
 Null
 ```
 
-我们不能通过传递 `null` 到 `of()` 来创建 `Optional` 对象。最安全的方法是， 使用 `ofNullable()` 来优雅地处理 `null`。
+我們不能透過傳遞 `null` 到 `of()` 來建立 `Optional` 物件。最安全的方法是， 使用 `ofNullable()` 來優雅地處理 `null`。
 
-### Optional 对象操作
+### Optional 物件操作
 
-当我们的流管道生成了 **Optional** 对象，下面 3 个方法可使得 **Optional** 的后续能做更多的操作：
+當我們的流管道生成了 **Optional** 物件，下面 3 個方法可使得 **Optional** 的後續能做更多的操作：
 
-- `filter(Predicate)`：对 **Optional** 中的内容应用**Predicate** 并将结果返回。如果 **Optional** 不满足 **Predicate** ，将 **Optional** 转化为空 **Optional** 。如果 **Optional** 已经为空，则直接返回空**Optional** 。
+- `filter(Predicate)`：對 **Optional** 中的內容應用**Predicate** 並將結果返回。如果 **Optional** 不滿足 **Predicate** ，將 **Optional** 轉化為空 **Optional** 。如果 **Optional** 已經為空，則直接返回空**Optional** 。
 
-- `map(Function)`：如果 **Optional** 不为空，应用 **Function**  于 **Optional** 中的内容，并返回结果。否则直接返回 **Optional.empty**。
+- `map(Function)`：如果 **Optional** 不為空，應用 **Function**  於 **Optional** 中的內容，並返回結果。否則直接返回 **Optional.empty**。
 
-- `flatMap(Function)`：同 `map()`，但是提供的映射函数将结果包装在 **Optional** 对象中，因此 `flatMap()` 不会在最后进行任何包装。
+- `flatMap(Function)`：同 `map()`，但是提供的映射函數將結果包裝在 **Optional** 物件中，因此 `flatMap()` 不會在最後進行任何包裝。
 
-以上方法都不适用于数值型 **Optional**。一般来说，流的 `filter()` 会在 **Predicate** 返回 `false` 时移除流元素。而 `Optional.filter()` 在失败时不会删除 **Optional**，而是将其保留下来，并转化为空。下面请看代码示例：
+以上方法都不適用於數值型 **Optional**。一般來說，流的 `filter()` 會在 **Predicate** 返回 `false` 時移除流元素。而 `Optional.filter()` 在失敗時不會刪除 **Optional**，而是將其保留下來，並轉化為空。下面請看程式碼範例：
 
 
 ```java
@@ -1403,7 +1403,7 @@ class OptionalFilter {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 ---( true )---
@@ -1443,11 +1443,11 @@ Optional[Bingo]
 Optional.empty
 ```
 
-即使输出看起来像流，要特别注意 `test()` 中的 for 循环。每一次的for循环都重新启动流，然后跳过for循环索引指定的数量的元素，这就是流只剩后续元素的原因。然后调用`findFirst()` 获取剩余元素中的第一个元素，并包装在一个 `Optional`对象中。
+即使輸出看起來像流，要特別注意 `test()` 中的 for 循環。每一次的for循環都重新啟動流，然後跳過for循環索引指定的數量的元素，這就是流只剩後續元素的原因。然後呼叫`findFirst()` 獲取剩餘元素中的第一個元素，並包裝在一個 `Optional`物件中。
 
-**注意**，不同于普通 for 循环，这里的索引值范围并不是 `i < elements.length`， 而是 `i <= elements.length`。所以最后一个元素实际上超出了流。方便的是，这将自动成为 **Optional.empty**，你可以在每一个测试的结尾中看到。
+**注意**，不同於普通 for 循環，這裡的索引值範圍並不是 `i < elements.length`， 而是 `i <= elements.length`。所以最後一個元素實際上超出了流。方便的是，這將自動成為 **Optional.empty**，你可以在每一個測試的結尾中看到。
 
-同 `map()` 一样 ， `Optional.map()` 执行一个函数。它仅在 **Optional** 不为空时才执行这个映射函数。并将 **Optional** 的内容提取出来，传递给映射函数。代码示例：
+同 `map()` 一樣 ， `Optional.map()` 執行一個函數。它僅在 **Optional** 不為空時才執行這個映射函數。並將 **Optional** 的內容提取出來，傳遞給映射函數。程式碼範例：
 
 ```java
 // streams/OptionalMap.java
@@ -1494,7 +1494,7 @@ class OptionalMap {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 ---( Add brackets )---
@@ -1523,9 +1523,9 @@ Optional[5]
 Optional.empty
 ```
 
-映射函数的返回结果会自动包装成为 **Optional**。**Optional.empty** 会被直接跳过。
+映射函數的返回結果會自動包裝成為 **Optional**。**Optional.empty** 會被直接跳過。
 
-**Optional** 的 `flatMap()` 应用于已生成 **Optional** 的映射函数，所以 `flatMap()` 不会像 `map()` 那样将结果封装在 **Optional** 中。代码示例：
+**Optional** 的 `flatMap()` 應用於已生成 **Optional** 的映射函數，所以 `flatMap()` 不會像 `map()` 那樣將結果封裝在 **Optional** 中。程式碼範例：
 
 ```java
 // streams/OptionalFlatMap.java
@@ -1574,7 +1574,7 @@ class OptionalFlatMap {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 ---( Add brackets )---
@@ -1603,12 +1603,12 @@ Optional[5]
 Optional.empty
 ```
 
-同 `map()`，`flatMap()` 将提取非空 **Optional** 的内容并将其应用在映射函数。唯一的区别就是 `flatMap()` 不会把结果包装在 **Optional** 中，因为映射函数已经被包装过了。在如上示例中，我们已经在每一个映射函数中显式地完成了包装，但是很显然 `Optional.flatMap()` 是为那些自己已经生成 **Optional** 的函数而设计的。
+同 `map()`，`flatMap()` 將提取非空 **Optional** 的內容並將其應用在映射函數。唯一的區別就是 `flatMap()` 不會把結果包裝在 **Optional** 中，因為映射函數已經被包裝過了。在如上範例中，我們已經在每一個映射函數中顯式地完成了包裝，但是很顯然 `Optional.flatMap()` 是為那些自己已經生成 **Optional** 的函數而設計的。
 
 <!-- Streams of Optionals -->
 ### Optional 流
 
-假设你的生成器可能产生 `null` 值，那么当用它来创建流时，你会自然地想到用  **Optional** 来包装元素。如下是它的样子，代码示例：
+假設你的生成器可能產生 `null` 值，那麼當用它來建立流時，你會自然地想到用  **Optional** 來包裝元素。如下是它的樣子，程式碼範例：
 
 ```java
 // streams/Signal.java
@@ -1638,7 +1638,7 @@ public class Signal {
 }
 ```
 
-当我们使用这个流的时候，必须要弄清楚如何解包 **Optional**。代码示例：
+當我們使用這個流的時候，必須要弄清楚如何解包 **Optional**。程式碼範例：
 
 ```java
 // streams/StreamOfOptionals.java
@@ -1659,7 +1659,7 @@ public class StreamOfOptionals {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```java
 Optional[Signal(dash)]
@@ -1679,22 +1679,22 @@ Signal(dash)
 Signal(dash)
 ```
 
-在这里，我们使用 `filter()` 来保留那些非空 **Optional**，然后在 `map()` 中使用 `get()` 获取元素。由于每种情况都需要定义“空值”的含义，所以通常我们要为每个应用程序采用不同的方法。
+在這裡，我們使用 `filter()` 來保留那些非空 **Optional**，然後在 `map()` 中使用 `get()` 獲取元素。由於每種情況都需要定義“空值”的含義，所以通常我們要為每個應用程式採用不同的方法。
 
 <!-- Terminal Operations -->
 
-## 终端操作
+## 終端操作
 
 
-以下操作将会获取流的最终结果。至此我们无法再继续往后传递流。可以说，终端操作（Terminal Operations）总是我们在流管道中所做的最后一件事。
+以下操作將會獲取流的最終結果。至此我們無法再繼續往後傳遞流。可以說，終端操作（Terminal Operations）總是我們在流管道中所做的最後一件事。
 
 <!-- Convert to an Array -->
 
-### 数组
-- `toArray()`：将流转换成适当类型的数组。
-- `toArray(generator)`：在特殊情况下，生成自定义类型的数组。
+### 陣列
+- `toArray()`：將流轉換成適當類型的陣列。
+- `toArray(generator)`：在特殊情況下，生成自訂類型的陣列。
 
-当我们需要得到数组类型的数据以便于后续操作时，上面的方法就很有用。假设我们需要复用流产生的随机数时，就可以这么使用。代码示例:
+當我們需要得到陣列類型的資料以便於後續操作時，上面的方法就很有用。假設我們需要復用流產生的隨機數時，就可以這麼使用。程式碼範例:
 
 ```java
 // streams/RandInts.java
@@ -1709,19 +1709,19 @@ public class RandInts {
 }
 ```
 
-上例将100个数值范围在 0 到 1000 之间的随机数流转换成为数组并将其存储在 `rints` 中。这样一来，每次调用 `rands()` 的时候可以重复获取相同的整数流。
+上例將100個數值範圍在 0 到 1000 之間的隨機數流轉換成為陣列並將其儲存在 `rints` 中。這樣一來，每次呼叫 `rands()` 的時候可以重複獲取相同的整數流。
 
 <!-- Apply a Final Operation to Every Element -->
-### 循环
+### 循環
 
-- `forEach(Consumer)`常见如 `System.out::println` 作为 **Consumer** 函数。
-- `forEachOrdered(Consumer)`： 保证 `forEach` 按照原始流顺序操作。
+- `forEach(Consumer)`常見如 `System.out::println` 作為 **Consumer** 函數。
+- `forEachOrdered(Consumer)`： 保證 `forEach` 按照原始流順序操作。
 
-第一种形式：无序操作，仅在引入并行流时才有意义。在 [并发编程](24-Concurrent-Programming.md) 章节之前我们不会深入研究这个问题。这里简单介绍下 `parallel()`：可实现多处理器并行操作。实现原理为将流分割为多个（通常数目为 CPU 核心数）并在不同处理器上分别执行操作。因为我们采用的是内部迭代，而不是外部迭代，所以这是可能实现的。
+第一種形式：無序操作，僅在引入並行流時才有意義。在 [並發編程](24-Concurrent-Programming.md) 章節之前我們不會深入研究這個問題。這裡簡單介紹一下 `parallel()`：可實現多處理器並行操作。實現原理為將流分割為多個（通常數目為 CPU 核心數）並在不同處理器上分別執行操作。因為我們採用的是內部疊代，而不是外部疊代，所以這是可能實現的。
 
-`parallel()` 看似简单，实则棘手。更多内容将在稍后的 [并发编程](24-Concurrent-Programming.md) 章节中学习。
+`parallel()` 看似簡單，實則棘手。更多內容將在稍後的 [並發編程](24-Concurrent-Programming.md) 章節中學習。
 
-下例引入 `parallel()` 来帮助理解 `forEachOrdered(Consumer)` 的作用和使用场景。代码示例：
+下例引入 `parallel()` 來幫助理解 `forEachOrdered(Consumer)` 的作用和使用場景。程式碼範例：
 
 ```java
 // streams/ForEach.java
@@ -1745,7 +1745,7 @@ public class ForEach {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 258 555 693 861 961 429 868 200 522 207 288 128 551 589
@@ -1753,20 +1753,20 @@ public class ForEach {
 258 555 693 861 961 429 868 200 522 207 288 128 551 589
 ```
 
-为了方便测试不同大小的流，我们抽离出了 `SZ` 变量。然而即使 `SZ` 值为14也产生了有趣的结果。在第一个流中，未使用 `parallel()` ，因此以元素从 `rands()`出来的顺序输出结果。在第二个流中，引入`parallel()` ，即便流很小，输出的结果的顺序也和前面不一样。这是由于多处理器并行操作的原因，如果你将程序多运行几次，你会发现输出都不相同，这是多处理器并行操作的不确定性造成的结果。
+為了方便測試不同大小的流，我們抽離出了 `SZ` 變數。然而即使 `SZ` 值為14也產生了有趣的結果。在第一個流中，未使用 `parallel()` ，因此以元素從 `rands()`出來的順序輸出結果。在第二個流中，引入`parallel()` ，即便流很小，輸出的結果的順序也和前面不一樣。這是由於多處理器並行操作的原因，如果你將程式多執行幾次，你會發現輸出都不相同，這是多處理器並行操作的不確定性造成的結果。
 
-在最后一个流中，同时使用了 `parallel()` 和 `forEachOrdered()` 来强制保持原始流顺序。因此，对非并行流使用 `forEachOrdered()` 是没有任何影响的。
+在最後一個流中，同時使用了 `parallel()` 和 `forEachOrdered()` 來強制保持原始流順序。因此，對非並行流使用 `forEachOrdered()` 是沒有任何影響的。
 
 <!-- Collecting -->
 
 ### 集合
 
-- `collect(Collector)`：使用 **Collector** 收集流元素到结果集合中。
-- `collect(Supplier, BiConsumer, BiConsumer)`：同上，第一个参数 **Supplier** 创建了一个新的结果集合，第二个参数 **BiConsumer** 将下一个元素收集到结果集合中，第三个参数 **BiConsumer** 用于将两个结果集合合并起来。
+- `collect(Collector)`：使用 **Collector** 收集流元素到結果集合中。
+- `collect(Supplier, BiConsumer, BiConsumer)`：同上，第一個參數 **Supplier** 建立了一個新的結果集合，第二個參數 **BiConsumer** 將下一個元素收集到結果集合中，第三個參數 **BiConsumer** 用於將兩個結果集合合併起來。
 
-在这里我们只是简单介绍了几个 **Collectors** 的运用示例。实际上，它还有一些非常复杂的操作实现，可通过查看 `java.util.stream.Collectors` 的 API 文档了解。例如，我们可以将元素收集到任意一种特定的集合中。
+在這裡我們只是簡單介紹了幾個 **Collectors** 的運用範例。實際上，它還有一些非常複雜的操作實現，可透過查看 `java.util.stream.Collectors` 的 API 文件了解。例如，我們可以將元素收集到任意一種特定的集合中。
 
-假设我们现在为了保证元素有序，将元素存储在 **TreeSet** 中。**Collectors** 里面没有特定的 `toTreeSet()`，但是我们可以通过将集合的构造函数引用传递给 `Collectors.toCollection()`，从而构建任何类型的集合。下面我们来将一个文件中的单词收集到 **TreeSet** 集合中。代码示例：
+假設我們現在為了保證元素有序，將元素儲存在 **TreeSet** 中。**Collectors** 裡面沒有特定的 `toTreeSet()`，但是我們可以透過將集合的建構子引用傳遞給 `Collectors.toCollection()`，從而構建任何類型的集合。下面我們來將一個文件中的單詞收集到 **TreeSet** 集合中。程式碼範例：
 
 ```java
 // streams/TreeSetOfWords.java
@@ -1789,7 +1789,7 @@ public class TreeSetOfWords {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 [Arrays, Collectors, Exception, Files, Output, Paths,
@@ -1801,9 +1801,9 @@ stream, streams, throws, toCollection, trim, util,
 void, words2]
 ```
 
-**Files.**`lines()` 打开 **Path** 并将其转换成为由行组成的流。下一行代码以一个或多个非单词字符（`\\W+`）为分界，对每一行进行分割，结果是产生一个数组，然后使用 **Arrays.**`stream()` 将数组转化成为流，最后`flatMap()`将各行形成的多个单词流，扁平映射为一个单词流。使用 `matches(\\d+)` 查找并移除全部是数字的字符串（注意,`words2` 是通过的）。然后用 **String.**`trim()` 去除单词两边的空白，`filter()` 过滤所有长度小于3的单词，并只获取前100个单词，最后将其保存到 **TreeSet** 中。
+**Files.**`lines()` 打開 **Path** 並將其轉換成為由行組成的流。下一行程式碼以一個或多個非單詞字元（`\\W+`）為分界，對每一行進行分割，結果是產生一個陣列，然後使用 **Arrays.**`stream()` 將陣列轉化成為流，最後`flatMap()`將各行形成的多個單詞流，扁平映射為一個單詞流。使用 `matches(\\d+)` 尋找並移除全部是數字的字串（注意,`words2` 是透過的）。然後用 **String.**`trim()` 去除單詞兩邊的空白，`filter()` 過濾所有長度小於3的單詞，並只獲取前100個單詞，最後將其儲存到 **TreeSet** 中。
 
-我们也可以在流中生成 **Map**。代码示例：
+我們也可以在流中生成 **Map**。程式碼範例：
 
 ```java
 // streams/MapCollector.java
@@ -1846,17 +1846,17 @@ public class MapCollector {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 {688=W, 309=C, 293=B, 761=N, 858=N, 668=G, 622=F, 751=N}
 ```
 
-**Pair** 只是一个基础的数据对象。**RandomPair** 创建了随机生成的 **Pair** 对象流。在 Java 中，我们不能直接以某种方式组合两个流。所以我创建了一个整数流，并且使用 `mapToObj()` 将整数流转化成为 **Pair** 流。 **capChars**的随机大写字母迭代器创建了流，然后`next()`让我们可以在`stream()`中使用这个流。就我所知，这是将多个流组合成新的对象流的唯一方法。
+**Pair** 只是一個基礎的資料物件。**RandomPair** 建立了隨機生成的 **Pair** 物件流。在 Java 中，我們不能直接以某種方式組合兩個流。所以我建立了一個整數流，並且使用 `mapToObj()` 將整數流轉化成為 **Pair** 流。 **capChars**的隨機大寫字母疊代器建立了流，然後`next()`讓我們可以在`stream()`中使用這個流。就我所知，這是將多個流組合成新的物件流的唯一方法。
 
-在这里，我们只使用最简单形式的 `Collectors.toMap()`，这个方法只需要两个从流中获取键和值的函数。还有其他重载形式，其中一种当是键发生冲突时，使用一个函数来处理冲突。
+在這裡，我們只使用最簡單形式的 `Collectors.toMap()`，這個方法只需要兩個從流中獲取鍵和值的函數。還有其他重載形式，其中一種當是鍵發生衝突時，使用一個函數來處理衝突。
 
-大多数情况下，`java.util.stream.Collectors` 中预设的 **Collector** 就能满足我们的要求。除此之外，你还可以使用第二种形式的 `collect()`。 我把它留作更高级的练习，下例给出基本用法：
+大多數情況下，`java.util.stream.Collectors` 中預設的 **Collector** 就能滿足我們的要求。除此之外，你還可以使用第二種形式的 `collect()`。 我把它留作更進階的練習，下例給出基本用法：
 
 ```java
 // streams/SpecialCollector.java
@@ -1876,24 +1876,24 @@ public class SpecialCollector {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 cheese
 cheese
 ```
 
-在这里， **ArrayList** 的方法已经做了你所需要的操作，但更有可能的是，如果你必须使用这种形式的 `collect()`，就要自己创建特定的定义。
+在這裡， **ArrayList** 的方法已經做了你所需要的操作，但更有可能的是，如果你必須使用這種形式的 `collect()`，就要自己建立特定的定義。
 
 <!-- Combining All Stream Elements -->
 
-### 组合
+### 組合
 
-- `reduce(BinaryOperator)`：使用 **BinaryOperator** 来组合所有流中的元素。因为流可能为空，其返回值为 **Optional**。
-- `reduce(identity, BinaryOperator)`：功能同上，但是使用 **identity** 作为其组合的初始值。因此如果流为空，**identity** 就是结果。
-- `reduce(identity, BiFunction, BinaryOperator)`：更复杂的使用形式（暂不介绍），这里把它包含在内，因为它可以提高效率。通常，我们可以显式地组合 `map()` 和 `reduce()` 来更简单的表达它。
+- `reduce(BinaryOperator)`：使用 **BinaryOperator** 來組合所有流中的元素。因為流可能為空，其返回值為 **Optional**。
+- `reduce(identity, BinaryOperator)`：功能同上，但是使用 **identity** 作為其組合的初始值。因此如果流為空，**identity** 就是結果。
+- `reduce(identity, BiFunction, BinaryOperator)`：更複雜的使用形式（暫不介紹），這裡把它包含在內，因為它可以提高效率。通常，我們可以顯式地組合 `map()` 和 `reduce()` 來更簡單的表達它。
 
-下面来看下 `reduce` 的代码示例：
+下面來看一下 `reduce` 的程式碼範例：
 
 ```java
 // streams/Reduce.java
@@ -1924,7 +1924,7 @@ public class Reduce {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Frobnitz(58)
@@ -1940,20 +1940,20 @@ Frobnitz(7)
 Frobnitz(29)
 ```
 
-**Frobnitz** 包含一个可生成自身的生成器 `supply()` ；因为 `supply()` 方法作为一个 `Supplier<Frobnitz>` 是签名兼容的，我们可以把 `supply()` 作为一个方法引用传递给 `Stream.generate()` （这种签名兼容性被称作结构一致性）。我们使用了没有“初始值”作为第一个参数的 `reduce()`方法，所以产生的结果是 **Optional** 类型。`Optional.ifPresent()` 方法只有在结果非空的时候才会调用 `Consumer<Frobnitz>` （`println` 方法可以被调用是因为 **Frobnitz** 可以通过 `toString()` 方法转换成 **String**）。
+**Frobnitz** 包含一個可生成自身的生成器 `supply()` ；因為 `supply()` 方法作為一個 `Supplier<Frobnitz>` 是簽名相容的，我們可以把 `supply()` 作為一個方法引用傳遞給 `Stream.generate()` （這種簽名相容性被稱作結構一致性）。我們使用了沒有“初始值”作為第一個參數的 `reduce()`方法，所以產生的結果是 **Optional** 類型。`Optional.ifPresent()` 方法只有在結果非空的時候才會呼叫 `Consumer<Frobnitz>` （`println` 方法可以被呼叫是因為 **Frobnitz** 可以透過 `toString()` 方法轉換成 **String**）。
 
-Lambda 表达式中的第一个参数 `fr0` 是 `reduce()` 中上一次调用的结果。而第二个参数 `fr1` 是从流传递过来的值。
+Lambda 表達式中的第一個參數 `fr0` 是 `reduce()` 中上一次呼叫的結果。而第二個參數 `fr1` 是從流傳遞過來的值。
 
-`reduce()` 中的 Lambda 表达式使用了三元表达式来获取结果，当 `fr0` 的 `size` 值小于 50 的时候，将 `fr0` 作为结果，否则将序列中的下一个元素即 `fr1`作为结果。当取得第一个 `size` 值小于 50 的 `Frobnitz`，只要得到这个结果就会忽略流中其他元素。这是个非常奇怪的限制， 但也确实让我们对 `reduce()` 有了更多的了解。
+`reduce()` 中的 Lambda 表達式使用了三元表達式來獲取結果，當 `fr0` 的 `size` 值小於 50 的時候，將 `fr0` 作為結果，否則將序列中的下一個元素即 `fr1`作為結果。當取得第一個 `size` 值小於 50 的 `Frobnitz`，只要得到這個結果就會忽略流中其他元素。這是個非常奇怪的限制， 但也確實讓我們對 `reduce()` 有了更多的了解。
 
 <!-- Matching -->
 ### 匹配
 
-- `allMatch(Predicate)` ：如果流的每个元素提供给 **Predicate** 都返回 true ，结果返回为 true。在第一个 false 时，则停止执行计算。
-- `anyMatch(Predicate)`：如果流的任意一个元素提供给 **Predicate** 返回 true ，结果返回为 true。在第一个 true 是停止执行计算。
-- `noneMatch(Predicate)`：如果流的每个元素提供给 **Predicate** 都返回 false 时，结果返回为 true。在第一个 true 时停止执行计算。
+- `allMatch(Predicate)` ：如果流的每個元素提供給 **Predicate** 都返回 true ，結果返回為 true。在第一個 false 時，則停止執行計算。
+- `anyMatch(Predicate)`：如果流的任意一個元素提供給 **Predicate** 返回 true ，結果返回為 true。在第一個 true 是停止執行計算。
+- `noneMatch(Predicate)`：如果流的每個元素提供給 **Predicate** 都返回 false 時，結果返回為 true。在第一個 true 時停止執行計算。
 
-我们已经在 `Prime.java` 中看到了 `noneMatch()` 的示例；`allMatch()` 和 `anyMatch()` 的用法基本上是等同的。下面我们来探究一下短路行为。为了消除冗余代码，我们创建了 `show()`。首先我们必须知道如何统一地描述这三个匹配器的操作，然后再将其转换为 **Matcher** 接口。代码示例：
+我們已經在 `Prime.java` 中看到了 `noneMatch()` 的範例；`allMatch()` 和 `anyMatch()` 的用法基本上是等同的。下面我們來探究一下短路行為。為了消除冗餘程式碼，我們建立了 `show()`。首先我們必須知道如何統一地描述這三個匹配器的操作，然後再將其轉換為 **Matcher** 介面。程式碼範例：
 
 ```java
 // streams/Matching.java
@@ -1984,7 +1984,7 @@ public class Matching {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 1 2 3 4 5 6 7 8 9 true
@@ -1995,16 +1995,16 @@ public class Matching {
 1 2 3 4 5 6 7 8 9 true
 ```
 
-**BiPredicate** 是一个二元谓词，它接受两个参数并返回 true 或者 false。第一个参数是我们要测试的流，第二个参数是一个谓词 **Predicate**。**Matcher** 可以匹配所有的 **Stream::\*Match** 方法，所以可以将每一个**Stream::\*Match**方法引用传递到 `show()` 中。对`match.test()` 的调用会被转换成 对方法引用**Stream::\*Match** 的调用。
+**BiPredicate** 是一個二元謂詞，它接受兩個參數並返回 true 或者 false。第一個參數是我們要測試的流，第二個參數是一個謂詞 **Predicate**。**Matcher** 可以匹配所有的 **Stream::\*Match** 方法，所以可以將每一個**Stream::\*Match**方法引用傳遞到 `show()` 中。對`match.test()` 的呼叫會被轉換成 對方法引用**Stream::\*Match** 的呼叫。
 
-`show()` 接受一个**Matcher**和一个 `val` 参数，`val` 在判断测试 `n < val`中指定了最大值。`show()` 方法生成了整数1-9组成的一个流。`peek()`用来展示在测试短路之前测试进行到了哪一步。从输出中可以看到每次都发生了短路。
+`show()` 接受一個**Matcher**和一個 `val` 參數，`val` 在判斷測試 `n < val`中指定了最大值。`show()` 方法生成了整數1-9組成的一個流。`peek()`用來展示在測試短路之前測試進行到了哪一步。從輸出中可以看到每次都發生了短路。
 
-### 查找
+### 尋找
 
-- `findFirst()`：返回第一个流元素的 **Optional**，如果流为空返回 **Optional.empty**。
-- `findAny(`：返回含有任意流元素的 **Optional**，如果流为空返回 **Optional.empty**。
+- `findFirst()`：返回第一個流元素的 **Optional**，如果流為空返回 **Optional.empty**。
+- `findAny(`：返回含有任意流元素的 **Optional**，如果流為空返回 **Optional.empty**。
 
-代码示例：
+程式碼範例：
 
 ```java
 // streams/SelectElement.java
@@ -2023,7 +2023,7 @@ public class SelectElement {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 258
@@ -2032,9 +2032,9 @@ public class SelectElement {
 242
 ```
 
-无论流是否为并行化，`findFirst()` 总是会选择流中的第一个元素。对于非并行流，`findAny()`会选择流中的第一个元素（即使从定义上来看是选择任意元素）。在这个例子中，用 `parallel()` 将流并行化，以展示 `findAny()` 不选择流的第一个元素的可能性。
+無論流是否為並行化，`findFirst()` 總是會選擇流中的第一個元素。對於非並行流，`findAny()`會選擇流中的第一個元素（即使從定義上來看是選擇任意元素）。在這個例子中，用 `parallel()` 將流並行化，以展示 `findAny()` 不選擇流的第一個元素的可能性。
 
-如果必须选择流中最后一个元素，那就使用 `reduce()`。代码示例：
+如果必須選擇流中最後一個元素，那就使用 `reduce()`。程式碼範例：
 
 ```java
 // streams/LastElement.java
@@ -2055,24 +2055,24 @@ public class LastElement {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 19
 three
 ```
 
-`reduce()`  的参数只是用最后一个元素替换了最后两个元素，最终只生成最后一个元素。如果为数字流，你必须使用相近的数字 **Optional** 类型（ numeric optional type），否则使用 **Optional** 类型，就像上例中的 `Optional<String>`。
+`reduce()`  的參數只是用最後一個元素取代了最後兩個元素，最終只生成最後一個元素。如果為數字流，你必須使用相近的數字 **Optional** 類型（ numeric optional type），否則使用 **Optional** 類型，就像上例中的 `Optional<String>`。
 
 <!-- Informational -->
 
-### 信息
+### 訊息
 
-- `count()`：流中的元素个数。
-- `max(Comparator)`：根据所传入的 **Comparator** 所决定的“最大”元素。
-- `min(Comparator)`：根据所传入的 **Comparator** 所决定的“最小”元素。
+- `count()`：流中的元素個數。
+- `max(Comparator)`：根據所傳入的 **Comparator** 所決定的“最大”元素。
+- `min(Comparator)`：根據所傳入的 **Comparator** 所決定的“最小”元素。
 
-**String** 类型有预设的 **Comparator** 实现。代码示例：
+**String** 類型有預設的 **Comparator** 實現。程式碼範例：
 
 ```java
 // streams/Informational.java
@@ -2095,7 +2095,7 @@ public class Informational {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 32
@@ -2103,15 +2103,15 @@ a
 you
 ```
 
-`min()` 和 `max()` 的返回类型为 **Optional**，这需要我们使用 `orElse()`来解包。
+`min()` 和 `max()` 的返回類型為 **Optional**，這需要我們使用 `orElse()`來解包。
 
 <!-- Information for Numeric Streams -->
-### 数字流信息
+### 數字流訊息
 
 - `average()` ：求取流元素平均值。
-- `max()` 和 `min()`：数值流操作无需 **Comparator**。
-- `sum()`：对所有流元素进行求和。
-- `summaryStatistics()`：生成可能有用的数据。目前并不太清楚这个方法存在的必要性，因为我们其实可以用更直接的方法获得需要的数据。
+- `max()` 和 `min()`：數值流操作無需 **Comparator**。
+- `sum()`：對所有流元素進行求和。
+- `summaryStatistics()`：生成可能有用的資料。目前並不太清楚這個方法存在的必要性，因為我們其實可以用更直接的方法獲得需要的資料。
 
 ```java
 // streams/NumericStreamInfo.java
@@ -2128,7 +2128,7 @@ public class NumericStreamInfo {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 507.94
@@ -2138,14 +2138,14 @@ public class NumericStreamInfo {
 IntSummaryStatistics{count=100, sum=50794, min=8, average=507.940000, max=998}
 ```
 
-上例操作对于 **LongStream** 和 **DoubleStream** 同样适用。
+上例操作對於 **LongStream** 和 **DoubleStream** 同樣適用。
 
-## 本章小结
+## 本章小結
 
-流式操作改变并极大地提升了 Java 语言的可编程性，并可能极大地阻止了 Java 编程人员向诸如 Scala 这种函数式语言的流转。在本书的剩余部分，我们将尽可能地使用流。
+流式操作改變並極大地提升了 Java 語言的可編程性，並可能極大地阻止了 Java 編程人員向諸如 Scala 這種函數式語言的流轉。在本書的剩餘部分，我們將儘可能地使用流。
 
-[^1]: 在软件或信息建模的上下文中，快乐路径(有时称为快乐流)是没有异常或错误条件的默认场景。例如，验证信用卡号的函数的快乐路径应该是任何验证规则都不会出现错误的地方，从而让执行成功地继续到最后，生成一个积极的响应。[见 wikipedia: happy path](https://en.wikipedia.org/wiki/Happy_path)
+[^1]: 在軟體或訊息建模的上下文中，快樂路徑(有時稱為快樂流)是沒有異常或錯誤條件的預設場景。例如，驗證信用卡號的函數的快樂路徑應該是任何驗證規則都不會出現錯誤的地方，從而讓執行成功地繼續到最後，生成一個積極的響應。[見 wikipedia: happy path](https://en.wikipedia.org/wiki/Happy_path)
 
-<!-- 分页 -->
+<!-- 分頁 -->
 
 <div style="page-break-after: always;"></div>

@@ -1,22 +1,22 @@
-[TOC]
+﻿[TOC]
 
 <!-- File -->
 
 # 第十七章 文件
->在丑陋的 Java I/O 编程方式诞生多年以后，Java终于简化了文件读写的基本操作。
+>在醜陋的 Java I/O 編程方式誕生多年以後，Java終於簡化了文件讀寫的基本操作。
 
-这种"困难方式"的全部细节都在 [Appendix: I/O Streams](./Appendix-IO-Streams.md)。如果你读过这个部分，就会认同 Java 设计者毫不在意他们的使用者的体验这一观念。打开并读取文件对于大多数编程语言来说是非常常用的，由于 I/O 糟糕的设计以至于
-很少有人能够在不依赖其他参考代码的情况下完成打开文件的操作。
+這種"困難方式"的全部細節都在 [Appendix: I/O Streams](./Appendix-IO-Streams.md)。如果你讀過這個部分，就會認同 Java 設計者毫不在意他們的使用者的體驗這一觀念。打開並讀取文件對於大多數程式語言來說是非常常用的，由於 I/O 糟糕的設計以至於
+很少有人能夠在不依賴其他參考程式碼的情況下完成打開文件的操作。
 
-好像 Java 设计者终于意识到了 Java 使用者多年来的痛苦，在 Java7 中对此引入了巨大的改进。这些新元素被放在 **java.nio.file** 包下面，过去人们通常把 **nio** 中的 **n** 理解为 **new** 即新的 **io**，现在更应该当成是 **non-blocking** 非阻塞 **io**(**io**就是*input/output输入/输出*)。**java.nio.file** 库终于将 Java 文件操作带到与其他编程语言相同的水平。最重要的是 Java8 新增的 streams 与文件结合使得文件操作编程变得更加优雅。我们将看一下文件操作的两个基本组件：
+好像 Java 設計者終於意識到了 Java 使用者多年來的痛苦，在 Java7 中對此引入了巨大的改進。這些新元素被放在 **java.nio.file** 包下面，過去人們通常把 **nio** 中的 **n** 理解為 **new** 即新的 **io**，現在更應該當成是 **non-blocking** 非阻塞 **io**(**io**就是*input/output輸入/輸出*)。**java.nio.file** 庫終於將 Java 文件操作帶到與其他程式語言相同的水準。最重要的是 Java8 新增的 streams 與文件結合使得文件操作編程變得更加優雅。我們將看一下文件操作的兩個基本元件：
 
-1. 文件或者目录的路径；
+1. 文件或者目錄的路徑；
 2. 文件本身。
 
 <!-- File and Directory Paths -->
-## 文件和目录路径
+## 文件和目錄路徑
 
-一个 **Path** 对象表示一个文件或者目录的路径，是一个跨操作系统（OS）和文件系统的抽象，目的是在构造路径时不必关注底层操作系统，代码可以在不进行修改的情况下运行在不同的操作系统上。**java.nio.file.Paths** 类包含一个重载方法 **static get()**，该方法接受一系列 **String** 字符串或一个*统一资源标识符*(URI)作为参数，并且进行转换返回一个 **Path** 对象：
+一個 **Path** 物件表示一個文件或者目錄的路徑，是一個跨作業系統（OS）和文件系統的抽象，目的是在構造路徑時不必關注底層作業系統，程式碼可以在不進行修改的情況下執行在不同的作業系統上。**java.nio.file.Paths** 類包含一個重載方法 **static get()**，該方法接受一系列 **String** 字串或一個*統一資源標識符*(URI)作為參數，並且進行轉換返回一個 **Path** 物件：
 
 ```java
 // files/PathInfo.java
@@ -62,7 +62,7 @@ public class PathInfo {
     }
 }
 
-/* 输出:
+/* 輸出:
 Windows 10
 toString: C:\path\to\nowhere\NoFile.txt
 Exists: false
@@ -121,17 +121,17 @@ true
 */
 ```
 
-我已经在这一章第一个程序的 **main()** 方法添加了第一行用于展示操作系统的名称，因此你可以看到不同操作系统之间存在哪些差异。理想情况下，差别会相对较小，并且使用 **/** 或者 **\\** 路径分隔符进行分隔。你可以看到我运行在Windows 10 上的程序输出。
+我已經在這一章第一個程式的 **main()** 方法添加了第一行用於展示作業系統的名稱，因此你可以看到不同作業系統之間存在哪些差異。理想情況下，差別會相對較小，並且使用 **/** 或者 **\\** 路徑分隔符進行分隔。你可以看到我執行在Windows 10 上的程式輸出。
 
-当 **toString()** 方法生成完整形式的路径，你可以看到 **getFileName()** 方法总是返回当前文件名。
-通过使用 **Files** 工具类(我们接下来将会更多地使用它)，可以测试一个文件是否存在，测试是否是一个"普通"文件还是一个目录等等。"Nofile.txt"这个示例展示我们描述的文件可能并不在指定的位置；这样可以允许你创建一个新的路径。"PathInfo.java"存在于当前目录中，最初它只是没有路径的文件名，但它仍然被检测为"存在"。一旦我们将其转换为绝对路径，我们将会得到一个从"C:"盘(因为我们是在Windows机器下进行测试)开始的完整路径，现在它也拥有一个父路径。“真实”路径的定义在文档中有点模糊，因为它取决于具体的文件系统。例如，如果文件名不区分大小写，即使路径由于大小写的缘故而不是完全相同，也可能得到肯定的匹配结果。在这样的平台上，**toRealPath()** 将返回实际情况下的 **Path**，并且还会删除任何冗余元素。
+當 **toString()** 方法生成完整形式的路徑，你可以看到 **getFileName()** 方法總是返回目前檔案名。
+透過使用 **Files** 工具類(我們接下來將會更多地使用它)，可以測試一個文件是否存在，測試是否是一個"普通"文件還是一個目錄等等。"Nofile.txt"這個範例展示我們描述的文件可能並不在指定的位置；這樣可以允許你建立一個新的路徑。"PathInfo.java"存在於目前目錄中，最初它只是沒有路徑的檔案名，但它仍然被檢測為"存在"。一旦我們將其轉換為絕對路徑，我們將會得到一個從"C:"盤(因為我們是在Windows機器下進行測試)開始的完整路徑，現在它也擁有一個父路徑。“真實”路徑的定義在文件中有點模糊，因為它取決於具體的文件系統。例如，如果檔案名不區分大小寫，即使路徑由於大小寫的緣故而不是完全相同，也可能得到肯定的匹配結果。在這樣的平台上，**toRealPath()** 將返回實際情況下的 **Path**，並且還會刪除任何冗餘元素。
 
-这里你会看到 **URI** 看起来只能用于描述文件，实际上 **URI** 可以用于描述更多的东西；通过 [维基百科](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) 可以了解更多细节。现在我们成功地将 **URI** 转为一个 **Path** 对象。
+這裡你會看到 **URI** 看起來只能用於描述文件，實際上 **URI** 可以用於描述更多的東西；通過 [維基百科](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) 可以了解更多細節。現在我們成功地將 **URI** 轉為一個 **Path** 物件。
 
-最后，你会在 **Path** 中看到一些有点欺骗的东西，这就是调用 **toFile()** 方法会生成一个 **File** 对象。听起来似乎可以得到一个类似文件的东西(毕竟被称为 **File** )，但是这个方法的存在仅仅是为了向后兼容。虽然看上去应该被称为"路径"，实际上却应该表示目录或者文件本身。这是个非常草率并且令人困惑的命名，但是由于 **java.nio.file** 的存在我们可以安全地忽略它的存在。
+最後，你會在 **Path** 中看到一些有點欺騙的東西，這就是呼叫 **toFile()** 方法會生成一個 **File** 物件。聽起來似乎可以得到一個類似文件的東西(畢竟被稱為 **File** )，但是這個方法的存在僅僅是為了向後相容。雖然看起來應該被稱為"路徑"，實際上卻應該表示目錄或者文件本身。這是個非常草率並且令人困惑的命名，但是由於 **java.nio.file** 的存在我們可以安全地忽略它的存在。
 
-### 选取路径部分片段
-**Path** 对象可以非常容易地生成路径的某一部分：
+### 選取路徑部分片段
+**Path** 物件可以非常容易地生成路徑的某一部分：
 
 ```java
 // files/PartsOfPaths.java
@@ -154,7 +154,7 @@ public class PartsOfPaths {
     }
 }
 
-/* 输出:
+/* 輸出:
 Windows 10
 Users
 Bruce
@@ -177,10 +177,10 @@ Starts with C:\ true
 */
 
 ```
-可以通过 **getName()** 来索引 **Path** 的各个部分，直到达到上限 **getNameCount()**。**Path** 也实现了 **Iterable** 接口，因此我们也可以通过增强的 for-each 进行遍历。请注意，即使路径以 **.java** 结尾，使用 **endsWith()** 方法也会返回 **false**。这是因为使用 **endsWith()** 比较的是整个路径部分，而不会包含文件路径的后缀。通过使用 **startsWith()** 和 **endsWith()** 也可以完成路径的遍历。但是我们可以看到，遍历 **Path** 对象并不包含根路径，只有使用 **startsWith()** 检测根路径时才会返回 **true**。
+可以透過 **getName()** 來索引 **Path** 的各個部分，直到達到上限 **getNameCount()**。**Path** 也實現了 **Iterable** 介面，因此我們也可以透過增強的 for-each 進行遍歷。請注意，即使路徑以 **.java** 結尾，使用 **endsWith()** 方法也會返回 **false**。這是因為使用 **endsWith()** 比較的是整個路徑部分，而不會包含文件路徑的後綴。透過使用 **startsWith()** 和 **endsWith()** 也可以完成路徑的遍歷。但是我們可以看到，遍歷 **Path** 物件並不包含根路徑，只有使用 **startsWith()** 檢測根路徑時才會返回 **true**。
 
-### 路径分析
-**Files** 工具类包含一系列完整的方法用于获得 **Path** 相关的信息。
+### 路徑分析
+**Files** 工具類包含一系列完整的方法用於獲得 **Path** 相關的訊息。
 
 ```java
 // files/PathAnalysis.java
@@ -218,7 +218,7 @@ public class PathAnalysis {
     }
 }
 
-/* 输出:
+/* 輸出:
 Windows 10
 Exists: true
 Directory: false
@@ -236,13 +236,13 @@ ContentType: null
 SymbolicLink: false
 */
 ```
-在调用最后一个测试方法 **getPosixFilePermissions()** 之前我们需要确认一下当前文件系统是否支持 **Posix** 接口，否则会抛出运行时异常。
+在呼叫最後一個測試方法 **getPosixFilePermissions()** 之前我們需要確認一下目前文件系統是否支援 **Posix** 介面，否則會拋出執行時異常。
 
-### **Paths**的增减修改
-我们必须能通过对 **Path** 对象增加或者删除一部分来构造一个新的 **Path** 对象。我们使用 **relativize()** 移除 **Path** 的根路径，使用 **resolve()** 添加 **Path** 的尾路径(不一定是“可发现”的名称)。
+### **Paths**的增減修改
+我們必須能透過對 **Path** 物件增加或者刪除一部分來構造一個新的 **Path** 物件。我們使用 **relativize()** 移除 **Path** 的根路徑，使用 **resolve()** 添加 **Path** 的尾路徑(不一定是“可發現”的名稱)。
 
-对于下面代码中的示例，我使用 **relativize()** 方法从所有的输出中移除根路径，部分原因是为了示范，部分原因是为了简化输出结果，这说明你可以使用该方法将绝对路径转为相对路径。
-这个版本的代码中包含 **id**，以便于跟踪输出结果：
+對於下面程式碼中的範例，我使用 **relativize()** 方法從所有的輸出中移除根路徑，部分原因是為了示範，部分原因是為了簡化輸出結果，這說明你可以使用該方法將絕對路徑轉為相對路徑。
+這個版本的程式碼中包含 **id**，以便於跟蹤輸出結果：
 
 ```java
 // files/AddAndSubtractPaths.java
@@ -289,7 +289,7 @@ public class AddAndSubtractPaths {
     }
 }
 
-/* 输出:
+/* 輸出:
 Windows 10
 C:\Users\Bruce\Documents\GitHub
 (1)r onjava\
@@ -324,12 +324,12 @@ C:\Users\Bruce\Documents\GitHub\onjava\
 ExtractedExamples\files\nonexistent
 */
 ```
-我还为 **toRealPath()** 添加了更多的测试，这是为了扩展和规则化，防止路径不存在时抛出运行时异常。
+我還為 **toRealPath()** 添加了更多的測試，這是為了擴展和規則化，防止路徑不存在時拋出執行時異常。
 
 <!-- Directories -->
 
-## 目录
-**Files** 工具类包含大部分我们需要的目录操作和文件操作方法。出于某种原因，它们没有包含删除目录树相关的方法，因此我们将实现并将其添加到 **onjava** 库中。
+## 目錄
+**Files** 工具類包含大部分我們需要的目錄操作和文件操作方法。出於某種原因，它們沒有包含刪除目錄樹相關的方法，因此我們將實現並將其添加到 **onjava** 庫中。
 
 ```java
 // onjava/RmDir.java
@@ -357,16 +357,16 @@ public class RmDir {
     }
 }
 ```
-删除目录树的方法实现依赖于 **Files.walkFileTree()**，"walking" 目录树意味着遍历每个子目录和文件。*Visitor* 设计模式提供了一种标准机制来访问集合中的每个对象，然后你需要提供在每个对象上执行的操作。
-此操作的定义取决于实现的 **FileVisitor** 的四个抽象方法，包括：
+刪除目錄樹的方法實現依賴於 **Files.walkFileTree()**，"walking" 目錄樹意味著遍歷每個子目錄和文件。*Visitor* 設計模式提供了一種標準機制來訪問集合中的每個物件，然後你需要提供在每個物件上執行的操作。
+此操作的定義取決於實現的 **FileVisitor** 的四個抽象方法，包括：
 
-    1.  **preVisitDirectory()**：在访问目录中条目之前在目录上运行。 
-    2.  **visitFile()**：运行目录中的每一个文件。  
-    3.  **visitFileFailed()**：调用无法访问的文件。   
-    4.  **postVisitDirectory()**：在访问目录中条目之后在目录上运行，包括所有的子目录。
+    1.  **preVisitDirectory()**：在訪問目錄中條目之前在目錄上執行。 
+    2.  **visitFile()**：執行目錄中的每一個文件。  
+    3.  **visitFileFailed()**：呼叫無法訪問的文件。   
+    4.  **postVisitDirectory()**：在訪問目錄中條目之後在目錄上執行，包括所有的子目錄。
 
-为了简化，**java.nio.file.SimpleFileVisitor** 提供了所有方法的默认实现。这样，在我们的匿名内部类中，我们只需要重写非标准行为的方法：**visitFile()** 和 **postVisitDirectory()** 实现删除文件和删除目录。两者都应该返回标志位决定是否继续访问(这样就可以继续访问，直到找到所需要的)。
-作为探索目录操作的一部分，现在我们可以有条件地删除已存在的目录。在以下例子中，**makeVariant()** 接受基本目录测试，并通过旋转部件列表生成不同的子目录路径。这些旋转与路径分隔符 **sep** 使用 **String.join()** 贴在一起，然后返回一个 **Path** 对象。
+為了簡化，**java.nio.file.SimpleFileVisitor** 提供了所有方法的預設實現。這樣，在我們的匿名內部類中，我們只需要重寫非標準行為的方法：**visitFile()** 和 **postVisitDirectory()** 實現刪除文件和刪除目錄。兩者都應該返回標誌位決定是否繼續訪問(這樣就可以繼續訪問，直到找到所需要的)。
+作為探索目錄操作的一部分，現在我們可以有條件地刪除已存在的目錄。在以下例子中，**makeVariant()** 接受基本目錄測試，並透過旋轉部件列表生成不同的子目錄路徑。這些旋轉與路徑分隔符 **sep** 使用 **String.join()** 貼在一起，然後返回一個 **Path** 物件。
 
 ```java
 // files/Directories.java
@@ -422,7 +422,7 @@ public class Directories {
     }
 }
 
-/* 输出:
+/* 輸出:
 Nope, that doesn't work.
 test\bag
 test\bar
@@ -461,18 +461,18 @@ test\foo\bar\baz\bag\File.txt
 test\Hello.txt
 */
 ```
-首先，**refreshTestDir()** 用于检测 **test** 目录是否已经存在。若存在，则使用我们新工具类 **rmdir()** 删除其整个目录。检查是否 **exists** 是多余的，但我想说明一点，因为如果你对于已经存在的目录调用 **createDirectory()** 将会抛出异常。**createFile()** 使用参数 **Path** 创建一个空文件; **resolve()** 将文件名添加到 **test Path** 的末尾。
+首先，**refreshTestDir()** 用於檢測 **test** 目錄是否已經存在。若存在，則使用我們新工具類 **rmdir()** 刪除其整個目錄。檢查是否 **exists** 是多餘的，但我想說明一點，因為如果你對於已經存在的目錄呼叫 **createDirectory()** 將會拋出異常。**createFile()** 使用參數 **Path** 建立一個空文件; **resolve()** 將檔案名添加到 **test Path** 的末尾。
 
-我们尝试使用 **createDirectory()** 来创建多级路径，但是这样会抛出异常，因为这个方法只能创建单级路径。我已经将 **populateTestDir()** 作为一个单独的方法，因为它将在后面的例子中被重用。对于每一个变量 **variant**，我们都能使用 **createDirectories()** 创建完整的目录路径，然后使用此文件的副本以不同的目标名称填充该终端目录。然后我们使用 **createTempFile()** 生成一个临时文件。
+我們嘗試使用 **createDirectory()** 來建立多級路徑，但是這樣會拋出異常，因為這個方法只能建立單級路徑。我已經將 **populateTestDir()** 作為一個單獨的方法，因為它將在後面的例子中被重用。對於每一個變數 **variant**，我們都能使用 **createDirectories()** 建立完整的目錄路徑，然後使用此文件的副本以不同的目標名稱填充該終端目錄。然後我們使用 **createTempFile()** 生成一個暫存檔。
 
-在调用 **populateTestDir()** 之后，我们在 **test** 目录下面创建一个临时目录。请注意，**createTempDirectory()** 只有名称的前缀选项。与 **createTempFile()** 不同，我们再次使用它将临时文件放入新的临时目录中。你可以从输出中看到，如果未指定后缀，它将默认使用".tmp"作为后缀。
+在呼叫 **populateTestDir()** 之後，我們在 **test** 目錄下面建立一個暫存資料夾。請注意，**createTempDirectory()** 只有名稱的前綴選項。與 **createTempFile()** 不同，我們再次使用它將暫存檔放入新的暫存資料夾中。你可以從輸出中看到，如果未指定後綴，它將預設使用".tmp"作為後綴。
 
-为了展示结果，我们首次使用看起来很有希望的 **newDirectoryStream()**，但事实证明这个方法只是返回 **test** 目录内容的 Stream 流，并没有更多的内容。要获取目录树的全部内容的流，请使用 **Files.walk()**。
+為了展示結果，我們首次使用看起來很有希望的 **newDirectoryStream()**，但事實證明這個方法只是返回 **test** 目錄內容的 Stream 流，並沒有更多的內容。要獲取目錄樹的全部內容的流，請使用 **Files.walk()**。
 
 <!-- File Systems -->
 
-## 文件系统
-为了完整起见，我们需要一种方法查找文件系统相关的其他信息。在这里，我们使用静态的 **FileSystems** 工具类获取"默认"的文件系统，但你同样也可以在 **Path** 对象上调用 **getFileSystem()** 以获取创建该 **Path** 的文件系统。你可以获得给定 *URI* 的文件系统，还可以构建新的文件系统(对于支持它的操作系统)。
+## 文件系統
+為了完整起見，我們需要一種方法尋找文件系統相關的其他訊息。在這裡，我們使用靜態的 **FileSystems** 工具類獲取"預設"的文件系統，但你同樣也可以在 **Path** 物件上呼叫 **getFileSystem()** 以獲取建立該 **Path** 的文件系統。你可以獲得給定 *URI* 的文件系統，還可以構建新的文件系統(對於支持它的作業系統)。
 ```java
 // files/FileSystemDemo.java
 import java.nio.file.*;
@@ -499,7 +499,7 @@ public class FileSystemDemo {
         fsys.supportedFileAttributeViews());
     }
 }
-/* 输出:
+/* 輸出:
 Windows 10
 File Store: SSD (C:)
 Root Directory: C:\
@@ -514,12 +514,12 @@ sun.nio.fs.WindowsFileSystemProvider@6d06d69c
 File Attribute Views: [owner, dos, acl, basic, user]
 */
 ```
-一个 **FileSystem** 对象也能生成 **WatchService** 和 **PathMatcher** 对象，将会在接下来两章中详细讲解。
+一個 **FileSystem** 物件也能生成 **WatchService** 和 **PathMatcher** 物件，將會在接下來兩章中詳細講解。
 
 <!-- Watching a Path -->
 
-## 路径监听
-通过 **WatchService** 可以设置一个进程对目录中的更改做出响应。在这个例子中，**delTxtFiles()** 作为一个单独的任务执行，该任务将遍历整个目录并删除以 **.txt** 结尾的所有文件，**WatchService** 会对文件删除操作做出反应：
+## 路徑監聽
+通過 **WatchService** 可以設定一個行程對目錄中的更改做出響應。在這個例子中，**delTxtFiles()** 作為一個單獨的任務執行，該任務將遍歷整個目錄並刪除以 **.txt** 結尾的所有文件，**WatchService** 會對文件刪除操作做出反應：
 
 ```java
 // files/PathWatcher.java
@@ -581,15 +581,15 @@ evt.kind(): ENTRY_DELETE
 */
 ```
 
-**delTxtFiles()** 中的 **try** 代码块看起来有些多余，因为它们捕获的是同一种类型的异常，外部的 **try** 语句似乎已经足够了。然而出于某种原因，Java 要求两者都必须存在(这也可能是一个 bug)。还要注意的是在 **filter()** 中，我们必须显式地使用 **f.toString()** 转为字符串，否则我们调用 **endsWith()** 将会与整个 **Path** 对象进行比较，而不是路径名称字符串的一部分进行比较。
+**delTxtFiles()** 中的 **try** 程式碼塊看起來有些多餘，因為它們捕獲的是同一種類型的異常，外部的 **try** 語句似乎已經足夠了。然而出於某種原因，Java 要求兩者都必須存在(這也可能是一個 bug)。還要注意的是在 **filter()** 中，我們必須顯式地使用 **f.toString()** 轉為字串，否則我們呼叫 **endsWith()** 將會與整個 **Path** 物件進行比較，而不是路徑名稱字串的一部分進行比較。
 
-一旦我们从 **FileSystem** 中得到了 **WatchService** 对象，我们将其注册到 **test** 路径以及我们感兴趣的项目的变量参数列表中，可以选择 **ENTRY_CREATE**，**ENTRY_DELETE** 或 **ENTRY_MODIFY**(其中创建和删除不属于修改)。
+一旦我們從 **FileSystem** 中得到了 **WatchService** 物件，我們將其註冊到 **test** 路徑以及我們感興趣的項目的變數參數列表中，可以選擇 **ENTRY_CREATE**，**ENTRY_DELETE** 或 **ENTRY_MODIFY**(其中建立和刪除不屬於修改)。
 
-因为接下来对 **watcher.take()** 的调用会在发生某些事情之前停止所有操作，所以我们希望 **deltxtfiles()** 能够并行运行以便生成我们感兴趣的事件。为了实现这个目的，我通过调用 **Executors.newSingleThreadScheduledExecutor()** 产生一个 **ScheduledExecutorService** 对象，然后调用 **schedule()** 方法传递所需函数的方法引用，并且设置在运行之前应该等待的时间。
+因為接下來對 **watcher.take()** 的呼叫會在發生某些事情之前停止所有操作，所以我們希望 **deltxtfiles()** 能夠並行執行以便生成我們感興趣的事件。為了實現這個目的，我透過呼叫 **Executors.newSingleThreadScheduledExecutor()** 產生一個 **ScheduledExecutorService** 物件，然後呼叫 **schedule()** 方法傳遞所需函數的方法引用，並且設定在執行之前應該等待的時間。
 
-此时，**watcher.take()** 将等待并阻塞在这里。当目标事件发生时，会返回一个包含 **WatchEvent** 的 **Watchkey** 对象。展示的这三种方法是能对 **WatchEvent** 执行的全部操作。
+此時，**watcher.take()** 將等待並阻塞在這裡。當目標事件發生時，會返回一個包含 **WatchEvent** 的 **Watchkey** 物件。展示的這三種方法是能對 **WatchEvent** 執行的全部操作。
 
-查看输出的具体内容。即使我们正在删除以 **.txt** 结尾的文件，在 **Hello.txt** 被删除之前，**WatchService** 也不会被触发。你可能认为，如果说"监视这个目录"，自然会包含整个目录和下面子目录，但实际上：只会监视给定的目录，而不是下面的所有内容。如果需要监视整个树目录，必须在整个树的每个子目录上放置一个 **Watchservice**。
+查看輸出的具體內容。即使我們正在刪除以 **.txt** 結尾的文件，在 **Hello.txt** 被刪除之前，**WatchService** 也不會被觸發。你可能認為，如果說"監視這個目錄"，自然會包含整個目錄和下面子目錄，但實際上：只會監視給定的目錄，而不是下面的所有內容。如果需要監視整個樹目錄，必須在整個樹的每個子目錄上放置一個 **Watchservice**。
 
 ```java
 // files/TreeWatcher.java
@@ -644,14 +644,14 @@ evt.kind(): ENTRY_DELETE
 */
 ```
 
-在 **watchDir()** 方法中给 **WatchSevice** 提供参数 **ENTRY_DELETE**，并启动一个独立的线程来监视该**Watchservice**。这里我们没有使用 **schedule()** 进行启动，而是使用 **submit()** 启动线程。我们遍历整个目录树，并将 **watchDir()** 应用于每个子目录。现在，当我们运行 **deltxtfiles()** 时，其中一个 **Watchservice** 会检测到每一次文件删除。
+在 **watchDir()** 方法中給 **WatchSevice** 提供參數 **ENTRY_DELETE**，並啟動一個獨立的執行緒來監視該**Watchservice**。這裡我們沒有使用 **schedule()** 進行啟動，而是使用 **submit()** 啟動執行緒。我們遍歷整個目錄樹，並將 **watchDir()** 應用於每個子目錄。現在，當我們執行 **deltxtfiles()** 時，其中一個 **Watchservice** 會檢測到每一次文件刪除。
 
 <!-- Finding Files -->
 
-## 文件查找
-到目前为止，为了找到文件，我们一直使用相当粗糙的方法，在 `path` 上调用 `toString()`，然后使用 `string` 操作查看结果。事实证明，`java.nio.file` 有更好的解决方案：通过在 `FileSystem` 对象上调用 `getPathMatcher()` 获得一个 `PathMatcher`，然后传入您感兴趣的模式。模式有两个选项：`glob` 和 `regex`。`glob` 比较简单，实际上功能非常强大，因此您可以使用 `glob` 解决许多问题。如果您的问题更复杂，可以使用 `regex`，这将在接下来的 `Strings` 一章中解释。
+## 文件尋找
+到目前為止，為了找到文件，我們一直使用相當粗糙的方法，在 `path` 上呼叫 `toString()`，然後使用 `string` 操作查看結果。事實證明，`java.nio.file` 有更好的解決方案：透過在 `FileSystem` 物件上呼叫 `getPathMatcher()` 獲得一個 `PathMatcher`，然後傳入您感興趣的模式。模式有兩個選項：`glob` 和 `regex`。`glob` 比較簡單，實際上功能非常強大，因此您可以使用 `glob` 解決許多問題。如果您的問題更複雜，可以使用 `regex`，這將在接下來的 `Strings` 一章中解釋。
 
-在这里，我们使用 `glob` 查找以 `.tmp` 或 `.txt` 结尾的所有 `Path`：
+在這裡，我們使用 `glob` 尋找以 `.tmp` 或 `.txt` 結尾的所有 `Path`：
 
 ```java
 // files/Find.java
@@ -712,19 +712,19 @@ dir.tmp
 */
 ```
 
-在 `matcher` 中，`glob` 表达式开头的 `**/` 表示“当前目录及所有子目录”，这在当你不仅仅要匹配当前目录下特定结尾的 `Path` 时非常有用。单 `*` 表示“任何东西”，然后是一个点，然后大括号表示一系列的可能性---我们正在寻找以 `.tmp` 或 `.txt` 结尾的东西。您可以在 `getPathMatcher()` 文档中找到更多详细信息。
+在 `matcher` 中，`glob` 表達式開頭的 `**/` 表示“目前目錄及所有子目錄”，這在當你不僅僅要匹配目前目錄下特定結尾的 `Path` 時非常有用。單 `*` 表示“任何東西”，然後是一個點，然後大括號表示一系列的可能性---我們正在尋找以 `.tmp` 或 `.txt` 結尾的東西。您可以在 `getPathMatcher()` 文件中找到更多詳細訊息。
 
-`matcher2` 只使用 `*.tmp`，通常不匹配任何内容，但是添加 `map()` 操作会将完整路径减少到末尾的名称。
+`matcher2` 只使用 `*.tmp`，通常不匹配任何內容，但是添加 `map()` 操作會將完整路徑減少到末尾的名稱。
 
-注意，在这两种情况下，输出中都会出现 `dir.tmp`，即使它是一个目录而不是一个文件。要只查找文件，必须像在最后 `files.walk()` 中那样对其进行筛选。
+注意，在這兩種情況下，輸出中都會出現 `dir.tmp`，即使它是一個目錄而不是一個文件。要只尋找文件，必須像在最後 `files.walk()` 中那樣對其進行篩選。
 
 <!-- Reading & Writing Files -->
-## 文件读写
-此时，我们可以对路径和目录做任何事情。 现在让我们看一下操纵文件本身的内容。
+## 文件讀寫
+此時，我們可以對路徑和目錄做任何事情。 現在讓我們看一下操縱文件本身的內容。
 
-如果一个文件很“小”，也就是说“它运行得足够快且占用内存小”，那么 `java.nio.file.Files` 类中的实用程序将帮助你轻松读写文本和二进制文件。
+如果一個文件很“小”，也就是說“它執行得足夠快且占用記憶體小”，那麼 `java.nio.file.Files` 類中的實用程式將幫助你輕鬆讀寫文字和二進位制文件。
 
-`Files.readAllLines()` 一次读取整个文件（因此，“小”文件很有必要），产生一个`List<String>`。 对于示例文件，我们将重用`streams/Cheese.dat`：
+`Files.readAllLines()` 一次讀取整個文件（因此，“小”文件很有必要），產生一個`List<String>`。 對於範例文件，我們將重用`streams/Cheese.dat`：
 
 ```java
 // files/ListOfLines.java
@@ -751,9 +751,9 @@ It's certainly uncon
 */
 ```
 
-跳过注释行，其余的内容每行只打印一半。 这实现起来很简单：你只需将 `Path` 传递给 `readAllLines()` （以前的 java 实现这个功能很复杂）。`readAllLines()` 有一个重载版本，包含一个 `Charset` 参数来存储文件的 Unicode 编码。
+跳過注釋行，其餘的內容每行只列印一半。 這實現起來很簡單：你只需將 `Path` 傳遞給 `readAllLines()` （以前的 java 實現這個功能很複雜）。`readAllLines()` 有一個重載版本，包含一個 `Charset` 參數來儲存文件的 Unicode 編碼。
 
-`Files.write()` 被重载以写入 `byte` 数组或任何 `Iterable` 对象（它也有 `Charset` 选项）：
+`Files.write()` 被重載以寫入 `byte` 陣列或任何 `Iterable` 物件（它也有 `Charset` 選項）：
 
 ```java
 // files/Writing.java
@@ -784,17 +784,17 @@ Cheese.txt: 199
 */
 ```
 
-我们使用 `Random` 来创建一个随机的 `byte` 数组; 你可以看到生成的文件大小是 1000。
+我們使用 `Random` 來建立一個隨機的 `byte` 陣列; 你可以看到生成的檔案大小是 1000。
 
-一个 `List` 被写入文件，任何 `Iterable` 对象也可以这么做。
+一個 `List` 被寫入檔案，任何 `Iterable` 對像也可以這麼做。
 
-如果文件大小有问题怎么办？ 比如说：
+如果檔案大小有問題怎麼辦？ 比如說：
 
-1. 文件太大，如果你一次性读完整个文件，你可能会耗尽内存。
+1. 文件太大，如果你一次性讀完整個文件，你可能會耗盡記憶體。
 
-2. 您只需要在文件的中途工作以获得所需的结果，因此读取整个文件会浪费时间。
+2. 您只需要在文件的中途工作以獲得所需的結果，因此讀取整個文件會浪費時間。
 
-`Files.lines()` 方便地将文件转换为行的 `Stream`：
+`Files.lines()` 方便地將文件轉換為行的 `Stream`：
 
 ```java
 // files/ReadLineStream.java
@@ -813,9 +813,9 @@ public class ReadLineStream {
 */
 ```
 
-这对本章中第一个示例代码做了流式处理，跳过 13 行，然后选择下一行并将其打印出来。
+這對本章中第一個範例程式碼做了流式處理，跳過 13 行，然後選擇下一行並將其列印出來。
 
-`Files.lines()` 对于把文件处理行的传入流时非常有用，但是如果你想在 `Stream` 中读取，处理或写入怎么办？这就需要稍微复杂的代码：
+`Files.lines()` 對於把文件處理行的傳入流時非常有用，但是如果你想在 `Stream` 中讀取，處理或寫入怎麼辦？這就需要稍微複雜的程式碼：
 
 ```java
 // files/StreamInAndOut.java
@@ -840,15 +840,15 @@ public class StreamInAndOut {
 }
 ```
 
-因为我们在同一个块中执行所有操作，所以这两个文件都可以在相同的 try-with-resources 语句中打开。`PrintWriter` 是一个旧式的 `java.io` 类，允许你“打印”到一个文件，所以它是这个应用的理想选择。如果你看一下 `StreamInAndOut.txt`，你会发现它里面的内容确实是大写的。
+因為我們在同一個塊中執行所有操作，所以這兩個文件都可以在相同的 try-with-resources 語句中打開。`PrintWriter` 是一個舊式的 `java.io` 類，允許你“列印”到一個文件，所以它是這個應用的理想選擇。如果你看一下 `StreamInAndOut.txt`，你會發現它裡面的內容確實是大寫的。
 
 <!-- Summary -->
 
-## 本章小结
-虽然本章对文件和目录操作做了相当全面的介绍，但是仍然有没被介绍的类库中的功能——一定要研究 `java.nio.file` 的 Javadocs，尤其是 `java.nio.file.Files` 这个类。
+## 本章小結
+雖然本章對文件和目錄操作做了相當全面的介紹，但是仍然有沒被介紹的類庫中的功能——一定要研究 `java.nio.file` 的 Javadocs，尤其是 `java.nio.file.Files` 這個類。
 
-Java 7 和 8 对于处理文件和目录的类库做了大量改进。如果您刚刚开始使用 Java，那么您很幸运。在过去，它令人非常不愉快，我确信 Java 设计者以前对于文件操作不够重视才没做简化。对于初学者来说这是一件很棒的事，对于教学者来说也一样。我不明白为什么花了这么长时间来解决这个明显的问题，但不管怎么说它被解决了，我很高兴。使用文件现在很简单，甚至很有趣，这是你以前永远想不到的。
+Java 7 和 8 對於處理文件和目錄的類庫做了大量改進。如果您剛剛開始使用 Java，那麼您很幸運。在過去，它令人非常不愉快，我確信 Java 設計者以前對於文件操作不夠重視才沒做簡化。對於初學者來說這是一件很棒的事，對於教學者來說也一樣。我不明白為什麼花了這麼長時間來解決這個明顯的問題，但不管怎麼說它被解決了，我很高興。使用文件現在很簡單，甚至很有趣，這是你以前永遠想不到的。
 
-<!-- 分页 -->
+<!-- 分頁 -->
 
 <div style="page-break-after: always;"></div>

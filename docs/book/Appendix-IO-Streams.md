@@ -1,215 +1,215 @@
-[TOC]
+﻿[TOC]
 
 <!-- Appendix: I/O Streams -->
-# 附录:流式IO
+# 附錄:流式IO
 
-> Java 7 引入了一种简单明了的方式来读写文件和操作目录。大多情况下，[文件](./17-Files.md)这一章所介绍的那些库和技术就足够你用了。但是，如果你必须面对一些特殊的需求和比较底层的操作，或者处理一些老版本的代码，那么你就必须了解本附录中的内容。
+> Java 7 引入了一種簡單明瞭的方式來讀寫文件和操作目錄。大多情況下，[文件](./17-Files.md)這一章所介紹的那些庫和技術就足夠你用了。但是，如果你必須面對一些特殊的需求和比較底層的操作，或者處理一些老版本的程式碼，那麼你就必須了解本附錄中的內容。
 
-对于编程语言的设计者来说，实现良好的输入/输出（I/O）系统是一项比较艰难的任务，不同实现方案的数量就可以证明这点。其中的挑战似乎在于要涵盖所有的可能性，你不仅要覆盖到不同的 I/O 源和 I/O 接收器（如文件、控制台、网络连接等），还要实现多种与它们进行通信的方式（如顺序、随机访问、缓冲、二进制、字符、按行和按字等）。
+對於程式語言的設計者來說，實現良好的輸入/輸出（I/O）系統是一項比較艱難的任務，不同實現方案的數量就可以證明這點。其中的挑戰似乎在於要涵蓋所有的可能性，你不僅要覆蓋到不同的 I/O 源和 I/O 接收器（如文件、控制台、網路連接等），還要實現多種與它們進行通信的方式（如順序、隨機訪問、緩衝、二進位制、字元、按行和按字等）。
 
-Java 类库的设计者通过创建大量的类来解决这一难题。一开始，你可能会对 Java I/O 系统提供了如此多的类而感到不知所措。Java 1.0 之后，Java 的 I/O 类库发生了明显的改变，在原来面向字节的类中添加了面向字符和基于 Unicode 的类。在 Java 1.4 中，为了改进性能和功能，又添加了 `nio` 类（全称是 “new I/O”，Java 1.4 引入，到现在已经很多年了）。这部分在[附录：新 I/O](./Appendix-New-IO.md) 中介绍。
+Java 類庫的設計者透過建立大量的類來解決這一難題。一開始，你可能會對 Java I/O 系統提供了如此多的類而感到不知所措。Java 1.0 之後，Java 的 I/O 類庫發生了明顯的改變，在原來面向位元組的類中添加了面向字元和基於 Unicode 的類。在 Java 1.4 中，為了改進性能和功能，又添加了 `nio` 類（全稱是 “new I/O”，Java 1.4 引入，到現在已經很多年了）。這部分在[附錄：新 I/O](./Appendix-New-IO.md) 中介紹。
 
-因此，要想充分理解 Java I/O 系统以便正确运用它，我们需要学习一定数量的类。另外，理解 I/O 类库的演化过程也很有必要，因为如果缺乏历史的眼光，很快我们就会对什么时候该使用哪些类，以及什么时候不该使用它们而感到困惑。
+因此，要想充分理解 Java I/O 系統以便正確運用它，我們需要學習一定數量的類。另外，理解 I/O 類庫的演化過程也很有必要，因為如果缺乏歷史的眼光，很快我們就會對什麼時候該使用哪些類，以及什麼時候不該使用它們而感到困惑。
 
-编程语言的 I/O 类库经常使用**流**这个抽象概念，它将所有数据源或者数据接收器表示为能够产生或者接收数据片的对象。
+程式語言的 I/O 類庫經常使用**流**這個抽象概念，它將所有資料源或者資料接收器表示為能夠產生或者接收資料片的物件。
 
-> **注意**：Java 8 函数式编程中的 `Stream` 类和这里的 I/O stream 没有任何关系。这又是另一个例子，如果再给设计者一次重来的机会，他们将使用不同的术语。
+> **注意**：Java 8 函數式編程中的 `Stream` 類和這裡的 I/O stream 沒有任何關係。這又是另一個例子，如果再給設計者一次重來的機會，他們將使用不同的術語。
 
-I/O 流屏蔽了实际的 I/O 设备中处理数据的细节：
+I/O 流封鎖了實際的 I/O 裝置中處理資料的細節：
 
-1. 字节流对应原生的二进制数据；
-2. 字符流对应字符数据，它会自动处理与本地字符集之间的转换；
-3. 缓冲流可以提高性能，通过减少底层 API 的调用次数来优化 I/O。
+1. 位元組流對應原生的二進位制資料；
+2. 字元流對應字元資料，它會自動處理與本機字元集之間的轉換；
+3. 緩衝流可以提高性能，透過減少底層 API 的呼叫次數來最佳化 I/O。
 
-从 JDK 文档的类层次结构中可以看到，Java 类库中的 I/O 类分成了输入和输出两部分。在设计 Java 1.0 时，类库的设计者们就决定让所有与输入有关系的类都继承自 `InputStream`，所有与输出有关系的类都继承自 `OutputStream`。所有从 `InputStream` 或 `Reader` 派生而来的类都含有名为 `read()` 的基本方法，用于读取单个字节或者字节数组。同样，所有从 `OutputStream` 或 `Writer` 派生而来的类都含有名为 `write()` 的基本方法，用于写单个字节或者字节数组。但是，我们通常不会用到这些方法，它们之所以存在是因为别的类可以使用它们，以便提供更有用的接口。
+從 JDK 文件的類層次結構中可以看到，Java 類庫中的 I/O 類分成了輸入和輸出兩部分。在設計 Java 1.0 時，類庫的設計者們就決定讓所有與輸入有關係的類都繼承自 `InputStream`，所有與輸出有關係的類都繼承自 `OutputStream`。所有從 `InputStream` 或 `Reader` 衍生而來的類都含有名為 `read()` 的基本方法，用於讀取單個位元組或者位元組陣列。同樣，所有從 `OutputStream` 或 `Writer` 衍生而來的類都含有名為 `write()` 的基本方法，用於寫單個位元組或者位元組陣列。但是，我們通常不會用到這些方法，它們之所以存在是因為別的類可以使用它們，以便提供更有用的介面。
 
-我们很少使用单一的类来创建流对象，而是通过叠合多个对象来提供所期望的功能（这是**装饰器设计模式**）。为了创建一个流，你却要创建多个对象，这也是 Java I/O 类库让人困惑的主要原因。
+我們很少使用單一的類來建立流物件，而是透過疊合多個物件來提供所期望的功能（這是**裝飾器設計模式**）。為了建立一個流，你卻要建立多個物件，這也是 Java I/O 類庫讓人困惑的主要原因。
 
-这里我只会提供这些类的概述，并假定你会使用 JDK 文档来获取它们的详细信息（比如某个类的所以方法的详细列表）。
+這裡我只會提供這些類的概述，並假定你會使用 JDK 文件來獲取它們的詳細訊息（比如某個類的所以方法的詳細列表）。
 
 <!-- Types of InputStream -->
-## 输入流类型
+## 輸入流類型
 
-`InputStream` 表示那些从不同数据源产生输入的类，如[表 I/O-1](#table-io-1) 所示，这些数据源包括：
+`InputStream` 表示那些從不同資料源產生輸入的類，如[表 I/O-1](#table-io-1) 所示，這些資料源包括：
 
-1. 字节数组；
-2. `String` 对象；
+1. 位元組陣列；
+2. `String` 物件；
 3. 文件；
-4. “管道”，工作方式与实际生活中的管道类似：从一端输入，从另一端输出；
-5. 一个由其它种类的流组成的序列，然后我们可以把它们汇聚成一个流；
-6. 其它数据源，如 Internet 连接。
+4. “管道”，工作方式與實際生活中的管道類似：從一端輸入，從另一端輸出；
+5. 一個由其它種類的流組成的序列，然後我們可以把它們匯聚成一個流；
+6. 其它資料源，如 Internet 連接。
 
-每种数据源都有相应的 `InputStream` 子类。另外，`FilterInputStream` 也属于一种 `InputStream`，它的作用是为“装饰器”类提供基类。其中，“装饰器”类可以把属性或有用的接口与输入流连接在一起，这个我们稍后再讨论。
+每種資料源都有相應的 `InputStream` 子類。另外，`FilterInputStream` 也屬於一種 `InputStream`，它的作用是為“裝飾器”類提供基類。其中，“裝飾器”類可以把屬性或有用的介面與輸入流連接在一起，這個我們稍後再討論。
 
-<span id="table-io-1">**表 I/O-1 `InputStream` 类型**</span>
+<span id="table-io-1">**表 I/O-1 `InputStream` 類型**</span>
 
-|  类  | 功能 | 构造器参数 | 如何使用 |
+|  類  | 功能 | 構造器參數 | 如何使用 |
 | :--: | :-- | :-------- | :----- |
-| `ByteArrayInputStream`    | 允许将内存的缓冲区当做 `InputStream` 使用 | 缓冲区，字节将从中取出 | 作为一种数据源：将其与 `FilterInputStream` 对象相连以提供有用接口 |
-| `StringBufferInputStream` | 将 `String` 转换成 `InputStream` | 字符串。底层实现实际使用 `StringBuffer` | 作为一种数据源：将其与 `FilterInputStream` 对象相连以提供有用接口 |
-| `FileInputStream`         | 用于从文件中读取信息 | 字符串，表示文件名、文件或 `FileDescriptor` 对象 | 作为一种数据源：将其与 `FilterInputStream` 对象相连以提供有用接口 |
-| `PipedInputStream`        | 产生用于写入相关 `PipedOutputStream` 的数据。实现“管道化”概念 | `PipedOutputSteam`           | 作为多线程中的数据源：将其与 `FilterInputStream` 对象相连以提供有用接口 |
-| `SequenceInputStream`     | 将两个或多个 `InputStream` 对象转换成一个 `InputStream` | 两个 `InputStream` 对象或一个容纳 `InputStream` 对象的容器 `Enumeration` | 作为一种数据源：将其与 `FilterInputStream` 对象相连以提供有用接口          |
-| `FilterInputStream`       | 抽象类，作为“装饰器”的接口。其中，“装饰器”为其它的 `InputStream` 类提供有用的功能。见[表 I/O-3](#table-io-3) | 见[表 I/O-3](#table-io-3) | 见[表 I/O-3](#table-io-3) |
+| `ByteArrayInputStream`    | 允許將記憶體的緩衝區當做 `InputStream` 使用 | 緩衝區，位元組將從中取出 | 作為一種資料源：將其與 `FilterInputStream` 物件相連以提供有用介面 |
+| `StringBufferInputStream` | 將 `String` 轉換成 `InputStream` | 字串。底層實現實際使用 `StringBuffer` | 作為一種資料源：將其與 `FilterInputStream` 物件相連以提供有用介面 |
+| `FileInputStream`         | 用於從文件中讀取訊息 | 字串，表示檔案名、文件或 `FileDescriptor` 物件 | 作為一種資料源：將其與 `FilterInputStream` 物件相連以提供有用介面 |
+| `PipedInputStream`        | 產生用於寫入相關 `PipedOutputStream` 的資料。實現“管道化”概念 | `PipedOutputSteam`           | 作為多執行緒中的資料源：將其與 `FilterInputStream` 物件相連以提供有用介面 |
+| `SequenceInputStream`     | 將兩個或多個 `InputStream` 物件轉換成一個 `InputStream` | 兩個 `InputStream` 物件或一個容納 `InputStream` 物件的容器 `Enumeration` | 作為一種資料源：將其與 `FilterInputStream` 物件相連以提供有用介面          |
+| `FilterInputStream`       | 抽象類，作為“裝飾器”的介面。其中，“裝飾器”為其它的 `InputStream` 類提供有用的功能。見[表 I/O-3](#table-io-3) | 見[表 I/O-3](#table-io-3) | 見[表 I/O-3](#table-io-3) |
 
 <!-- Types of OutputStream -->
-## 输出流类型
+## 輸出流類型
 
-如[表 I/O-2](#table-io-2) 所示，该类别的类决定了输出所要去往的目标：字节数组（但不是 `String`，当然，你也可以用字节数组自己创建）、文件或管道。
+如[表 I/O-2](#table-io-2) 所示，該類別的類決定了輸出所要去往的目標：位元組陣列（但不是 `String`，當然，你也可以用位元組陣列自己建立）、文件或管道。
 
-另外，`FilterOutputStream` 为“装饰器”类提供了一个基类，“装饰器”类把属性或者有用的接口与输出流连接了起来，这些稍后会讨论。
+另外，`FilterOutputStream` 為“裝飾器”類提供了一個基類，“裝飾器”類把屬性或者有用的介面與輸出流連接了起來，這些稍後會討論。
 
-<span id="table-io-2">**表 I/O-2：`OutputStream` 类型**</span>
+<span id="table-io-2">**表 I/O-2：`OutputStream` 類型**</span>
 
-| 类 | 功能 | 构造器参数 | 如何使用 |
+| 類 | 功能 | 構造器參數 | 如何使用 |
 | :--: | :-- | :-------- | :----- |
-| `ByteArrayOutputStream` | 在内存中创建缓冲区。所有送往“流”的数据都要放置在此缓冲区 | 缓冲区初始大小（可选） | 用于指定数据的目的地：将其与 `FilterOutputStream` 对象相连以提供有用接口 |
-| `FileOutputStream`      | 用于将信息写入文件 | 字符串，表示文件名、文件或 `FileDescriptor` 对象 | 用于指定数据的目的地：将其与 `FilterOutputStream` 对象相连以提供有用接口 |
-| `PipedOutputStream`     | 任何写入其中的信息都会自动作为相关 `PipedInputStream` 的输出。实现“管道化”概念 | `PipedInputStream` | 指定用于多线程的数据的目的地：将其与 `FilterOutputStream` 对象相连以提供有用接口 |
-| `FilterOutputStream`    | 抽象类，作为“装饰器”的接口。其中，“装饰器”为其它 `OutputStream` 提供有用功能。见[表 I/O-4](#table-io-4) | 见[表 I/O-4](#table-io-4) | 见[表 I/O-4](#table-io-4) |
+| `ByteArrayOutputStream` | 在記憶體中建立緩衝區。所有送往“流”的資料都要放置在此緩衝區 | 緩衝區初始大小（可選） | 用於指定資料的目的地：將其與 `FilterOutputStream` 物件相連以提供有用介面 |
+| `FileOutputStream`      | 用於將訊息寫入檔案 | 字串，表示檔案名、文件或 `FileDescriptor` 物件 | 用於指定資料的目的地：將其與 `FilterOutputStream` 物件相連以提供有用介面 |
+| `PipedOutputStream`     | 任何寫入其中的訊息都會自動作為相關 `PipedInputStream` 的輸出。實現“管道化”概念 | `PipedInputStream` | 指定用於多執行緒的資料的目的地：將其與 `FilterOutputStream` 物件相連以提供有用介面 |
+| `FilterOutputStream`    | 抽象類，作為“裝飾器”的介面。其中，“裝飾器”為其它 `OutputStream` 提供有用功能。見[表 I/O-4](#table-io-4) | 見[表 I/O-4](#table-io-4) | 見[表 I/O-4](#table-io-4) |
 
 <!-- Adding Attributes and Useful Interfaces -->
 
-## 添加属性和有用的接口
+## 添加屬性和有用的介面
 
-装饰器在[泛型](./20-Generics.md)这一章引入。Java I/O 类库需要多种不同功能的组合，这正是使用装饰器模式的原因所在[^1]。而之所以存在 **filter**（过滤器）类，是因为让抽象类 **filter** 作为所有装饰器类的基类。装饰器必须具有和它所装饰对象相同的接口，但它也可以扩展接口，不过这种情况只发生在个别 **filter** 类中。
+裝飾器在[泛型](./20-Generics.md)這一章引入。Java I/O 類庫需要多種不同功能的組合，這正是使用裝飾器模式的原因所在[^1]。而之所以存在 **filter**（過濾器）類，是因為讓抽象類 **filter** 作為所有裝飾器類的基類。裝飾器必須具有和它所裝飾物件相同的介面，但它也可以擴展介面，不過這種情況只發生在個別 **filter** 類中。
 
-但是，装饰器模式也有一个缺点：在编写程序的时候，它给我们带来了相当多的灵活性（因为我们可以很容易地对属性进行混搭），但它同时也增加了代码的复杂性。Java I/O 类库操作不便的原因在于：我们必须创建许多类（“核心” I/O 类型加上所有的装饰器）才能得到我们所希望的单个 I/O 对象。
+但是，裝飾器模式也有一個缺點：在編寫程式的時候，它給我們帶來了相當多的靈活性（因為我們可以很容易地對屬性進行混搭），但它同時也增加了程式碼的複雜性。Java I/O 類庫操作不便的原因在於：我們必須建立許多類（“核心” I/O 類型加上所有的裝飾器）才能得到我們所希望的單個 I/O 物件。
 
-`FilterInputStream` 和 `FilterOutputStream` 是用来提供装饰器类接口以控制特定输入流 `InputStream` 和 输出流 `OutputStream` 的两个类，但它们的名字并不是很直观。`FilterInputStream` 和 `FilterOutputStream` 分别从 I/O 类库中的基类 `InputStream` 和 `OutputStream` 派生而来，这两个类是创建装饰器的必要条件（这样它们才能为所有被装饰的对象提供统一接口）。
+`FilterInputStream` 和 `FilterOutputStream` 是用來提供裝飾器類介面以控制特定輸入流 `InputStream` 和 輸出流 `OutputStream` 的兩個類，但它們的名字並不是很直觀。`FilterInputStream` 和 `FilterOutputStream` 分別從 I/O 類庫中的基類 `InputStream` 和 `OutputStream` 衍生而來，這兩個類是建立裝飾器的必要條件（這樣它們才能為所有被裝飾的物件提供統一介面）。
 
-### 通过 `FilterInputStream` 从 `InputStream` 读取
+### 通過 `FilterInputStream` 從 `InputStream` 讀取
 
-`FilterInputStream` 类能够完成两件截然不同的事情。其中，`DataInputStream` 允许我们读取不同的基本数据类型和 `String` 类型的对象（所有方法都以 “read” 开头，例如 `readByte()`、`readFloat()`等等）。搭配其对应的 `DataOutputStream`，我们就可以通过数据“流”将基本数据类型的数据从一个地方迁移到另一个地方。具体是那些“地方”是由[表 I/O-1](#table-io-1) 中的那些类决定的。
+`FilterInputStream` 類能夠完成兩件截然不同的事情。其中，`DataInputStream` 允許我們讀取不同的基本資料類型和 `String` 類型的物件（所有方法都以 “read” 開頭，例如 `readByte()`、`readFloat()`等等）。搭配其對應的 `DataOutputStream`，我們就可以透過資料“流”將基本資料類型的資料從一個地方遷移到另一個地方。具體是那些“地方”是由[表 I/O-1](#table-io-1) 中的那些類決定的。
 
-其它 `FilterInputStream` 类则在内部修改 `InputStream` 的行为方式：是否缓冲，是否保留它所读过的行（允许我们查询行数或设置行数），以及是否允许把单个字符推回输入流等等。最后两个类看起来就像是为了创建编译器提供的（它们被添加进来可能是为了对“用 Java 构建编译器”实现提供支持），因此我们在一般编程中不会用到它们。
+其它 `FilterInputStream` 類則在內部修改 `InputStream` 的行為方式：是否緩衝，是否保留它所讀過的行（允許我們查詢行數或設定行數），以及是否允許把單個字元推回輸入流等等。最後兩個類看起來就像是為了建立編譯器提供的（它們被添加進來可能是為了對“用 Java 構建編譯器”實現提供支援），因此我們在一般編程中不會用到它們。
 
-在实际应用中，不管连接的是什么 I/O 设备，我们基本上都会对输入进行缓冲。所以当初 I/O 类库如果能默认都让输入进行缓冲，同时将无缓冲输入作为一种特殊情况（或者只是简单地提供一个方法调用），这样会更加合理，而不是像现在这样迫使我们基本上每次都得手动添加缓冲。
-<!-- 译者注：感觉第四版中文版（536页）把上面这一段的意思弄反了 -->
+在實際應用中，不管連接的是什麼 I/O 裝置，我們基本上都會對輸入進行緩衝。所以當初 I/O 類庫如果能預設都讓輸入進行緩衝，同時將無緩衝輸入作為一種特殊情況（或者只是簡單地提供一個方法呼叫），這樣會更加合理，而不是像現在這樣迫使我們基本上每次都得手動添加緩衝。
+<!-- 譯者註：感覺第四版中文版（536頁）把上面這一段的意思弄反了 -->
 
-<span id="table-io-3">**表 I/O-3：`FilterInputStream` 类型**</span>
+<span id="table-io-3">**表 I/O-3：`FilterInputStream` 類型**</span>
 
-| 类 | 功能 | 构造器参数 | 如何使用 |
+| 類 | 功能 | 構造器參數 | 如何使用 |
 | :--: | :-- | :-------- | :----- |
-| `DataInputStream` | 与 `DataOutputStream` 搭配使用，按照移植方式从流读取基本数据类型（`int`、`char`、`long` 等） | `InputStream` | 包含用于读取基本数据类型的全部接口 |
-| `BufferedInputStream`      | 使用它可以防止每次读取时都得进行实际写操作。代表“使用缓冲区” | `InputStream`，可以指定缓冲区大小（可选） | 本质上不提供接口，只是向进程添加缓冲功能。与接口对象搭配 |
-| `LineNumberInputStream`     | 跟踪输入流中的行号，可调用 `getLineNumber()` 和 `setLineNumber(int)` | `InputStream` | 仅增加了行号，因此可能要与接口对象搭配使用 |
-| `PushbackInputStream`    | 具有能弹出一个字节的缓冲区，因此可以将读到的最后一个字符回退 | `InputStream` | 通常作为编译器的扫描器，我们可能永远也不会用到 |
+| `DataInputStream` | 與 `DataOutputStream` 搭配使用，按照移植方式從流讀取基本資料類型（`int`、`char`、`long` 等） | `InputStream` | 包含用於讀取基本資料類型的全部介面 |
+| `BufferedInputStream`      | 使用它可以防止每次讀取時都得進行實際寫操作。代表“使用緩衝區” | `InputStream`，可以指定緩衝區大小（可選） | 本質上不提供介面，只是向行程添加緩衝功能。與介面物件搭配 |
+| `LineNumberInputStream`     | 跟蹤輸入流中的行號，可呼叫 `getLineNumber()` 和 `setLineNumber(int)` | `InputStream` | 僅增加了行號，因此可能要與介面物件搭配使用 |
+| `PushbackInputStream`    | 具有能彈出一個位元組的緩衝區，因此可以將讀到的最後一個字元回退 | `InputStream` | 通常作為編譯器的掃描器，我們可能永遠也不會用到 |
 
-### 通过 `FilterOutputStream` 向 `OutputStream` 写入
+### 通過 `FilterOutputStream` 向 `OutputStream` 寫入
 
-与 `DataInputStream` 对应的是 `DataOutputStream`，它可以将各种基本数据类型和 `String` 类型的对象格式化输出到“流”中，。这样一来，任何机器上的任何 `DataInputStream` 都可以读出它们。所有方法都以 “write” 开头，例如 `writeByte()`、`writeFloat()` 等等。
+與 `DataInputStream` 對應的是 `DataOutputStream`，它可以將各種基本資料類型和 `String` 類型的物件格式化輸出到“流”中，。這樣一來，任何機器上的任何 `DataInputStream` 都可以讀出它們。所有方法都以 “write” 開頭，例如 `writeByte()`、`writeFloat()` 等等。
 
-`PrintStream` 最初的目的就是为了以可视化格式打印所有基本数据类型和 `String` 类型的对象。这和 `DataOutputStream` 不同，后者的目的是将数据元素置入“流”中，使 `DataInputStream` 能够可移植地重构它们。
+`PrintStream` 最初的目的就是為了以可視化格式列印所有基本資料類型和 `String` 類型的物件。這和 `DataOutputStream` 不同，後者的目的是將資料元素置入“流”中，使 `DataInputStream` 能夠可移植地重構它們。
 
-`PrintStream` 内有两个重要方法：`print()` 和 `println()`。它们都被重载了，可以打印各种各种数据类型。`print()` 和 `println()` 之间的差异是，后者在操作完毕后会添加一个换行符。
+`PrintStream` 內有兩個重要方法：`print()` 和 `println()`。它們都被重載了，可以列印各種各種資料類型。`print()` 和 `println()` 之間的差異是，後者在操作完畢後會添加一個換行符。
 
-`PrintStream` 可能会造成一些问题，因为它捕获了所有 `IOException`（因此，我们必须使用 `checkError()` 自行测试错误状态，如果出现错误它会返回 `true`）。另外，`PrintStream` 没有处理好国际化问题。这些问题都在 `PrintWriter` 中得到了解决，这在后面会讲到。
+`PrintStream` 可能會造成一些問題，因為它捕獲了所有 `IOException`（因此，我們必須使用 `checkError()` 自行測試錯誤狀態，如果出現錯誤它會返回 `true`）。另外，`PrintStream` 沒有處理好國際化問題。這些問題都在 `PrintWriter` 中得到了解決，這在後面會講到。
 
-`BufferedOutputStream` 是一个修饰符，表明这个“流”使用了缓冲技术，因此每次向流写入的时候，不是每次都会执行物理写操作。我们在进行输出操作的时候可能会经常用到它。
+`BufferedOutputStream` 是一個修飾符，表明這個“流”使用了緩衝技術，因此每次向流寫入的時候，不是每次都會執行物理寫操作。我們在進行輸出操作的時候可能會經常用到它。
 
-<span id="table-io-4">**表 I/O-4：`FilterOutputStream` 类型**</span>
+<span id="table-io-4">**表 I/O-4：`FilterOutputStream` 類型**</span>
 
-| 类 | 功能 | 构造器参数 | 如何使用 |
+| 類 | 功能 | 構造器參數 | 如何使用 |
 | :--: | :-- | :-------- | :----- |
-| `DataOutputStream` | 与 `DataInputStream` 搭配使用，因此可以按照移植方式向流中写入基本数据类型（`int`、`char`、`long` 等） | `OutputStream` | 包含用于写入基本数据类型的全部接口 |
-| `PrintStream`      | 用于产生格式化输出。其中 `DataOutputStream` 处理数据的存储，`PrintStream` 处理显示 | `OutputStream`，可以用 `boolean` 值指示是否每次换行时清空缓冲区（可选） | 应该是对 `OutputStream` 对象的 `final` 封装。可能会经常用到它 |
-| `BufferedOutputStream`     | 使用它以避免每次发送数据时都进行实际的写操作。代表“使用缓冲区”。可以调用 `flush()` 清空缓冲区 | `OutputStream`，可以指定缓冲区大小（可选） | 本质上并不提供接口，只是向进程添加缓冲功能。与接口对象搭配 |
+| `DataOutputStream` | 與 `DataInputStream` 搭配使用，因此可以按照移植方式向流中寫入基本資料類型（`int`、`char`、`long` 等） | `OutputStream` | 包含用於寫入基本資料類型的全部介面 |
+| `PrintStream`      | 用於產生格式化輸出。其中 `DataOutputStream` 處理資料的儲存，`PrintStream` 處理顯示 | `OutputStream`，可以用 `boolean` 值指示是否每次換行時清空緩衝區（可選） | 應該是對 `OutputStream` 物件的 `final` 封裝。可能會經常用到它 |
+| `BufferedOutputStream`     | 使用它以避免每次發送資料時都進行實際的寫操作。代表“使用緩衝區”。可以呼叫 `flush()` 清空緩衝區 | `OutputStream`，可以指定緩衝區大小（可選） | 本質上並不提供介面，只是向行程添加緩衝功能。與介面物件搭配 |
 
 <!-- Readers & Writers -->
 
 ## Reader和Writer
 
-Java 1.1 对基本的 I/O 流类库做了重大的修改。你初次遇到 `Reader` 和 `Writer` 时，可能会以为这两个类是用来替代 `InputStream` 和 `OutputStream` 的，但实际上并不是这样。尽管一些原始的“流”类库已经过时了（如果使用它们，编译器会发出警告），但是 `InputStream` 和 `OutputStream` 在面向字节 I/O 这方面仍然发挥着极其重要的作用，而 `Reader` 和 `Writer` 则提供兼容 Unicode 和面向字符 I/O 的功能。另外：
+Java 1.1 對基本的 I/O 流類庫做了重大的修改。你初次遇到 `Reader` 和 `Writer` 時，可能會以為這兩個類是用來替代 `InputStream` 和 `OutputStream` 的，但實際上並不是這樣。儘管一些原始的“流”類庫已經過時了（如果使用它們，編譯器會發出警告），但是 `InputStream` 和 `OutputStream` 在面向位元組 I/O 這方面仍然發揮著極其重要的作用，而 `Reader` 和 `Writer` 則提供相容 Unicode 和面向字元 I/O 的功能。另外：
 
-1. Java 1.1 往 `InputStream` 和 `OutputStream` 的继承体系中又添加了一些新类，所以这两个类显然是不会被取代的；
+1. Java 1.1 往 `InputStream` 和 `OutputStream` 的繼承體系中又添加了一些新類，所以這兩個類顯然是不會被取代的；
 
-2. 有时我们必须把来自“字节”层级结构中的类和来自“字符”层次结构中的类结合起来使用。为了达到这个目的，需要用到“适配器（adapter）类”：`InputStreamReader` 可以把 `InputStream` 转换为 `Reader`，而 `OutputStreamWriter` 可以把 `OutputStream` 转换为 `Writer`。
+2. 有時我們必須把來自“位元組”層級結構中的類和來自“字元”層次結構中的類結合起來使用。為了達到這個目的，需要用到“適配器（adapter）類”：`InputStreamReader` 可以把 `InputStream` 轉換為 `Reader`，而 `OutputStreamWriter` 可以把 `OutputStream` 轉換為 `Writer`。
 
-设计 `Reader` 和 `Writer` 继承体系主要是为了国际化。老的 I/O 流继承体系仅支持 8 比特的字节流，并且不能很好地处理 16 比特的 Unicode 字符。由于 Unicode 用于字符国际化（Java 本身的 `char` 也是 16 比特的 Unicode），所以添加 `Reader` 和 `Writer` 继承体系就是为了让所有的 I/O 操作都支持 Unicode。另外，新类库的设计使得它的操作比旧类库要快。
+設計 `Reader` 和 `Writer` 繼承體系主要是為了國際化。老的 I/O 流繼承體系僅支援 8 位元的位元組流，並且不能很好地處理 16 位元的 Unicode 字元。由於 Unicode 用於字元國際化（Java 本身的 `char` 也是 16 位元的 Unicode），所以添加 `Reader` 和 `Writer` 繼承體系就是為了讓所有的 I/O 操作都支援 Unicode。另外，新類庫的設計使得它的操作比舊類庫要快。
 
-### 数据的来源和去处
+### 資料的來源和去處
 
-几乎所有原始的 Java I/O 流类都有相应的 `Reader` 和 `Writer` 类来提供原生的 Unicode 操作。但是在某些场合，面向字节的 `InputStream` 和 `OutputStream` 才是正确的解决方案。特别是 `java.util.zip` 类库就是面向字节而不是面向字符的。因此，最明智的做法是尽量**尝试**使用 `Reader` 和 `Writer`，一旦代码没法成功编译，你就会发现此时应该使用面向字节的类库了。
+幾乎所有原始的 Java I/O 流類都有相應的 `Reader` 和 `Writer` 類來提供原生的 Unicode 操作。但是在某些場合，面向位元組的 `InputStream` 和 `OutputStream` 才是正確的解決方案。特別是 `java.util.zip` 類庫就是面向位元組而不是面向字元的。因此，最明智的做法是儘量**嘗試**使用 `Reader` 和 `Writer`，一旦程式碼沒辦法成功編譯，你就會發現此時應該使用面向位元組的類庫了。
 
-下表展示了在两个继承体系中，信息的来源和去处（即数据物理上来自哪里又去向哪里）之间的对应关系：
+下表展示了在兩個繼承體系中，訊息的來源和去處（即資料物理上來自哪裡又去向哪裡）之間的對應關係：
 
-| 来源与去处：Java 1.0 类 | 相应的 Java 1.1 类 |
+| 來源與去處：Java 1.0 類 | 相應的 Java 1.1 類 |
 | :-------------------: | :--------------: |
-| `InputStream`  |  `Reader` <br/> 适配器：`InputStreamReader` |
-| `OutputStream`  |  `Writer` <br/> 适配器：`OutputStreamWriter` |
+| `InputStream`  |  `Reader` <br/> 適配器：`InputStreamReader` |
+| `OutputStream`  |  `Writer` <br/> 適配器：`OutputStreamWriter` |
 | `FileInputStream`  | `FileReader` |
 | `FileOutputStream`  |  `FileWriter` |
-| `StringBufferInputStream`（已弃用） | `StringReader` |
-| （无相应的类） |  `StringWriter` |
+| `StringBufferInputStream`（已棄用） | `StringReader` |
+| （無相應的類） |  `StringWriter` |
 | `ByteArrayInputStream`  |  `CharArrayReader` |
 | `ByteArrayOutputStream`  | `CharArrayWriter` |
 | `PipedInputStream`  |  `PipedReader` |
 | `PipedOutputStream`  | `PipedWriter` |
 
-总的来说，这两个不同的继承体系中的接口即便不能说完全相同，但也是非常相似的。
+總的來說，這兩個不同的繼承體系中的介面即便不能說完全相同，但也是非常相似的。
 
-### 更改流的行为
+### 更改流的行為
 
-对于 `InputStream` 和 `OutputStream` 来说，我们会使用 `FilterInputStream` 和 `FilterOutputStream` 的装饰器子类来修改“流”以满足特殊需要。`Reader` 和 `Writer` 的类继承体系沿用了相同的思想——但是并不完全相同。
+對於 `InputStream` 和 `OutputStream` 來說，我們會使用 `FilterInputStream` 和 `FilterOutputStream` 的裝飾器子類來修改“流”以滿足特殊需要。`Reader` 和 `Writer` 的類繼承體系沿用了相同的思想——但是並不完全相同。
 
-在下表中，左右之间对应关系的近似程度现比上一个表格更加粗略一些。造成这种差别的原因是类的组织形式不同，`BufferedOutputStream` 是 `FilterOutputStream` 的子类，但 `BufferedWriter` 却不是 `FilterWriter` 的子类（尽管 `FilterWriter` 是抽象类，但却没有任何子类，把它放在表格里只是占个位置，不然你可能奇怪 `FilterWriter` 上哪去了）。然而，这些类的接口却又十分相似。
+在下表中，左右之間對應關係的近似程度現比上一個表格更加粗略一些。造成這種差別的原因是類的組織形式不同，`BufferedOutputStream` 是 `FilterOutputStream` 的子類，但 `BufferedWriter` 卻不是 `FilterWriter` 的子類（儘管 `FilterWriter` 是抽象類，但卻沒有任何子類，把它放在表格里只是占個位置，不然你可能奇怪 `FilterWriter` 上哪去了）。然而，這些類的介面卻又十分相似。
 
-| 过滤器：Java 1.0 类 | 相应 Java 1.1 类 |
+| 過濾器：Java 1.0 類 | 相應 Java 1.1 類 |
 | :---------------  | :-------------- |
 | `FilterInputStream` | `FilterReader` |
-| `FilterOutputStream` | `FilterWriter` (抽象类，没有子类) |
+| `FilterOutputStream` | `FilterWriter` (抽象類，沒有子類) |
 | `BufferedInputStream` | `BufferedReader`（也有 `readLine()`) |
 | `BufferedOutputStream` | `BufferedWriter` |
-| `DataInputStream` | 使用 `DataInputStream`（ 如果必须用到 `readLine()`，那你就得使用 `BufferedReader`。否则，一般情况下就用 `DataInputStream` |
+| `DataInputStream` | 使用 `DataInputStream`（ 如果必須用到 `readLine()`，那你就得使用 `BufferedReader`。否則，一般情況下就用 `DataInputStream` |
 | `PrintStream` | `PrintWriter` |
 | `LineNumberInputStream` | `LineNumberReader` |
-| `StreamTokenizer` | `StreamTokenizer`（使用具有 `Reader` 参数的构造器） |
+| `StreamTokenizer` | `StreamTokenizer`（使用具有 `Reader` 參數的構造器） |
 | `PushbackInputStream` | `PushbackReader` |
 
-有一条限制需要明确：一旦要使用 `readLine()`，我们就不应该用 `DataInputStream`（否则，编译时会得到使用了过时方法的警告），而应该使用 `BufferedReader`。除了这种情况之外的情形中，`DataInputStream` 仍是 I/O 类库的首选成员。
+有一條限制需要明確：一旦要使用 `readLine()`，我們就不應該用 `DataInputStream`（否則，編譯時會得到使用了過時方法的警告），而應該使用 `BufferedReader`。除了這種情況之外的情形中，`DataInputStream` 仍是 I/O 類庫的首選成員。
 
-为了使用时更容易过渡到 `PrintWriter`，它提供了一个既能接受 `Writer` 对象又能接受任何 `OutputStream` 对象的构造器。`PrintWriter` 的格式化接口实际上与 `PrintStream` 相同。
+為了使用時更容易過渡到 `PrintWriter`，它提供了一個既能接受 `Writer` 物件又能接受任何 `OutputStream` 物件的構造器。`PrintWriter` 的格式化介面實際上與 `PrintStream` 相同。
 
-Java 5 添加了几种 `PrintWriter` 构造器，以便在将输出写入时简化文件的创建过程，你马上就会见到它们。
+Java 5 添加了幾種 `PrintWriter` 構造器，以便在將輸出寫入時簡化文件的建立過程，你馬上就會見到它們。
 
-其中一种 `PrintWriter` 构造器还有一个执行**自动 flush**[^2] 的选项。如果构造器设置了该选项，就会在每个 `println()` 调用之后，自动执行 flush。
+其中一種 `PrintWriter` 構造器還有一個執行**自動 flush**[^2] 的選項。如果構造器設定了該選項，就會在每個 `println()` 呼叫之後，自動執行 flush。
 
-### 未发生改变的类
+### 未發生改變的類
 
-有一些类在 Java 1.0 和 Java 1.1 之间未做改变。
+有一些類在 Java 1.0 和 Java 1.1 之間未做改變。
 
-| 以下这些 Java 1.0 类在 Java 1.1 中没有相应类 |
+| 以下這些 Java 1.0 類在 Java 1.1 中沒有相應類 |
 | --- |
 | `DataOutputStream` |
 | `File` |
 | `RandomAccessFile` |
 | `SequenceInputStream` |
 
-特别是 `DataOutputStream`，在使用时没有任何变化；因此如果想以可传输的格式存储和检索数据，请用 `InputStream` 和 `OutputStream` 继承体系。
+特別是 `DataOutputStream`，在使用時沒有任何變化；因此如果想以可傳輸的格式儲存和檢索資料，請用 `InputStream` 和 `OutputStream` 繼承體系。
 
 <!-- Off By Itself: RandomAccessFile -->
-## RandomAccessFile类
+## RandomAccessFile類
 
-`RandomAccessFile` 适用于由大小已知的记录组成的文件，所以我们可以使用 `seek()` 将文件指针从一条记录移动到另一条记录，然后对记录进行读取和修改。文件中记录的大小不一定都相同，只要我们能确定那些记录有多大以及它们在文件中的位置即可。
+`RandomAccessFile` 適用於由大小已知的紀錄組成的文件，所以我們可以使用 `seek()` 將文件指標從一條紀錄移動到另一條紀錄，然後對記錄進行讀取和修改。文件中記錄的大小不一定都相同，只要我們能確定那些記錄有多大以及它們在文件中的位置即可。
 
-最初，我们可能难以相信 `RandomAccessFile` 不是 `InputStream` 或者 `OutputStream` 继承体系中的一部分。除了实现了 `DataInput` 和 `DataOutput` 接口（`DataInputStream` 和 `DataOutputStream` 也实现了这两个接口）之外，它和这两个继承体系没有任何关系。它甚至都不使用 `InputStream` 和 `OutputStream` 类中已有的任何功能。它是一个完全独立的类，其所有的方法（大多数都是 `native` 方法）都是从头开始编写的。这么做是因为 `RandomAccessFile` 拥有和别的 I/O 类型本质上不同的行为，因为我们可以在一个文件内向前和向后移动。在任何情况下，它都是自我独立的，直接继承自 `Object`。
+最初，我們可能難以相信 `RandomAccessFile` 不是 `InputStream` 或者 `OutputStream` 繼承體系中的一部分。除了實現了 `DataInput` 和 `DataOutput` 介面（`DataInputStream` 和 `DataOutputStream` 也實現了這兩個介面）之外，它和這兩個繼承體系沒有任何關係。它甚至都不使用 `InputStream` 和 `OutputStream` 類中已有的任何功能。它是一個完全獨立的類，其所有的方法（大多數都是 `native` 方法）都是從頭開始編寫的。這麼做是因為 `RandomAccessFile` 擁有和別的 I/O 類型本質上不同的行為，因為我們可以在一個文件內向前和向後移動。在任何情況下，它都是自我獨立的，直接繼承自 `Object`。
 
-从本质上来讲，`RandomAccessFile` 的工作方式类似于把 `DataIunputStream` 和 `DataOutputStream` 组合起来使用。另外它还有一些额外的方法，比如使用 `getFilePointer()` 可以得到当前文件指针在文件中的位置，使用 `seek()` 可以移动文件指针，使用 `length()` 可以得到文件的长度。另外，其构造器还需要传入第二个参数（和 C 语言中的 `fopen()` 相同）用来表示我们是准备对文件进行 “随机读”（r）还是“读写”（rw）。它并不支持只写文件，从这点来看，如果当初 `RandomAccessFile` 能设计成继承自 `DataInputStream`，可能也是个不错的实现方式。
+從本質上來講，`RandomAccessFile` 的工作方式類似於把 `DataIunputStream` 和 `DataOutputStream` 組合起來使用。另外它還有一些額外的方法，比如使用 `getFilePointer()` 可以得到目前文件指標在文件中的位置，使用 `seek()` 可以移動文件指標，使用 `length()` 可以得到文件的長度。另外，其構造器還需要傳入第二個參數（和 C 語言中的 `fopen()` 相同）用來表示我們是準備對文件進行 “隨機讀”（r）還是“讀寫”（rw）。它並不支援只寫文件，從這點來看，如果當初 `RandomAccessFile` 能設計成繼承自 `DataInputStream`，可能也是個不錯的實現方式。
 
-在 Java 1.4 中，`RandomAccessFile` 的大多数功能（但不是全部）都被 nio 中的**内存映射文件**（mmap）取代，详见[附录：新 I/O](./Appendix-New-IO.md)。
+在 Java 1.4 中，`RandomAccessFile` 的大多數功能（但不是全部）都被 nio 中的**記憶體映射文件**（mmap）取代，詳見[附錄：新 I/O](./Appendix-New-IO.md)。
 
 <!-- Typical Uses of I/O Streams -->
 
 ## IO流典型用途
 
-尽管我们可以用不同的方式来组合 I/O 流类，但常用的也就其中几种。你可以下面的例子可以作为 I/O 典型用法的基本参照（在你确定无法使用[文件](./17-Files.md)这一章所述的库之后）。
+儘管我們可以用不同的方式來組合 I/O 流類，但常用的也就其中幾種。你可以下面的例子可以作為 I/O 典型用法的基本參照（在你確定無法使用[文件](./17-Files.md)這一章所述的庫之後）。
 
-在这些示例中，异常处理都被简化为将异常传递给控制台，但是这样做只适用于小型的示例和工具。在你自己的代码中，你需要考虑更加复杂的错误处理方式。
+在這些範例中，異常處理都被簡化為將異常傳遞給控制台，但是這樣做只適用於小型的範例和工具。在你自己的程式碼中，你需要考慮更加複雜的錯誤處理方式。
 
-### 缓冲输入文件
+### 緩衝輸入文件
 
-如果想要打开一个文件进行字符输入，我们可以使用一个 `FileInputReader` 对象，然后传入一个 `String` 或者 `File` 对象作为文件名。为了提高速度，我们希望对那个文件进行缓冲，那么我们可以将所产生的引用传递给一个 `BufferedReader` 构造器。`BufferedReader` 提供了 `line()` 方法，它会产生一个 `Stream<String>` 对象：
+如果想要打開一個文件進行字元輸入，我們可以使用一個 `FileInputReader` 物件，然後傳入一個 `String` 或者 `File` 物件作為檔案名。為了提高速度，我們希望對那個文件進行緩衝，那麼我們可以將所產生的引用傳遞給一個 `BufferedReader` 構造器。`BufferedReader` 提供了 `line()` 方法，它會產生一個 `Stream<String>` 物件：
 
 ```java
 // iostreams/BufferedInputFile.java
@@ -235,11 +235,11 @@ public class BufferedInputFile {
 }
 ```
 
-`Collectors.joining()` 在其内部使用了一个 `StringBuilder` 来累加其运行结果。该文件会通过 `try-with-resources` 子句自动关闭。
+`Collectors.joining()` 在其內部使用了一個 `StringBuilder` 來累加其執行結果。該文件會透過 `try-with-resources` 子句自動關閉。
 
-### 从内存输入
+### 從記憶體輸入
 
-下面示例中，从 `BufferedInputFile.read()` 读入的 `String` 被用来创建一个 `StringReader` 对象。然后调用其 `read()` 方法，每次读取一个字符，并把它显示在控制台上：
+下面範例中，從 `BufferedInputFile.read()` 讀入的 `String` 被用來建立一個 `StringReader` 物件。然後呼叫其 `read()` 方法，每次讀取一個字元，並把它顯示在控制台上：
 
 ```java
 // iostreams/MemoryInput.java
@@ -258,11 +258,11 @@ public class MemoryInput {
 }
 ```
 
-注意 `read()` 是以 `int` 形式返回下一个字节，所以必须类型转换为 `char` 才能正确打印。
+注意 `read()` 是以 `int` 形式返回下一個位元組，所以必須類型轉換為 `char` 才能正確列印。
 
-### 格式化内存输入
+### 格式化記憶體輸入
 
-要读取格式化数据，我们可以使用 `DataInputStream`，它是一个面向字节的 I/O 类（不是面向字符的）。这样我们就必须使用 `InputStream` 类而不是 `Reader` 类。我们可以使用 `InputStream` 以字节形式读取任何数据（比如一个文件），但这里使用的是字符串。
+要讀取格式化資料，我們可以使用 `DataInputStream`，它是一個面向位元組的 I/O 類（不是面向字元的）。這樣我們就必須使用 `InputStream` 類而不是 `Reader` 類。我們可以使用 `InputStream` 以位元組形式讀取任何資料（比如一個文件），但這裡使用的是字串。
 
 ```java
 // iostreams/FormattedMemoryInput.java
@@ -289,9 +289,9 @@ public class FormattedMemoryInput {
 }
 ```
 
-`ByteArrayInputStream` 必须接收一个字节数组，所以这里我们调用了 `String.getBytes()` 方法。所产生的的 `ByteArrayInputStream` 是一个适合传递给 `DataInputStream` 的 `InputStream`。
+`ByteArrayInputStream` 必須接收一個位元組陣列，所以這裡我們呼叫了 `String.getBytes()` 方法。所產生的的 `ByteArrayInputStream` 是一個適合傳遞給 `DataInputStream` 的 `InputStream`。
 
-如果我们用 `readByte()` 从 `DataInputStream` 一次一个字节地读取字符，那么任何字节的值都是合法结果，因此返回值不能用来检测输入是否结束。取而代之的是，我们可以使用 `available()` 方法得到剩余可用字符的数量。下面例子演示了怎么一次一个字节地读取文件：
+如果我們用 `readByte()` 從 `DataInputStream` 一次一個位元組地讀取字元，那麼任何位元組的值都是合法結果，因此返回值不能用來檢測輸入是否結束。取而代之的是，我們可以使用 `available()` 方法得到剩餘可用字元的數量。下面例子示範了怎麼一次一個位元組地讀取文件：
 
 ```java
 // iostreams/TestEOF.java
@@ -315,13 +315,13 @@ public class TestEOF {
 }
 ```
 
-注意，`available()` 的工作方式会随着所读取媒介类型的不同而有所差异，它的字面意思就是“在没有阻塞的情况下所能读取的字节数”。对于文件，能够读取的是整个文件；但是对于其它类型的“流”，可能就不是这样，所以要谨慎使用。
+注意，`available()` 的工作方式會隨著所讀取媒介類型的不同而有所差異，它的字面意思就是“在沒有阻塞的情況下所能讀取的位元組數”。對於文件，能夠讀取的是整個文件；但是對於其它類型的“流”，可能就不是這樣，所以要謹慎使用。
 
-我们也可以通过捕获异常来检测输入的末尾。但是，用异常作为控制流是对异常的一种错误使用方式。
+我們也可以透過捕獲異常來檢測輸入的末尾。但是，用異常作為控制流是對異常的一種錯誤使用方式。
 
-### 基本文件的输出
+### 基本文件的輸出
 
-`FileWriter` 对象用于向文件写入数据。实际使用时，我们通常会用 `BufferedWriter` 将其包装起来以增加缓冲的功能（可以试试移除此包装来感受一下它对性能的影响——缓冲往往能显著地增加 I/O 操作的性能）。在本例中，为了提供格式化功能，它又被装饰成了 `PrintWriter`。按照这种方式创建的数据文件可作为普通文本文件来读取。
+`FileWriter` 物件用於向文件寫入資料。實際使用時，我們通常會用 `BufferedWriter` 將其包裝起來以增加緩衝的功能（可以試試移除此包裝來感受一下它對性能的影響——緩衝往往能顯著地增加 I/O 操作的效能）。在本例中，為了提供格式化功能，它又被裝飾成了 `PrintWriter`。按照這種方式建立的資料文件可作為普通文字文件來讀取。
 
 ```java
 // iostreams/BasicFileOutput.java
@@ -350,11 +350,11 @@ public class BasicFileOutput {
 }
 ```
 
-`try-with-resources` 语句会自动 flush 并关闭文件。
+`try-with-resources` 語句會自動 flush 並關閉文件。
 
-### 文本文件输出快捷方式
+### 文字文件輸出捷徑
 
-Java 5 在 `PrintWriter` 中添加了一个辅助构造器，有了它，你在创建并写入文件时，就不必每次都手动执行一些装饰的工作。下面的代码使用这种快捷方式重写了 `BasicFileOutput.java`：
+Java 5 在 `PrintWriter` 中添加了一個輔助構造器，有了它，你在建立並寫入檔案時，就不必每次都手動執行一些裝飾的工作。下面的程式碼使用這種捷徑重寫了 `BasicFileOutput.java`：
 
 ```java
 // iostreams/FileOutputShortcut.java
@@ -381,11 +381,11 @@ public class FileOutputShortcut {
 }
 ```
 
-使用这种方式仍具备了缓冲的功能，只是现在不必自己手动添加缓冲了。但遗憾的是，其它常见的写入任务都没有快捷方式，因此典型的 I/O 流依旧涉及大量冗余的代码。本书[文件](./17-Files.md)一章中介绍的另一种方式，对此类任务进行了极大的简化。
+使用這種方式仍具備了緩衝的功能，只是現在不必自己手動添加緩衝了。但遺憾的是，其它常見的寫入任務都沒有捷徑，因此典型的 I/O 流依舊涉及大量冗餘的程式碼。本書[文件](./17-Files.md)一章中介紹的另一種方式，對此類任務進行了極大的簡化。
 
-### 存储和恢复数据
+### 儲存和復原資料
 
-`PrintWriter` 是用来对可读的数据进行格式化。但如果要输出可供另一个“流”恢复的数据，我们可以用 `DataOutputStream` 写入数据，然后用 `DataInputStream` 恢复数据。当然，这些流可能是任何形式，在下面的示例中使用的是一个文件，并且对读写都进行了缓冲。注意 `DataOutputStream` 和 `DataInputStream` 是面向字节的，因此要使用 `InputStream` 和 `OutputStream` 体系的类。
+`PrintWriter` 是用來對可讀的資料進行格式化。但如果要輸出可供另一個“流”復原的資料，我們可以用 `DataOutputStream` 寫入資料，然後用 `DataInputStream` 復原資料。當然，這些流可能是任何形式，在下面的範例中使用的是一個文件，並且對讀寫都進行了緩衝。注意 `DataOutputStream` 和 `DataInputStream` 是面向位元組的，因此要使用 `InputStream` 和 `OutputStream` 體系的類。
 
 ```java
 // iostreams/StoringAndRecoveringData.java
@@ -423,7 +423,7 @@ public class StoringAndRecoveringData {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 3.14159
@@ -432,19 +432,19 @@ That was pi
 Square root of 2
 ```
 
-如果我们使用 `DataOutputStream` 进行数据写入，那么 Java 就保证了即便读和写数据的平台多么不同，我们仍可以使用 `DataInputStream` 准确地读取数据。这一点很有价值，众所周知，人们曾把大量精力耗费在数据的平台相关性问题上。但现在，只要两个平台上都有 Java，就不会存在这样的问题[^3]。
+如果我們使用 `DataOutputStream` 進行資料寫入，那麼 Java 就保證了即便讀和寫資料的平台多麼不同，我們仍可以使用 `DataInputStream` 準確地讀取資料。這一點很有價值，眾所周知，人們曾把大量精力耗費在資料的平台相關性問題上。但現在，只要兩個平台上都有 Java，就不會存在這樣的問題[^3]。
 
-当我们使用 `DastaOutputStream` 时，写字符串并且让 `DataInputStream` 能够恢复它的唯一可靠方式就是使用 UTF-8 编码，在这个示例中是用 `writeUTF()` 和 `readUTF()` 来实现的。UTF-8 是一种多字节格式，其编码长度根据实际使用的字符集会有所变化。如果我们使用的只是 ASCII 或者几乎都是 ASCII 字符（只占 7 比特），那么就显得及其浪费空间和带宽，所以 UTF-8 将 ASCII 字符编码成一个字节的形式，而非 ASCII 字符则编码成两到三个字节的形式。另外，字符串的长度保存在 UTF-8 字符串的前两个字节中。但是，`writeUTF()` 和 `readUTF()` 使用的是一种适用于 Java 的 UTF-8 变体（JDK 文档中有这些方法的详尽描述），因此如果我们用一个非 Java 程序读取用 `writeUTF()` 所写的字符串时，必须编写一些特殊的代码才能正确读取。
+當我們使用 `DastaOutputStream` 時，寫字串並且讓 `DataInputStream` 能夠復原它的唯一可靠方式就是使用 UTF-8 編碼，在這個範例中是用 `writeUTF()` 和 `readUTF()` 來實現的。UTF-8 是一種多位元組格式，其編碼長度根據實際使用的字元集會有所變化。如果我們使用的只是 ASCII 或者幾乎都是 ASCII 字元（只占 7 位元），那麼就顯得及其浪費空間和頻寬，所以 UTF-8 將 ASCII 字元編碼成一個位元組的形式，而非 ASCII 字元則編碼成兩到三個位元組的形式。另外，字串的長度儲存在 UTF-8 字串的前兩個位元組中。但是，`writeUTF()` 和 `readUTF()` 使用的是一種適用於 Java 的 UTF-8 變體（JDK 文件中有這些方法的詳盡描述），因此如果我們用一個非 Java 程式讀取用 `writeUTF()` 所寫的字串時，必須編寫一些特殊的程式碼才能正確讀取。
 
-有了 `writeUTF()` 和 `readUTF()`，我们就可以在 `DataOutputStream` 中把字符串和其它数据类型混合使用。因为字符串完全可以作为 Unicode 格式存储，并且可以很容易地使用 `DataInputStream` 来恢复它。
+有了 `writeUTF()` 和 `readUTF()`，我們就可以在 `DataOutputStream` 中把字串和其它資料類型混合使用。因為字串完全可以作為 Unicode 格式儲存，並且可以很容易地使用 `DataInputStream` 來復原它。
 
-`writeDouble()` 将 `double` 类型的数字存储在流中，并用相应的 `readDouble()` 恢复它（对于其它的书类型，也有类似的方法用于读写）。但是为了保证所有的读方法都能够正常工作，我们必须知道流中数据项所在的确切位置，因为极有可能将保存的 `double` 数据作为一个简单的字节序列、`char` 或其它类型读入。因此，我们必须：要么为文件中的数据采用固定的格式；要么将额外的信息保存到文件中，通过解析额外信息来确定数据的存放位置。注意，对象序列化和 XML （二者都在[附录：对象序列化](Appendix-Object-Serialization.md)中介绍）是存储和读取复杂数据结构的更简单的方式。
+`writeDouble()` 將 `double` 類型的數字儲存在流中，並用相應的 `readDouble()` 復原它（對於其它的書類型，也有類似的方法用於讀寫）。但是為了保證所有的讀方法都能夠正常工作，我們必須知道流中資料項所在的確切位置，因為極有可能將儲存的 `double` 資料作為一個簡單的位元組序列、`char` 或其它類型讀入。因此，我們必須：要嘛為文件中的資料採用固定的格式；要嘛將額外的訊息儲存到文件中，透過解析額外訊息來確定資料的存放位置。注意，物件序列化和 XML （二者都在[附錄：物件序列化](Appendix-Object-Serialization.md)中介紹）是儲存和讀取複雜資料結構的更簡單的方式。
 
-### 读写随机访问文件
+### 讀寫隨機訪問文件
 
-使用 `RandomAccessFile` 就像是使用了一个 `DataInputStream` 和 `DataOutputStream` 的结合体（因为它实现了相同的接口：`DataInput` 和 `DataOutput`）。另外，我们还可以使用 `seek()` 方法移动文件指针并修改对应位置的值。
+使用 `RandomAccessFile` 就像是使用了一個 `DataInputStream` 和 `DataOutputStream` 的結合體（因為它實現了相同的介面：`DataInput` 和 `DataOutput`）。另外，我們還可以使用 `seek()` 方法移動文件指標並修改對應位置的值。
 
-在使用 `RandomAccessFile` 时，你必须清楚文件的结构，否则没法正确使用它。`RandomAccessFile` 有一套专门的方法来读写基本数据类型的数据和 UTF-8 编码的字符串：
+在使用 `RandomAccessFile` 時，你必須清楚文件的結構，否則沒辦法正確使用它。`RandomAccessFile` 有一套專門的方法來讀寫基本資料類型的資料和 UTF-8 編碼的字串：
 
 ```java
 // iostreams/UsingRandomAccessFile.java
@@ -495,7 +495,7 @@ public class UsingRandomAccessFile {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Value 0: 0.0
@@ -516,32 +516,32 @@ Value 6: 8.484
 The end of the file
 ```
 
-`display()` 方法打开了一个文件，并以 `double` 值的形式显示了其中的七个元素。在 `main()` 中，首先创建了文件，然后打开并修改了它。因为 `double` 总是 8 字节长，所以如果要用 `seek()` 定位到第 5 个（从 0 开始计数） `double` 值，则要传入的地址值应该为 `5*8`。
+`display()` 方法打開了一個文件，並以 `double` 值的形式顯示了其中的七個元素。在 `main()` 中，首先建立了文件，然後打開並修改了它。因為 `double` 總是 8 位元組長，所以如果要用 `seek()` 定位到第 5 個（從 0 開始計數） `double` 值，則要傳入的地址值應該為 `5*8`。
 
-正如前面所诉，虽然 `RandomAccess` 实现了 `DataInput` 和 `DataOutput` 接口，但实际上它和 I/O 继承体系中的其它部分是分离的。它不支持装饰，故而不能将其与 `InputStream` 及 `OutputStream` 子类中的任何一个组合起来，所以我们也没法给它添加缓冲的功能。
+正如前面所訴，雖然 `RandomAccess` 實現了 `DataInput` 和 `DataOutput` 介面，但實際上它和 I/O 繼承體系中的其它部分是分離的。它不支援裝飾，故而不能將其與 `InputStream` 及 `OutputStream` 子類中的任何一個組合起來，所以我們也沒辦法給它添加緩衝的功能。
 
-该类的构造器还有第二个必选参数：我们可以指定让 `RandomAccessFile` 以“只读”（r）方式或“读写”
-（rw）方式打开文件。
+該類的構造器還有第二個必選參數：我們可以指定讓 `RandomAccessFile` 以“唯讀”（r）方式或“讀寫”
+（rw）方式打開文件。
 
-除此之外，还可以使用 `nio` 中的“内存映射文件”代替 `RandomAccessFile`，这在[附录：新 I/O](Appendix-New-IO.md)中有介绍。
+除此之外，還可以使用 `nio` 中的“記憶體映射文件”代替 `RandomAccessFile`，這在[附錄：新 I/O](Appendix-New-IO.md)中有介紹。
 
 <!-- Summary -->
-## 本章小结
+## 本章小結
 
-Java 的 I/O 流类库的确能够满足我们的基本需求：我们可以通过控制台、文件、内存块，甚至因特网进行读写。通过继承，我们可以创建新类型的输入和输出对象。并且我们甚至可以通过重新定义“流”所接受对象类型的 `toString()` 方法，进行简单的扩展。当我们向一个期望收到字符串的方法传送一个非字符串对象时，会自动调用对象的 `toString()` 方法（这是 Java 中有限的“自动类型转换”功能之一）。
+Java 的 I/O 流類庫的確能夠滿足我們的基本需求：我們可以透過控制台、文件、記憶體塊，甚至網路進行讀寫。透過繼承，我們可以建立新類型的輸入和輸出物件。並且我們甚至可以透過重新定義“流”所接受物件類型的 `toString()` 方法，進行簡單的擴展。當我們向一個期望收到字串的方法傳送一個非字串物件時，會自動呼叫物件的 `toString()` 方法（這是 Java 中有限的“自動類型轉換”功能之一）。
 
-在 I/O 流类库的文档和设计中，仍留有一些没有解决的问题。例如，我们打开一个文件用于输出，如果在我们试图覆盖这个文件时能抛出一个异常，这样会比较好（有的编程系统只有当该文件不存在时，才允许你将其作为输出文件打开）。在 Java 中，我们应该使用一个 `File` 对象来判断文件是否存在，因为如果我们用 `FileOutputStream` 或者 `FileWriter` 打开，那么这个文件肯定会被覆盖。
+在 I/O 流類庫的文件和設計中，仍留有一些沒有解決的問題。例如，我們打開一個文件用於輸出，如果在我們試圖覆蓋這個文件時能拋出一個異常，這樣會比較好（有的程式系統只有當該文件不存在時，才允許你將其作為輸出文件打開）。在 Java 中，我們應該使用一個 `File` 物件來判斷文件是否存在，因為如果我們用 `FileOutputStream` 或者 `FileWriter` 打開，那麼這個文件肯定會被覆蓋。
 
-I/O 流类库让我们喜忧参半。它确实挺有用的，而且还具有可移植性。但是如果我们没有理解“装饰器”模式，那么这种设计就会显得不是很直观。所以，它的学习成本相对较高。而且它并不完善，比如说在过去，我不得不编写相当数量的代码去实现一个读取文本文件的工具——所幸的是，Java 7 中的 nio 消除了此类需求。
+I/O 流類庫讓我們喜憂參半。它確實挺有用的，而且還具有可移植性。但是如果我們沒有理解“裝飾器”模式，那麼這種設計就會顯得不是很直觀。所以，它的學習成本相對較高。而且它並不完善，比如說在過去，我不得不編寫相當數量的程式碼去實現一個讀取文字文件的工具——所幸的是，Java 7 中的 nio 消除了此類需求。
 
-一旦你理解了装饰器模式，并且开始在某些需要这种灵活性的场景中使用该类库，那么你就开始能从这种设计中受益了。到那时候，为此额外多写几行代码的开销应该不至于让人觉得太麻烦。但还是请务必检查一下，确保使用[文件](./17-Files.md)一章中的库和技术没法解决问题后，再考虑使用本章的 I/O 流库。
+一旦你理解了裝飾器模式，並且開始在某些需要這種靈活性的場景中使用該類庫，那麼你就開始能從這種設計中受益了。到那時候，為此額外多寫幾行程式碼的開銷應該不至於讓人覺得太麻煩。但還是請務必檢查一下，確保使用[文件](./17-Files.md)一章中的庫和技術沒辦法解決問題後，再考慮使用本章的 I/O 流庫。
 
-[^1]: 很难说这就是一个很好的设计选择，尤其是与其它编程语言中简单的 I/O 类库相比较。但它确实是如此选择的一个正当理由。
+[^1]: 很難說這就是一個很好的設計選擇，尤其是與其它程式語言中簡單的 I/O 類庫相比較。但它確實是如此選擇的一個正當理由。
 
-[^2]: 译者注：“flush” 直译是“清空”，意思是把缓冲中的数据清空，输送到对应的目的地（如文件和屏幕）。
+[^2]: 譯者註：“flush” 直譯是“清空”，意思是把緩衝中的資料清空，輸送到對應的目的地（如文件和螢幕）。
 
-[^3]: XML 是另一种方式，可以解决在不同计算平台之间移动数据，而不依赖于所有平台上都有 Java 这一问题。XML 将在[附录：对象序列化](./Appendix-Object-Serialization.md)一章中进行介绍。
+[^3]: XML 是另一種方式，可以解決在不同計算平台之間移動資料，而不依賴於所有平台上都有 Java 這一問題。XML 將在[附錄：物件序列化](./Appendix-Object-Serialization.md)一章中進行介紹。
 
-<!-- 分页 -->
+<!-- 分頁 -->
 
 <div style="page-break-after: always;"></div>

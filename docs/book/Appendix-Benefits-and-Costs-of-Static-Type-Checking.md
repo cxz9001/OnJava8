@@ -1,15 +1,15 @@
-[TOC]
+﻿[TOC]
 
 <!-- Appendix: Benefits and Costs of Static Type Checking -->
-# 附录:静态语言类型检查
-> 这是一本我多年来撰写的经过编辑过的论文集，论文集试图将静态检查语言和动态语言之间的争论放到一个正确的角度。还有一个前言部分，描述了我最近对这个话题的思考和见解。
+# 附錄:靜態語言類型檢查
+> 這是一本我多年來撰寫的經過編輯過的論文集，論文集試圖將靜態檢查語言和動態語言之間的爭論放到一個正確的角度。還有一個前言部分，描述了我最近對這個話題的思考和見解。
 
 <!-- Foreword -->
 ## 前言
 
 
 <!-- Static Type Checking vs. Testing -->
-## 静态类型检查和测试
+## 靜態類型檢查和測試
 
 
 <!-- How to Argue about Typing -->
@@ -17,13 +17,12 @@
 
 
 <!-- The Cost of Productivity -->
-## 生产力的成本
+## 生產力的成本
 
 
 <!-- Static vs. Dynamic -->
-## 静态和动态
+## 靜態和動態
 
 
-<!-- 分页 -->
-
+<!-- 分頁 -->
 <div style="page-break-after: always;"></div>

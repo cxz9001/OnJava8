@@ -1,30 +1,30 @@
-[TOC]
+﻿[TOC]
 
 <!-- Type Information -->
-# 第十九章 类型信息
+# 第十九章 類型訊息
 
-> RTTI（RunTime Type Information，运行时类型信息）能够在程序运行时发现和使用类型信息
+> RTTI（RunTime Type Information，執行時類型訊息）能夠在程式執行時發現和使用類型訊息
 
-RTTI 把我们从只能在编译期进行面向类型操作的禁锢中解脱了出来，并且让我们可以使用某些非常强大的程序。对 RTTI 的需要，揭示了面向对象设计中许多有趣（并且复杂）的特性，同时也带来了关于如何组织程序的基本问题。
+RTTI 把我們從只能在編譯期進行面向類型操作的禁錮中解脫了出來，並且讓我們可以使用某些非常強大的程式。對 RTTI 的需要，揭示了物件導向設計中許多有趣（並且複雜）的特性，同時也帶來了關於如何組織程式的基本問題。
 
-本章将讨论 Java 是如何在运行时识别对象和类信息的。主要有两种方式：
+本章將討論 Java 是如何在執行時識別物件和類訊息的。主要有兩種方式：
 
-1. “传统的” RTTI：假定我们在编译时已经知道了所有的类型；
-2. “反射”机制：允许我们在运行时发现和使用类的信息。
+1. “傳統的” RTTI：假定我們在編譯時已經知道了所有的類型；
+2. “反射”機制：允許我們在執行時發現和使用類的訊息。
 
 <!-- The Need for RTTI -->
 
-## 为什么需要 RTTI
+## 為什麼需要 RTTI
 
-下面看一下我们已经很熟悉的一个例子，它使用了多态的类层次结构。基类 `Shape` 是泛化的类型，从它派生出了三个具体类： `Circle` 、`Square` 和 `Triangle`（见下图所示）。
+下面看一下我們已經很熟悉的一個例子，它使用了多態的類層次結構。基類 `Shape` 是泛化的類型，從它衍生出了三個具體類： `Circle` 、`Square` 和 `Triangle`（見一下圖所示）。
 
-![多态例子Shape的类层次结构图](../images/image-20190409114913825-4781754.png)
+![多態例子Shape的類層次結構圖](../images/image-20190409114913825-4781754.png)
 
-这是一个典型的类层次结构图，基类位于顶部，派生类向下扩展。面向对象编程的一个基本目的是：让代码只操纵对基类(这里即 `Shape` )的引用。这样，如果你想添加一个新类(比如从 `Shape` 派生出 `Rhomboid`)来扩展程序，就不会影响原来的代码。在这个例子中，`Shape` 接口中动态绑定了 `draw()` 方法，这样做的目的就是让客户端程序员可以使用泛化的 `Shape` 引用来调用 `draw()`。`draw()` 方法在所有派生类里都会被覆盖，而且由于它是动态绑定的，所以即使通过 `Shape` 引用来调用它，也能产生恰当的行为，这就是多态。
+這是一個典型的類層次結構圖，基類位於頂部，衍生類向下擴展。物件導向編程的一個基本目的是：讓程式碼只操縱對基類(這裡即 `Shape` )的引用。這樣，如果你想添加一個新類(比如從 `Shape` 衍生出 `Rhomboid`)來擴展程式，就不會影響原來的程式碼。在這個例子中，`Shape` 介面中動態綁定了 `draw()` 方法，這樣做的目的就是讓用戶端程式設計師可以使用泛化的 `Shape` 引用來呼叫 `draw()`。`draw()` 方法在所有衍生類裡都會被覆蓋，而且由於它是動態綁定的，所以即使透過 `Shape` 引用來呼叫它，也能產生恰當的行為，這就是多態。
 
-因此，我们通常会创建一个具体的对象(`Circle`、`Square` 或者 `Triangle`)，把它向上转型成 `Shape` (忽略对象的具体类型)，并且在后面的程序中使用 `Shape` 引用来调用在具体对象中被重载的方法（如 `draw()`）。
+因此，我們通常會建立一個具體的物件(`Circle`、`Square` 或者 `Triangle`)，把它向上轉型成 `Shape` (忽略物件的具體類型)，並且在後面的程式中使用 `Shape` 引用來呼叫在具體物件中被重載的方法（如 `draw()`）。
 
-代码如下：
+程式碼如下：
 
 ```java
 // typeinfo/Shapes.java
@@ -60,7 +60,7 @@ public class Shapes {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Circle.draw()
@@ -68,43 +68,43 @@ Square.draw()
 Triangle.draw()
 ```
 
-基类中包含 `draw()` 方法，它通过传递 `this` 参数传递给 `System.out.println()`，间接地使用 `toString()` 打印类标识符(注意：这里将 `toString()` 声明为 `abstract`，以此强制继承者覆盖该方法，并防止对 `Shape` 的实例化)。如果某个对象出现在字符串表达式中(涉及"+"和字符串对象的表达式)，`toString()` 方法就会被自动调用，以生成表示该对象的 `String`。每个派生类都要覆盖（从 `Object` 继承来的）`toString()` 方法，这样 `draw()` 在不同情况下就打印出不同的消息(多态)。
+基類中包含 `draw()` 方法，它透過傳遞 `this` 參數傳遞給 `System.out.println()`，間接地使用 `toString()` 列印類標識符(注意：這裡將 `toString()` 聲明為 `abstract`，以此強制繼承者覆蓋該方法，並防止對 `Shape` 的實例化)。如果某個物件出現在字串表達式中(涉及"+"和字串物件的表達式)，`toString()` 方法就會被自動呼叫，以生成表示該物件的 `String`。每個衍生類都要覆蓋（從 `Object` 繼承來的）`toString()` 方法，這樣 `draw()` 在不同情況下就列印出不同的消息(多態)。
 
-这个例子中，在把 `Shape` 对象放入 `Stream<Shape>` 中时就会进行向上转型(隐式)，但在向上转型的时候也丢失了这些对象的具体类型。对 `stream` 而言，它们只是 `Shape` 对象。
+這個例子中，在把 `Shape` 物件放入 `Stream<Shape>` 中時就會進行向上轉型(隱式)，但在向上轉型的時候也遺失了這些物件的具體類型。對 `stream` 而言，它們只是 `Shape` 物件。
 
-严格来说，`Stream<Shape>` 实际上是把放入其中的所有对象都当做 `Object` 对象来持有，只是取元素时会自动将其类型转为 `Shape`。这也是 RTTI 最基本的使用形式，因为在 Java 中，所有类型转换的正确性检查都是在运行时进行的。这也正是 RTTI 的含义所在：在运行时，识别一个对象的类型。
+嚴格來說，`Stream<Shape>` 實際上是把放入其中的所有物件都當做 `Object` 物件來持有，只是取元素時會自動將其類型轉為 `Shape`。這也是 RTTI 最基本的使用形式，因為在 Java 中，所有類型轉換的正確性檢查都是在執行時進行的。這也正是 RTTI 的含義所在：在執行時，識別一個物件的類型。
 
-另外在这个例子中，类型转换并不彻底：`Object` 被转型为 `Shape` ，而不是 `Circle`、`Square` 或者 `Triangle`。这是因为目前我们只能确保这个 `Stream<Shape>` 保存的都是 `Shape`：
+另外在這個例子中，類型轉換並不徹底：`Object` 被轉型為 `Shape` ，而不是 `Circle`、`Square` 或者 `Triangle`。這是因為目前我們只能確保這個 `Stream<Shape>` 儲存的都是 `Shape`：
 
-- 编译期，`stream` 和 Java 泛型系统确保放入 `stream` 的都是 `Shape` 对象（`Shape` 子类的对象也可视为 `Shape` 的对象），否则编译器会报错；
-- 运行时，自动类型转换确保了从 `stream` 中取出的对象都是 `Shape` 类型。
+- 編譯期，`stream` 和 Java 泛型系統確保放入 `stream` 的都是 `Shape` 物件（`Shape` 子類的物件也可視為 `Shape` 的物件），否則編譯器會報錯；
+- 執行時，自動類型轉換確保了從 `stream` 中取出的物件都是 `Shape` 類型。
 
-接下来就是多态机制的事了，`Shape` 对象实际执行什么样的代码，是由引用所指向的具体对象（`Circle`、`Square` 或者 `Triangle`）决定的。这也符合我们编写代码的一般需求，通常，我们希望大部分代码尽可能少了解对象的具体类型，而是只与对象家族中的一个通用表示打交道（本例中即为 `Shape`）。这样，代码会更容易写，更易读和维护；设计也更容易实现，更易于理解和修改。所以多态是面向对象的基本目标。
+接下來就是多態機制的事了，`Shape` 物件實際執行什麼樣的程式碼，是由引用所指向的具體物件（`Circle`、`Square` 或者 `Triangle`）決定的。這也符合我們編寫程式碼的一般需求，通常，我們希望大部分程式碼儘可能少了解物件的具體類型，而是只與物件家族中的一個通用表示打交道（本例中即為 `Shape`）。這樣，程式碼會更容易寫，更易讀和維護；設計也更容易實現，更易於理解和修改。所以多態是物件導向的基本目標。
 
-但是，有时你会碰到一些编程问题，在这些问题中如果你能知道某个泛化引用的具体类型，就可以把问题轻松解决。例如，假设我们允许用户将某些几何形状高亮显示，现在希望找到屏幕上所有高亮显示的三角形；或者，我们现在需要旋转所有图形，但是想跳过圆形(因为圆形旋转没有意义)。这时我们就希望知道 `Stream<Shape>` 里边的形状具体是什么类型，而 Java 实际上也满足了我们的这种需求。使用 RTTI，我们可以查询某个 `Shape` 引用所指向对象的确切类型，然后选择或者剔除特例。
+但是，有時你會碰到一些編程問題，在這些問題中如果你能知道某個泛化引用的具體類型，就可以把問題輕鬆解決。例如，假設我們允許使用者將某些幾何形狀突顯顯示，現在希望找到螢幕上所有突顯顯示的三角形；或者，我們現在需要旋轉所有圖形，但是想跳過圓形(因為圓形旋轉沒有意義)。這時我們就希望知道 `Stream<Shape>` 裡面的形狀具體是什麼類型，而 Java 實際上也滿足了我們的這種需求。使用 RTTI，我們可以查詢某個 `Shape` 引用所指向物件的確切類型，然後選擇或者剔除特例。
 
 <!-- The Class Object -->
-## Class 对象
+## Class 物件
 
-要理解 RTTI 在 Java 中的工作原理，首先必须知道类型信息在运行时是如何表示的。这项工作是由称为 **`Class`对象** 的特殊对象完成的，它包含了与类有关的信息。实际上，`Class` 对象就是用来创建该类所有"常规"对象的。Java 使用 `Class` 对象来实现 RTTI，即便是类型转换这样的操作都是用 `Class` 对象实现的。不仅如此，`Class` 类还提供了很多使用 RTTI 的其它方式。
+要理解 RTTI 在 Java 中的工作原理，首先必須知道類型訊息在執行時是如何表示的。這項工作是由稱為 **`Class`物件** 的特殊物件完成的，它包含了與類有關的訊息。實際上，`Class` 物件就是用來建立該類所有"一般"物件的。Java 使用 `Class` 物件來實現 RTTI，即便是類型轉換這樣的操作都是用 `Class` 物件實現的。不僅如此，`Class` 類還提供了很多使用 RTTI 的其它方式。
 
-类是程序的一部分，每个类都有一个 `Class` 对象。换言之，每当我们编写并且编译了一个新类，就会产生一个 `Class` 对象（更恰当的说，是被保存在一个同名的 `.class` 文件中）。为了生成这个类的对象，Java 虚拟机 (JVM) 先会调用"类加载器"子系统把这个类加载到内存中。
+類是程式的一部分，每個類都有一個 `Class` 物件。換言之，每當我們編寫並且編譯了一個新類，就會產生一個 `Class` 物件（更恰當的說，是被儲存在一個同名的 `.class` 文件中）。為了生成這個類的物件，Java 虛擬機 (JVM) 先會呼叫"類載入器"子系統把這個類載入到記憶體中。
 
-类加载器子系统可能包含一条类加载器链，但有且只有一个**原生类加载器**，它是 JVM 实现的一部分。原生类加载器加载的是”可信类”（包括 Java API 类）。它们通常是从本地盘加载的。在这条链中，通常不需要添加额外的类加载器，但是如果你有特殊需求（例如以某种特殊的方式加载类，以支持 Web 服务器应用，或者通过网络下载类），也可以挂载额外的类加载器。
+類載入器子系統可能包含一條類載入器鏈，但有且只有一個**原生類載入器**，它是 JVM 實現的一部分。原生類載入器載入的是“可信類”（包括 Java API 類）。它們通常是從本機盤載入的。在這條鏈中，通常不需要添加額外的類載入器，但是如果你有特殊需求（例如以某種特殊的方式載入類，以支援 Web 伺服器應用，或者透過網路下載類），也可以掛載額外的類載入器。
 
-所有的类都是第一次使用时动态加载到 JVM 中的，当程序创建第一个对类的静态成员的引用时，就会加载这个类。
+所有的類都是第一次使用時動態載入到 JVM 中的，當程式建立第一個對類的靜態成員的引用時，就會載入這個類。
 
-> 其实构造器也是类的静态方法，虽然构造器前面并没有 `static` 关键字。所以，使用 `new` 操作符创建类的新对象，这个操作也算作对类的静态成员引用。
+> 其實構造器也是類的靜態方法，雖然構造器前面並沒有 `static` 關鍵字。所以，使用 `new` 操作符建立類的新物件，這個操作也算作對類的靜態成員引用。
 
-因此，Java 程序在它开始运行之前并没有被完全加载，很多部分是在需要时才会加载。这一点与许多传统编程语言不同，动态加载使得 Java 具有一些静态加载语言（如 C++）很难或者根本不可能实现的特性。
+因此，Java 程式在它開始執行之前並沒有被完全載入，很多部分是在需要時才會載入。這一點與許多傳統程式語言不同，動態載入使得 Java 具有一些靜態載入語言（如 C++）很難或者根本不可能實現的特性。
 
-类加载器首先会检查这个类的 `Class` 对象是否已经加载，如果尚未加载，默认的类加载器就会根据类名查找 `.class` 文件（如果有附加的类加载器，这时候可能就会在数据库中或者通过其它方式获得字节码）。这个类的字节码被加载后，JVM 会对其进行验证，确保它没有损坏，并且不包含不良的 Java 代码(这是 Java 安全防范的一种措施)。
+類載入器首先會檢查這個類的 `Class` 物件是否已經載入，如果尚未載入，預設的類載入器就會根據類名尋找 `.class` 文件（如果有附加的類載入器，這時候可能就會在資料庫中或者透過其它方式獲得位元組碼）。這個類的位元組碼被載入後，JVM 會對其進行驗證，確保它沒有損壞，並且不包含不良的 Java 程式碼(這是 Java 安全防範的一種措施)。
 
-一旦某个类的 `Class` 对象被载入内存，它就可以用来创建这个类的所有对象。下面的示范程序可以证明这点：
+一旦某個類的 `Class` 物件被載入記憶體，它就可以用來建立這個類的所有物件。下面的示範程式可以證明這點：
 
 ```java
 // typeinfo/SweetShop.java
-// 检查类加载器工作方式
+// 檢查類載入器工作方式
 class Cookie {
     static { System.out.println("Loading Cookie"); }
 }
@@ -134,7 +134,7 @@ public class SweetShop {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 inside main
@@ -146,25 +146,25 @@ Loading Cookie
 After creating Cookie
 ```
 
-上面的代码中，`Candy`、`Gum` 和 `Cookie` 这几个类都有一个 `static{...}` 静态初始化块，这些静态初始化块在类第一次被加载的时候就会执行。也就是说，静态初始化块会打印出相应的信息，告诉我们这些类分别是什么时候被加载了。而在主方法里边，创建对象的代码都放在了 `print()` 语句之间，以帮助我们判断类加载的时间点。
+上面的程式碼中，`Candy`、`Gum` 和 `Cookie` 這幾個類都有一個 `static{...}` 靜態初始化塊，這些靜態初始化塊在類第一次被載入的時候就會執行。也就是說，靜態初始化塊會列印出相應的訊息，告訴我們這些類分別是什麼時候被載入了。而在主方法裡面，建立物件的程式碼都放在了 `print()` 語句之間，以幫助我們判斷類載入的時間點。
 
-从输出中可以看到，`Class` 对象仅在需要的时候才会被加载，`static` 初始化是在类加载时进行的。
+從輸出中可以看到，`Class` 物件僅在需要的時候才會被載入，`static` 初始化是在類載入時進行的。
 
-代码里面还有特别有趣的一行：
+程式碼裡面還有特別有趣的一行：
 
 ```java
 Class.forName("Gum");
 ```
 
-所有 `Class` 对象都属于 `Class` 类，而且它跟其他普通对象一样，我们可以获取和操控它的引用(这也是类加载器的工作)。`forName()` 是 `Class` 类的一个静态方法，我们可以使用 `forName()` 根据目标类的类名（`String`）得到该类的 `Class` 对象。上面的代码忽略了 `forName()` 的返回值，因为那个调用是为了得到它产生的“副作用”。从结果可以看出，`forName()` 执行的副作用是如果 `Gum` 类没有被加载就加载它，而在加载的过程中，`Gum` 的 `static` 初始化块被执行了。
+所有 `Class` 物件都屬於 `Class` 類，而且它跟其他普通物件一樣，我們可以獲取和操控它的引用(這也是類載入器的工作)。`forName()` 是 `Class` 類的一個靜態方法，我們可以使用 `forName()` 根據目標類的類名（`String`）得到該類的 `Class` 物件。上面的程式碼忽略了 `forName()` 的返回值，因為那個呼叫是為了得到它產生的“副作用”。從結果可以看出，`forName()` 執行的副作用是如果 `Gum` 類沒有被載入就載入它，而在載入的過程中，`Gum` 的 `static` 初始化塊被執行了。
 
-还需要注意的是，如果 `Class.forName()` 找不到要加载的类，它就会抛出异常 `ClassNotFoundException`。上面的例子中我们只是简单地报告了问题，但在更严密的程序里，就要考虑在异常处理程序中把问题解决掉（具体例子详见[设计模式](./25-Patterns)章节）。
+還需要注意的是，如果 `Class.forName()` 找不到要載入的類，它就會拋出異常 `ClassNotFoundException`。上面的例子中我們只是簡單地報告了問題，但在更嚴密的程式裡，就要考慮在異常處理程序中把問題解決掉（具體例子詳見[設計模式](./25-Patterns)章節）。
 
-无论何时，只要你想在运行时使用类型信息，就必须先得到那个 `Class` 对象的引用。`Class.forName()` 就是实现这个功能的一个便捷途径，因为使用该方法你不需要先持有这个类型 的对象。但是，如果你已经拥有了目标类的对象，那就可以通过调用 `getClass()` 方法来获取 `Class` 引用了，这个方法来自根类 `Object`，它将返回表示该对象实际类型的 `Class` 对象的引用。`Class` 包含很多有用的方法，下面代码展示了其中的一部分：
+無論何時，只要你想在執行時使用類型訊息，就必須先得到那個 `Class` 物件的引用。`Class.forName()` 就是實現這個功能的一個便捷途徑，因為使用該方法你不需要先持有這個類型 的物件。但是，如果你已經擁有了目標類的物件，那就可以透過呼叫 `getClass()` 方法來獲取 `Class` 引用了，這個方法來自根類 `Object`，它將返回表示該物件實際類型的 `Class` 物件的引用。`Class` 包含很多有用的方法，下面程式碼展示了其中的一部分：
 
 ```java
 // typeinfo/toys/ToyTest.java
-// 测试 Class 类
+// 測試 Class 類
 // {java typeinfo.toys.ToyTest}
 package typeinfo.toys;
 
@@ -173,7 +173,7 @@ interface Waterproof {}
 interface Shoots {}
 
 class Toy {
-    // 注释下面的无参数构造器会引起 NoSuchMethodError 错误
+    // 注釋下面的無參數構造器會引起 NoSuchMethodError 錯誤
     Toy() {}
     Toy(int i) {}
 }
@@ -225,7 +225,7 @@ public class ToyTest {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Class name: typeinfo.toys.FancyToy is interface?
@@ -248,27 +248,27 @@ Simple name: Toy
 Canonical name : typeinfo.toys.Toy
 ```
 
-`FancyToy` 继承自 `Toy` 并实现了 `HasBatteries`、`Waterproof` 和 `Shoots` 接口。在 `main` 方法中，我们创建了一个 `Class` 引用，然后在 `try` 语句里边用 `forName()` 方法创建了一个 `FancyToy` 的类对象并赋值给该引用。需要注意的是，传递给 `forName()` 的字符串必须使用类的全限定名（包含包名）。
+`FancyToy` 繼承自 `Toy` 並實現了 `HasBatteries`、`Waterproof` 和 `Shoots` 介面。在 `main` 方法中，我們建立了一個 `Class` 引用，然後在 `try` 語句裡面用 `forName()` 方法建立了一個 `FancyToy` 的類物件並賦值給該引用。需要注意的是，傳遞給 `forName()` 的字串必須使用類的全限定名（包含包名）。
 
-`printInfo()` 函数使用 `getName()` 来产生完整类名，使用 `getSimpleName()` 产生不带包名的类名，`getCanonicalName()` 也是产生完整类名（除内部类和数组外，对大部分类产生的结果与 `getName()` 相同）。`isInterface()` 用于判断某个 `Class` 对象代表的是否为一个接口。因此，通过 `Class` 对象，你可以得到关于该类型的所有信息。
+`printInfo()` 函數使用 `getName()` 來產生完整類名，使用 `getSimpleName()` 產生不帶包名的類名，`getCanonicalName()` 也是產生完整類名（除內部類和陣列外，對大部分類產生的結果與 `getName()` 相同）。`isInterface()` 用於判斷某個 `Class` 物件代表的是否為一個介面。因此，通過 `Class` 物件，你可以得到關於該類型的所有訊息。
 
-在主方法中调用的 `Class.getInterfaces()` 方法返回的是存放 `Class` 对象的数组，里面的 `Class` 对象表示的是那个类实现的接口。
+在主方法中呼叫的 `Class.getInterfaces()` 方法返回的是存放 `Class` 物件的陣列，裡面的 `Class` 物件表示的是那個類實現的介面。
 
-另外，你还可以调用 `getSuperclass()` 方法来得到父类的 `Class` 对象，再用父类的 `Class` 对象调用该方法，重复多次，你就可以得到一个对象完整的类继承结构。
+另外，你還可以呼叫 `getSuperclass()` 方法來得到父類的 `Class` 物件，再用父類的 `Class` 物件呼叫該方法，重複多次，你就可以得到一個物件完整的類繼承結構。
 
-`Class` 对象的 `newInstance()` 方法是实现“虚拟构造器”的一种途径，虚拟构造器可以让你在不知道一个类的确切类型的时候，创建这个类的对象。在前面的例子中，`up` 只是一个 `Class` 对象的引用，在编译期并不知道这个引用会指向哪个类的 `Class` 对象。当你创建新实例时，会得到一个 `Object` 引用，但是这个引用指向的是 `Toy` 对象。当然，由于得到的是 `Object` 引用，目前你只能给它发送 `Object` 对象能够接受的调用。而如果你想请求具体对象才有的调用，你就得先获取该对象更多的类型信息，并执行某种转型。另外，使用 `newInstance()` 来创建的类，必须带有无参数的构造器。在本章稍后部分，你将会看到如何通过 Java 的反射 API，用任意的构造器来动态地创建类的对象。
+`Class` 物件的 `newInstance()` 方法是實現“虛擬構造器”的一種途徑，虛擬構造器可以讓你在不知道一個類的確切類型的時候，建立這個類的物件。在前面的例子中，`up` 只是一個 `Class` 物件的引用，在編譯期並不知道這個引用會指向哪個類的 `Class` 物件。當你建立新實例時，會得到一個 `Object` 引用，但是這個引用指向的是 `Toy` 物件。當然，由於得到的是 `Object` 引用，目前你只能給它發送 `Object` 物件能夠接受的呼叫。而如果你想請求具體物件才有的呼叫，你就得先獲取該物件更多的類型訊息，並執行某種轉型。另外，使用 `newInstance()` 來建立的類，必須帶有無參數的構造器。在本章稍後部分，你將會看到如何透過 Java 的反射 API，用任意的構造器來動態地建立類的物件。
 
-### 类字面常量
+### 類字面常量
 
-Java 还提供了另一种方法来生成类对象的引用：**类字面常量**。对上述程序来说，就像这样：`FancyToy.class;`。这样做不仅更简单，而且更安全，因为它在编译时就会受到检查（因此不必放在 `try` 语句块中）。并且它根除了对 `forName()` 方法的调用，所以效率更高。
+Java 還提供了另一種方法來生成類物件的引用：**類字面常量**。對上述程式來說，就像這樣：`FancyToy.class;`。這樣做不僅更簡單，而且更安全，因為它在編譯時就會受到檢查（因此不必放在 `try` 語句塊中）。並且它根除了對 `forName()` 方法的呼叫，所以效率更高。
 
-类字面常量不仅可以应用于普通类，也可以应用于接口、数组以及基本数据类型。另外，对于基本数据类型的包装类，还有一个标准字段 `TYPE`。`TYPE` 字段是一个引用，指向对应的基本数据类型的 `Class` 对象，如下所示：
+類字面常量不僅可以應用於普通類，也可以應用於介面、陣列以及基本資料類型。另外，對於基本資料類型的包裝類，還有一個標準欄位 `TYPE`。`TYPE` 欄位是一個引用，指向對應的基本資料類型的 `Class` 物件，如下所示：
 
 <figure>
 <table style="text-align:center;">
   <thead>
     <tr>
-      <th colspan="2">...等价于...</th>
+      <th colspan="2">...等價於...</th>
     </tr>
   </thead>
   <tbody>
@@ -312,17 +312,17 @@ Java 还提供了另一种方法来生成类对象的引用：**类字面常量*
 </table>
 </figure>
 
-我的建议是使用 `.class` 的形式，以保持与普通类的一致性。
+我的建議是使用 `.class` 的形式，以保持與普通類的一致性。
 
-注意，有一点很有趣：当使用 `.class` 来创建对 `Class` 对象的引用时，不会自动地初始化该 `Class` 对象。为了使用类而做的准备工作实际包含三个步骤：
+注意，有一點很有趣：當使用 `.class` 來建立對 `Class` 物件的引用時，不會自動地初始化該 `Class` 物件。為了使用類而做的準備工作實際包含三個步驟：
 
-1. **加载**，这是由类加载器执行的。该步骤将查找字节码（通常在 classpath 所指定的路径中查找，但这并非是必须的），并从这些字节码中创建一个 `Class` 对象。
+1. **載入**，這是由類載入器執行的。該步驟將尋找位元組碼（通常在 classpath 所指定的路徑中尋找，但這並非是必須的），並從這些位元組碼中建立一個 `Class` 物件。
 
-2. **链接**。在链接阶段将验证类中的字节码，为 `static` 字段分配存储空间，并且如果需要的话，将解析这个类创建的对其他类的所有引用。
+2. **連結**。在連結階段將驗證類中的位元組碼，為 `static` 欄位分配儲存空間，並且如果需要的話，將解析這個類建立的對其他類的所有引用。
 
-3. **初始化**。如果该类具有超类，则先初始化超类，执行 `static` 初始化器和 `static` 初始化块。
+3. **初始化**。如果該類具有超類，則先初始化超類，執行 `static` 初始化器和 `static` 初始化塊。
 
-直到第一次引用一个 `static` 方法（构造器隐式地是 `static`）或者非常量的 `static` 字段，才会进行类初始化。
+直到第一次引用一個 `static` 方法（構造器隱式地是 `static`）或者非常量的 `static` 欄位，才會進行類初始化。
 
 ```java
 // typeinfo/ClassInitialization.java
@@ -370,7 +370,7 @@ public class ClassInitialization {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 After creating Initable ref
@@ -384,19 +384,19 @@ After creating Initable3 ref
 74
 ```
 
-初始化有效地实现了尽可能的“惰性”，从对 `initable` 引用的创建中可以看到，仅使用 `.class` 语法来获得对类对象的引用不会引发初始化。但与此相反，使用 `Class.forName()` 来产生 `Class` 引用会立即就进行初始化，如 `initable3`。
+初始化有效地實現了儘可能的“惰性”，從對 `initable` 引用的建立中可以看到，僅使用 `.class` 語法來獲得對類物件的引用不會引發初始化。但與此相反，使用 `Class.forName()` 來產生 `Class` 引用會立即就進行初始化，如 `initable3`。
 
-如果一个 `static final` 值是“编译期常量”（如 `Initable.staticFinal`），那么这个值不需要对 `Initable` 类进行初始化就可以被读取。但是，如果只是将一个字段设置成为 `static` 和 `final`，还不足以确保这种行为。例如，对 `Initable.staticFinal2` 的访问将强制进行类的初始化，因为它不是一个编译期常量。
+如果一個 `static final` 值是“編譯期常量”（如 `Initable.staticFinal`），那麼這個值不需要對 `Initable` 類進行初始化就可以被讀取。但是，如果只是將一個欄位設定成為 `static` 和 `final`，還不足以確保這種行為。例如，對 `Initable.staticFinal2` 的訪問將強制進行類的初始化，因為它不是一個編譯期常量。
 
-如果一个 `static` 字段不是 `final` 的，那么在对它访问时，总是要求在它被读取之前，要先进行链接（为这个字段分配存储空间）和初始化（初始化该存储空间），就像在对 `Initable2.staticNonFinal` 的访问中所看到的那样。
+如果一個 `static` 欄位不是 `final` 的，那麼在對它訪問時，總是要求在它被讀取之前，要先進行連結（為這個欄位分配儲存空間）和初始化（初始化該儲存空間），就像在對 `Initable2.staticNonFinal` 的訪問中所看到的那樣。
 
 ### 泛化的 `Class` 引用
 
-`Class` 引用总是指向某个 `Class` 对象，而 `Class` 对象可以用于产生类的实例，并且包含可作用于这些实例的所有方法代码。它还包含该类的 `static` 成员，因此 `Class` 引用表明了它所指向对象的确切类型，而该对象便是 `Class` 类的一个对象。
+`Class` 引用總是指向某個 `Class` 物件，而 `Class` 物件可以用於產生類的實例，並且包含可作用於這些實例的所有方法程式碼。它還包含該類的 `static` 成員，因此 `Class` 引用表明了它所指向物件的確切類型，而該物件便是 `Class` 類的一個物件。
 
-<!-- > 译者的理解： `Class` 对象是 `Class` 类产生的对象，而再往深一点说，`Class` 类的 `Class` 对象（`Class.class`）也是其本类产生的对象。即一切皆对象，类也是一种对象。 -->
+<!-- > 譯者的理解： `Class` 物件是 `Class` 類產生的物件，而再往深一點說，`Class` 類的 `Class` 物件（`Class.class`）也是其本類產生的物件。即一切皆物件，類也是一種物件。 -->
 
-但是，Java 设计者看准机会，将它的类型变得更具体了一些。Java 引入泛型语法之后，我们可以使用泛型对 `Class` 引用所指向的 `Class` 对象的类型进行限定。在下面的实例中，两种语法都是正确的：
+但是，Java 設計者看準機會，將它的類型變得更具體了一些。Java 引入泛型語法之後，我們可以使用泛型對 `Class` 引用所指向的 `Class` 物件的類型進行限定。在下面的實例中，兩種語法都是正確的：
 
 ```java
 // typeinfo/GenericClassReferences.java
@@ -405,24 +405,24 @@ public class GenericClassReferences {
     public static void main(String[] args) {
         Class intClass = int.class;
         Class<Integer> genericIntClass = int.class;
-        genericIntClass = Integer.class; // 同一个东西
+        genericIntClass = Integer.class; // 同一個東西
         intClass = double.class;
         // genericIntClass = double.class; // 非法
     }
 }
 ```
 
-普通的类引用不会产生警告信息。你可以看到，普通的类引用可以重新赋值指向任何其他的 `Class` 对象，但是使用泛型限定的类引用只能指向其声明的类型。通过使用泛型语法，我们可以让编译器强制执行额外的类型检查。
+普通的類引用不會產生警告訊息。你可以看到，普通的類引用可以重新賦值指向任何其他的 `Class` 物件，但是使用泛型限定的類引用只能指向其聲明的類型。透過使用泛型語法，我們可以讓編譯器強制執行額外的類型檢查。
 
-那如果我们希望稍微放松一些限制，应该怎么办呢？乍一看，下面的操作好像是可以的：
+那如果我們希望稍微放鬆一些限制，應該怎麼辦呢？乍一看，下面的操作好像是可以的：
 
 ```java
 Class<Number> geenericNumberClass = int.class;
 ```
 
-这看起来似乎是起作用的，因为 `Integer` 继承自 `Number`。但事实却是不行，因为 `Integer` 的 `Class` 对象并不是 `Number`的 `Class` 对象的子类（这看起来可能有点诡异，我们将在[泛型](./20-Generics)这一章详细讨论）。
+這看起來似乎是起作用的，因為 `Integer` 繼承自 `Number`。但事實卻是不行，因為 `Integer` 的 `Class` 物件並不是 `Number`的 `Class` 物件的子類（這看起來可能有點詭異，我們將在[泛型](./20-Generics)這一章詳細討論）。
 
-为了在使用 `Class` 引用时放松限制，我们使用了通配符，它是 Java 泛型中的一部分。通配符就是 `?`，表示“任何事物”。因此，我们可以在上例的普通 `Class` 引用中添加通配符，并产生相同的结果：
+為了在使用 `Class` 引用時放鬆限制，我們使用了萬用字元，它是 Java 泛型中的一部分。萬用字元就是 `?`，表示“任何事物”。因此，我們可以在上例的普通 `Class` 引用中添加萬用字元，並產生相同的結果：
 
 ```java
 // typeinfo/WildcardClassReferences.java
@@ -435,9 +435,9 @@ public class WildcardClassReferences {
 }
 ```
 
-使用 `Class<?>` 比单纯使用 `Class` 要好，虽然它们是等价的，并且单纯使用 `Class` 不会产生编译器警告信息。使用 `Class<?>` 的好处是它表示你并非是碰巧或者由于疏忽才使用了一个非具体的类引用，而是特意为之。
+使用 `Class<?>` 比單純使用 `Class` 要好，雖然它們是等價的，並且單純使用 `Class` 不會產生編譯器警告訊息。使用 `Class<?>` 的好處是它表示你並非是碰巧或者由於疏忽才使用了一個非具體的類引用，而是特地為之。
 
-为了创建一个限定指向某种类型或其子类的 `Class` 引用，我们需要将通配符与 `extends` 关键字配合使用，创建一个范围限定。这与仅仅声明 `Class<Number>` 不同，现在做如下声明：
+為了建立一個限定指向某種類型或其子類的 `Class` 引用，我們需要將萬用字元與 `extends` 關鍵字配合使用，建立一個範圍限定。這與僅僅聲明 `Class<Number>` 不同，現在做如下聲明：
 
 ```java
 // typeinfo/BoundedClassReferences.java
@@ -452,9 +452,9 @@ public class BoundedClassReferences {
 }
 ```
 
-向 `Class` 引用添加泛型语法的原因只是为了提供编译期类型检查，因此如果你操作有误，稍后就会发现这点。使用普通的 `Class` 引用你要确保自己不会犯错，因为一旦你犯了错误，就要等到运行时才能发现它，很不方便。
+向 `Class` 引用添加泛型語法的原因只是為了提供編譯期類型檢查，因此如果你操作有誤，稍後就會發現這點。使用普通的 `Class` 引用你要確保自己不會犯錯，因為一旦你犯了錯誤，就要等到執行時才能發現它，很不方便。
 
-下面的示例使用了泛型语法，它保存了一个类引用，稍后又用 `newInstance()` 方法产生类的对象：
+下面的範例使用了泛型語法，它儲存了一個類引用，稍後又用 `newInstance()` 方法產生類的物件：
 
 ```java
 // typeinfo/DynamicSupplier.java
@@ -491,7 +491,7 @@ public class DynamicSupplier<T> implements Supplier<T> {
 }
 ```
 
-输出结果:
+輸出結果:
 
 ```
 10
@@ -501,13 +501,13 @@ public class DynamicSupplier<T> implements Supplier<T> {
 14
 ```
 
-注意，这个类必须假设与它一起工作的任何类型都有一个无参构造器，否则运行时会抛出异常。编译期对该程序不会产生任何警告信息。
+注意，這個類必須假設與它一起工作的任何類型都有一個無參構造器，否則執行時會拋出異常。編譯期對該程式不會產生任何警告訊息。
 
-当你将泛型语法用于 `Class` 对象时，`newInstance()` 将返回该对象的确切类型，而不仅仅只是在 `ToyTest.java` 中看到的基类 `Object`。然而，这在某种程度上有些受限：
+當你將泛型語法用於 `Class` 物件時，`newInstance()` 將返回該物件的確切類型，而不僅僅只是在 `ToyTest.java` 中看到的基類 `Object`。然而，這在某種程度上有些受限：
 
 ```java
 // typeinfo/toys/GenericToyTest.java
-// 测试 Class 类
+// 測試 Class 類
 // {java typeinfo.toys.GenericToyTest}
 package typeinfo.toys;
 
@@ -527,11 +527,11 @@ public class GenericToyTest {
 }
 ```
 
-如果你手头的是超类，那编译器将只允许你声明超类引用为“某个类，它是 `FancyToy` 的超类”，就像在表达式 `Class<? super FancyToy>` 中所看到的那样。而不会接收 `Class<Toy>` 这样的声明。这看上去显得有些怪，因为 `getSuperClass()` 方法返回的是基类（不是接口），并且编译器在编译期就知道它是什么类型了（在本例中就是 `Toy.class`），而不仅仅只是"某个类"。不管怎样，正是由于这种含糊性，`up.newInstance` 的返回值不是精确类型，而只是 `Object`。
+如果你手頭的是超類，那編譯器將只允許你聲明超類引用為“某個類，它是 `FancyToy` 的超類”，就像在表達式 `Class<? super FancyToy>` 中所看到的那樣。而不會接收 `Class<Toy>` 這樣的聲明。這看起來顯得有些怪，因為 `getSuperClass()` 方法返回的是基類（不是介面），並且編譯器在編譯期就知道它是什麼類型了（在本例中就是 `Toy.class`），而不僅僅只是"某個類"。不管怎樣，正是由於這種含糊性，`up.newInstance` 的返回值不是精確類型，而只是 `Object`。
 
 ### `cast()` 方法
 
-Java 中还有用于 `Class` 引用的转型语法，即 `cast()` 方法：
+Java 中還有用於 `Class` 引用的轉型語法，即 `cast()` 方法：
 
 ```java
 // typeinfo/ClassCasts.java
@@ -544,39 +544,39 @@ public class ClassCasts {
         Building b = new House();
         Class<House> houseType = House.class;
         House h = houseType.cast(b);
-        h = (House)b; // ... 或者这样做.
+        h = (House)b; // ... 或者這樣做.
     }
 }
 ```
 
-`cast()` 方法接受参数对象，并将其类型转换为 `Class` 引用的类型。但是，如果观察上面的代码，你就会发现，与实现了相同功能的 `main` 方法中最后一行相比，这种转型好像做了很多额外的工作。
+`cast()` 方法接受參數物件，並將其類型轉換為 `Class` 引用的類型。但是，如果觀察上面的程式碼，你就會發現，與實現了相同功能的 `main` 方法中最後一行相比，這種轉型好像做了很多額外的工作。
 
-`cast()` 在无法使用普通类型转换的情况下会显得非常有用，在你编写泛型代码（你将在[泛型](./20-Generics)这一章学习到）时，如果你保存了 `Class` 引用，并希望以后通过这个引用来执行转型，你就需要用到 `cast()`。但事实却是这种情况非常少见，我发现整个 Java 类库中，只有一处使用了 `cast()`（在 `com.sun.mirror.util.DeclarationFilter` 中）。
+`cast()` 在無法使用普通類型轉換的情況下會顯得非常有用，在你編寫泛型程式碼（你將在[泛型](./20-Generics)這一章學習到）時，如果你儲存了 `Class` 引用，並希望以後透過這個引用來執行轉型，你就需要用到 `cast()`。但事實卻是這種情況非常少見，我發現整個 Java 類庫中，只有一處使用了 `cast()`（在 `com.sun.mirror.util.DeclarationFilter` 中）。
 
-Java 类库中另一个没有任何用处的特性就是 `Class.asSubclass()`，该方法允许你将一个 `Class` 对象转型为更加具体的类型。
+Java 類庫中另一個沒有任何用處的特性就是 `Class.asSubclass()`，該方法允許你將一個 `Class` 物件轉型為更加具體的類型。
 
-## 类型转换检测
+## 類型轉換檢測
 
-直到现在，我们已知的 RTTI 类型包括：
+直到現在，我們已知的 RTTI 類型包括：
 
-1.  传统的类型转换，如 “`(Shape)`”，由 RTTI 确保转换的正确性，如果执行了一个错误的类型转换，就会抛出一个 `ClassCastException` 异常。
+1.  傳統的類型轉換，如 “`(Shape)`”，由 RTTI 確保轉換的正確性，如果執行了一個錯誤的類型轉換，就會拋出一個 `ClassCastException` 異常。
 
-2.  代表对象类型的 `Class` 对象. 通过查询 `Class` 对象可以获取运行时所需的信息.
+2.  代表物件類型的 `Class` 物件. 透過查詢 `Class` 物件可以獲取執行時所需的訊息.
 
-在 C++ 中，经典的类型转换 “`(Shape)`” 并不使用 RTTI。它只是简单地告诉编译器将这个对象作为新的类型对待. 而 Java 会进行类型检查，这种类型转换一般被称作“类型安全的向下转型”。之所以称作“向下转型”，是因为传统上类继承图是这么画的。将 `Circle` 转换为 `Shape` 是一次向上转型, 将 `Shape` 转换为 `Circle` 是一次向下转型。但是, 因为我们知道 `Circle` 肯定是一个 `Shape`，所以编译器允许我们自由地做向上转型的赋值操作，且不需要任何显式的转型操作。当你给编译器一个 `Shape` 的时候，编译器并不知道它到底是什么类型的 `Shape`——它可能是 `Shape`，也可能是 `Shape` 的子类型，例如 `Circle`、`Square`、`Triangle` 或某种其他的类型。在编译期，编译器只能知道它是 `Shape`。因此，你需要使用显式地进行类型转换，以告知编译器你想转换的特定类型，否则编译器就不允许你执行向下转型赋值。 （编译器将会检查向下转型是否合理，因此它不允许向下转型到实际不是待转型类型的子类类型上）。
+在 C++ 中，經典的類型轉換 “`(Shape)`” 並不使用 RTTI。它只是簡單地告訴編譯器將這個物件作為新的類型對待. 而 Java 會進行類型檢查，這種類型轉換一般被稱作“類型安全的向下轉型”。之所以稱作“向下轉型”，是因為傳統上類繼承圖是這麼畫的。將 `Circle` 轉換為 `Shape` 是一次向上轉型, 將 `Shape` 轉換為 `Circle` 是一次向下轉型。但是, 因為我們知道 `Circle` 肯定是一個 `Shape`，所以編譯器允許我們自由地做向上轉型的賦值操作，且不需要任何顯式的轉型操作。當你給編譯器一個 `Shape` 的時候，編譯器並不知道它到底是什麼類型的 `Shape`——它可能是 `Shape`，也可能是 `Shape` 的子類型，例如 `Circle`、`Square`、`Triangle` 或某種其他的類型。在編譯期，編譯器只能知道它是 `Shape`。因此，你需要使用顯式地進行類型轉換，以告知編譯器你想轉換的特定類型，否則編譯器就不允許你執行向下轉型賦值。 （編譯器將會檢查向下轉型是否合理，因此它不允許向下轉型到實際不是待轉型類型的子類類型上）。
 
-RTTI 在 Java 中还有第三种形式，那就是关键字 `instanceof`。它返回一个布尔值，告诉我们对象是不是某个特定类型的实例，可以用提问的方式使用它，就像这个样子：
+RTTI 在 Java 中還有第三種形式，那就是關鍵字 `instanceof`。它返回一個布林值，告訴我們物件是不是某個特定類型的實例，可以用提問的方式使用它，就像這個樣子：
 
 ```java
 if(x instanceof Dog)
     ((Dog)x).bark();
 ```
 
-在将 `x` 的类型转换为 `Dog` 之前，`if` 语句会先检查 `x` 是否是 `Dog` 类型的对象。进行向下转型前，如果没有其他信息可以告诉你这个对象是什么类型，那么使用 `instanceof` 是非常重要的，否则会得到一个 `ClassCastException` 异常。
+在將 `x` 的類型轉換為 `Dog` 之前，`if` 語句會先檢查 `x` 是否是 `Dog` 類型的物件。進行向下轉型前，如果沒有其他訊息可以告訴你這個物件是什麼類型，那麼使用 `instanceof` 是非常重要的，否則會得到一個 `ClassCastException` 異常。
 
-一般，可能想要查找某种类型（比如要找三角形，并填充为紫色），这时可以轻松地使用 `instanceof` 来度量所有对象。举个例子，假如你有一个类的继承体系，描述了 `Pet`（以及它们的主人，在后面一个例子中会用到这个特性）。在这个继承体系中的每个 `Individual` 都有一个 `id` 和一个可选的名字。尽管下面的类都继承自 `Individual`，但是 `Individual` 类复杂性较高，因此其代码将放在[附录：容器](./Appendix-Collection-Topics)中进行解释说明。正如你所看到的，此处并不需要去了解 `Individual` 的代码——你只需了解你可以创建其具名或不具名的对象，并且每个 `Individual` 都有一个 `id()` 方法，如果你没有为 `Individual` 提供名字，`toString()` 方法只产生类型名。
+一般，可能想要尋找某種類型（比如要找三角形，並填充為紫色），這時可以輕鬆地使用 `instanceof` 來度量所有物件。舉個例子，假如你有一個類的繼承體系，描述了 `Pet`（以及它們的主人，在後面一個例子中會用到這個特性）。在這個繼承體系中的每個 `Individual` 都有一個 `id` 和一個可選的名字。儘管下面的類都繼承自 `Individual`，但是 `Individual` 類複雜性較高，因此其程式碼將放在[附錄：容器](./Appendix-Collection-Topics)中進行解釋說明。正如你所看到的，此處並不需要去了解 `Individual` 的程式碼——你只需了解你可以建立其具名或不具名的物件，並且每個 `Individual` 都有一個 `id()` 方法，如果你沒有為 `Individual` 提供名字，`toString()` 方法只產生類型名。
 
-下面是继承自 `Individual` 的类的继承体系：
+下面是繼承自 `Individual` 的類的繼承體系：
 
 ```java
 // typeinfo/pets/Person.java
@@ -708,9 +708,9 @@ public class Hamster extends Rodent {
 }
 ```
 
-我们必须显式地为每一个子类编写无参构造器。因为我们有一个带一个参数的构造器，所以编译器不会自动地为我们加上无参构造器。
+我們必須顯式地為每一個子類編寫無參構造器。因為我們有一個帶一個參數的構造器，所以編譯器不會自動地為我們加上無參構造器。
 
-接下来，我们需要一个类，它可以随机地创建不同类型的宠物，同时，它还可以创建宠物数组和持有宠物的 `List`。为了使这个类更加普遍适用，我们将其定义为抽象类：
+接下來，我們需要一個類，它可以隨機地建立不同類型的寵物，同時，它還可以建立寵物陣列和持有寵物的 `List`。為了使這個類更加普遍適用，我們將其定義為抽象類：
 
 ```java
 // typeinfo/pets/PetCreator.java
@@ -737,11 +737,11 @@ public abstract class PetCreator implements Supplier<Pet> {
 }
 ```
 
-抽象的 `types()` 方法需要子类来实现，以此来获取 `Class` 对象构成的 `List`（这是模板方法设计模式的一种变体）。注意，其中类的类型被定义为“任何从 `Pet` 导出的类型”，因此 `newInstance()` 不需要转型就可以产生 `Pet`。`get()` 随机的选取出一个 `Class` 对象，然后可以通过 `Class.newInstance()` 来生成该类的新实例。
+抽象的 `types()` 方法需要子類來實現，以此來獲取 `Class` 物件構成的 `List`（這是模板方法設計模式的一種變體）。注意，其中類的類型被定義為“任何從 `Pet` 匯出的類型”，因此 `newInstance()` 不需要轉型就可以產生 `Pet`。`get()` 隨機的選取出一個 `Class` 物件，然後可以透過 `Class.newInstance()` 來生成該類的新實例。
 
-在调用 `newInstance()` 时，可能会出现两种异常。在紧跟 `try` 语句块后面的 `catch` 子句中可以看到对它们的处理。异常的名字再次成为了一种对错误类型相对比较有用的解释（`IllegalAccessException` 违反了 Java 安全机制，在本例中，表示默认构造器为 `private` 的情况）。
+在呼叫 `newInstance()` 時，可能會出現兩種異常。在緊跟 `try` 語句塊後面的 `catch` 子句中可以看到對它們的處理。異常的名字再次成為了一種對錯誤類型相對比較有用的解釋（`IllegalAccessException` 違反了 Java 安全機制，在本例中，表示預設構造器為 `private` 的情況）。
 
-当你创建 `PetCreator` 的子类时，你需要为 `get()` 方法提供 `Pet` 类型的 `List`。`types()` 方法会简单地返回一个静态 `List` 的引用。下面是使用 `forName()` 的一个具体实现：
+當你建立 `PetCreator` 的子類時，你需要為 `get()` 方法提供 `Pet` 類型的 `List`。`types()` 方法會簡單地返回一個靜態 `List` 的引用。下面是使用 `forName()` 的一個具體實現：
 
 ```java
 // typeinfo/pets/ForNameCreator.java
@@ -751,7 +751,7 @@ import java.util.*;
 public class ForNameCreator extends PetCreator {
     private static List<Class<? extends Pet>> types =
             new ArrayList<>();
-    // 需要随机生成的类型名:
+    // 需要隨機生成的類型名:
     private static String[] typeNames = {
             "typeinfo.pets.Mutt",
             "typeinfo.pets.Pug",
@@ -785,11 +785,11 @@ public class ForNameCreator extends PetCreator {
 }
 ```
 
-`loader()` 方法使用 `Class.forName()` 创建了 `Class` 对象的 `List`。这可能会导致 `ClassNotFoundException` 异常，因为你传入的是一个 `String` 类型的参数，它不能在编译期间被确认是否合理。由于 `Pet` 相关的文件在 `typeinfo` 包里面，所以使用它们的时候需要填写完整的包名。
+`loader()` 方法使用 `Class.forName()` 建立了 `Class` 物件的 `List`。這可能會導致 `ClassNotFoundException` 異常，因為你傳入的是一個 `String` 類型的參數，它不能在編譯期間被確認是否合理。由於 `Pet` 相關的文件在 `typeinfo` 包裡面，所以使用它們的時候需要填寫完整的包名。
 
-为了使得 `List` 装入的是具体的 `Class` 对象，类型转换是必须的，它会产生一个编译时警告。`loader()` 方法是分开编写的，然后它被放入到一个静态代码块里，因为 `@SuppressWarning` 注解不能够直接放置在静态代码块之上。
+為了使得 `List` 裝入的是具體的 `Class` 物件，類型轉換是必須的，它會產生一個編譯時警告。`loader()` 方法是分開編寫的，然後它被放入到一個靜態程式碼塊裡，因為 `@SuppressWarning` 註解不能夠直接放置在靜態程式碼塊之上。
 
-为了对 `Pet` 进行计数，我们需要一个能跟踪不同类型的 `Pet` 的工具。`Map` 是这个需求的首选，我们将 `Pet` 类型名作为键，将保存 `Pet` 数量的 `Integer` 作为值。通过这种方式，你就可以询问：“有多少个 `Hamster` 对象？”我们可以使用 `instanceof` 来对 `Pet` 进行计数：
+為了對 `Pet` 進行計數，我們需要一個能跟蹤不同類型的 `Pet` 的工具。`Map` 是這個需求的首選，我們將 `Pet` 類型名作為鍵，將儲存 `Pet` 數量的 `Integer` 作為值。透過這種方式，你就可以詢問：“有多少個 `Hamster` 物件？”我們可以使用 `instanceof` 來對 `Pet` 進行計數：
 
 ```java
 // typeinfo/PetCount.java
@@ -851,7 +851,7 @@ public class PetCount {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Rat Manx Cymric Mutt Pug Cymric Pug Manx Cymric Rat
@@ -861,23 +861,23 @@ Pug Mouse Cymric
 Manx=7, Rodent=5, Mutt=3, Dog=6, Pet=20, Hamster=1}
 ```
 
-在 `countPets()` 中，一个简短的静态方法 `Pets.array()` 生产出了一个随机动物的集合。每个 `Pet` 都被 `instanceof` 检测到并计算了一遍。
+在 `countPets()` 中，一個簡短的靜態方法 `Pets.array()` 生產出了一個隨機動物的集合。每個 `Pet` 都被 `instanceof` 檢測到並計算了一遍。
 
-`instanceof` 有一个严格的限制：只可以将它与命名类型进行比较，而不能与 `Class` 对象作比较。在前面的例子中，你可能会觉得写出一大堆 `instanceof` 表达式很乏味，事实也是如此。但是，也没有办法让 `instanceof` 聪明起来，让它能够自动地创建一个 `Class` 对象的数组，然后将目标与这个数组中的对象逐一进行比较（稍后会看到一种替代方案）。其实这并不是那么大的限制，如果你在程序中写了大量的 `instanceof`，那就说明你的设计可能存在瑕疵。
+`instanceof` 有一個嚴格的限制：只可以將它與命名類型進行比較，而不能與 `Class` 物件作比較。在前面的例子中，你可能會覺得寫出一大堆 `instanceof` 表達式很乏味，事實也是如此。但是，也沒有辦法讓 `instanceof` 聰明起來，讓它能夠自動地建立一個 `Class` 物件的陣列，然後將目標與這個陣列中的物件逐一進行比較（稍後會看到一種替代方案）。其實這並不是那麼大的限制，如果你在程式中寫了大量的 `instanceof`，那就說明你的設計可能存在瑕疵。
 
-### 使用类字面量
+### 使用類字面量
 
-如果我们使用类字面量重新实现 `PetCreator` 类的话，其结果在很多方面都会更清晰：
+如果我們使用類字面量重新實現 `PetCreator` 類的話，其結果在很多方面都會更清晰：
 
 ```java
 // typeinfo/pets/LiteralPetCreator.java
-// 使用类字面量
+// 使用類字面量
 // {java typeinfo.pets.LiteralPetCreator}
 package typeinfo.pets;
 import java.util.*;
 
 public class LiteralPetCreator extends PetCreator {
-    // try 代码块不再需要
+    // try 程式碼塊不再需要
     @SuppressWarnings("unchecked")
     public static final List<Class<? extends Pet>> ALL_TYPES =
             Collections.unmodifiableList(Arrays.asList(
@@ -885,7 +885,7 @@ public class LiteralPetCreator extends PetCreator {
                     Mutt.class, Pug.class, EgyptianMau.class,
                     Manx.class, Cymric.class, Rat.class,
                     Mouse.class, Hamster.class));
-    // 用于随机创建的类型:
+    // 用於隨機建立的類型:
     private static final List<Class<? extends Pet>> TYPES =
             ALL_TYPES.subList(ALL_TYPES.indexOf(Mutt.class),
                     ALL_TYPES.size());
@@ -901,7 +901,7 @@ public class LiteralPetCreator extends PetCreator {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 [class typeinfo.pets.Mutt, class typeinfo.pets.Pug,
@@ -912,11 +912,11 @@ typeinfo.pets.Hamster]
 ```
 
 
-在即将到来的 `PetCount3.java` 示例中，我们用所有 `Pet` 类型预先加载一个 `Map`（不仅仅是随机生成的），因此 `ALL_TYPES` 类型的列表是必要的。`types` 列表是 `ALL_TYPES` 类型（使用 `List.subList()` 创建）的一部分，它包含精确的宠物类型，因此用于随机生成 `Pet`。
+在即將到來的 `PetCount3.java` 範例中，我們用所有 `Pet` 類型預先載入一個 `Map`（不僅僅是隨機生成的），因此 `ALL_TYPES` 類型的列表是必要的。`types` 列表是 `ALL_TYPES` 類型（使用 `List.subList()` 建立）的一部分，它包含精確的寵物類型，因此用於隨機生成 `Pet`。
 
-这次，`types` 的创建没有被 `try` 块包围，因为它是在编译时计算的，因此不会引发任何异常，不像 `Class.forName()`。
+這次，`types` 的建立沒有被 `try` 塊包圍，因為它是在編譯時計算的，因此不會引發任何異常，不像 `Class.forName()`。
 
-我们现在在 `typeinfo.pets` 库中有两个 `PetCreator` 的实现。为了提供第二个作为默认实现，我们可以创建一个使用 `LiteralPetCreator` 的 *外观模式*：
+我們現在在 `typeinfo.pets` 庫中有兩個 `PetCreator` 的實現。為了提供第二個作為預設實現，我們可以建立一個使用 `LiteralPetCreator` 的 *外觀模式*：
 
 ```java
 // typeinfo/pets/Pets.java
@@ -952,9 +952,9 @@ public class Pets {
 }
 ```
 
-这还提供了对 `get()`、`array()` 和 `list()` 的间接调用，以及生成 `Stream<Pet>` 的新方法。
+這還提供了對 `get()`、`array()` 和 `list()` 的間接呼叫，以及生成 `Stream<Pet>` 的新方法。
 
-因为 `PetCount.countPets()` 采用了 `PetCreator` 参数，所以我们可以很容易地测试 `LiteralPetCreator`（通过上面的外观模式）：
+因為 `PetCount.countPets()` 採用了 `PetCreator` 參數，所以我們可以很容易地測試 `LiteralPetCreator`（透過上面的外觀模式）：
 
 ```java
 // typeinfo/PetCount2.java
@@ -967,7 +967,7 @@ public class PetCount2 {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Rat Manx Cymric Mutt Pug Cymric Pug Manx Cymric Rat
@@ -977,11 +977,11 @@ Pug Mouse Cymric
 Manx=7, Rodent=5, Mutt=3, Dog=6, Pet=20, Hamster=1}
 ```
 
-输出与 `PetCount.java` 的输出相同。
+輸出與 `PetCount.java` 的輸出相同。
 
-### 一个动态 `instanceof` 函数
+### 一個動態 `instanceof` 函數
 
-`Class.isInstance()` 方法提供了一种动态测试对象类型的方法。因此，所有这些繁琐的 `instanceof` 语句都可以从 `PetCount.java` 中删除：
+`Class.isInstance()` 方法提供了一種動態測試物件類型的方法。因此，所有這些繁瑣的 `instanceof` 語句都可以從 `PetCount.java` 中刪除：
 
 ```java
 // typeinfo/PetCount3.java
@@ -1004,7 +1004,7 @@ public class PetCount3 {
         }
 
         public void count(Pet pet) {
-            // Class.isInstance() 替换 instanceof:
+            // Class.isInstance() 取代 instanceof:
             entrySet().stream()
                     .filter(pair -> pair.getKey().isInstance(pet))
                     .forEach(pair ->
@@ -1034,7 +1034,7 @@ public class PetCount3 {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Rat Manx Cymric Mutt Pug Cymric Pug Manx Cymric Rat
@@ -1044,19 +1044,19 @@ Pug Mouse Cymric
 EgyptianMau=2, Rodent=5, Hamster=1, Manx=7, Pet=20}
 ```
 
-为了计算所有不同类型的 `Pet`，`Counter Map` 预先加载了来自 `LiteralPetCreator.ALL_TYPES` 的类型。如果不预先加载 `Map`，将只计数随机生成的类型，而不是像 `Pet` 和 `Cat` 这样的基本类型。
+為了計算所有不同類型的 `Pet`，`Counter Map` 預先載入了來自 `LiteralPetCreator.ALL_TYPES` 的類型。如果不預先載入 `Map`，將只計數隨機生成的類型，而不是像 `Pet` 和 `Cat` 這樣的基本類型。
 
-`isInstance()` 方法消除了对 `instanceof` 表达式的需要。此外，这意味着你可以通过更改 `LiteralPetCreator.types` 数组来添加新类型的 `Pet`；程序的其余部分不需要修改（就像使用 `instanceof` 表达式时那样）。
+`isInstance()` 方法消除了對 `instanceof` 表達式的需要。此外，這意味著你可以透過更改 `LiteralPetCreator.types` 陣列來添加新類型的 `Pet`；程式的其餘部分不需要修改（就像使用 `instanceof` 表達式時那樣）。
 
-`toString()` 方法被重载，以便更容易读取输出，该输出仍与打印 `Map` 时看到的典型输出匹配。
+`toString()` 方法被重載，以便更容易讀取輸出，該輸出仍與列印 `Map` 時看到的典型輸出匹配。
 
-### 递归计数
+### 遞迴計數
 
-`PetCount3.Counter` 中的 `Map` 预先加载了所有不同的 `Pet` 类。我们可以使用 `Class.isAssignableFrom()` 而不是预加载 `Map` ，并创建一个不限于计数 `Pet` 的通用工具：
+`PetCount3.Counter` 中的 `Map` 預先載入了所有不同的 `Pet` 類。我們可以使用 `Class.isAssignableFrom()` 而不是預載入 `Map` ，並建立一個不限於計數 `Pet` 的通用工具：
 
 ```java
 // onjava/TypeCounter.java
-// 计算类型家族的实例数
+// 計算類型家族的實例數
 package onjava;
 import java.util.*;
 import java.util.stream.*;
@@ -1098,7 +1098,7 @@ public class TypeCounter extends HashMap<Class<?>, Integer> {
 }
 ```
 
-`count()` 方法获取其参数的 `Class`，并使用 `isAssignableFrom()` 进行运行时检查，以验证传递的对象实际上属于感兴趣的层次结构。`countClass()` 首先计算类的确切类型。然后，如果 `baseType` 可以从超类赋值，则在超类上递归调用 `countClass()`。
+`count()` 方法獲取其參數的 `Class`，並使用 `isAssignableFrom()` 進行執行時檢查，以驗證傳遞的物件實際上屬於感興趣的層次結構。`countClass()` 首先計算類的確切類型。然後，如果 `baseType` 可以從超類賦值，則在超類上遞迴呼叫 `countClass()`。
 
 ```java
 // typeinfo/PetCount4.java
@@ -1118,7 +1118,7 @@ public class PetCount4 {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Rat Manx Cymric Mutt Pug Cymric Pug Manx Cymric Rat
@@ -1129,25 +1129,25 @@ Pug=3, Mutt=3, Cymric=5, EgyptianMau=2, Pet=20,
 Mouse=2}
 ```
 
-输出表明两个基类型以及精确类型都被计数了。
+輸出表明兩個基類型以及精確類型都被計數了。
 
 <!-- Registered Factories -->
 
-## 注册工厂
+## 註冊工廠
 
-从 `Pet` 层次结构生成对象的问题是，每当向层次结构中添加一种新类型的 `Pet` 时，必须记住将其添加到 `LiteralPetCreator.java` 的条目中。在一个定期添加更多类的系统中，这可能会成为问题。
+從 `Pet` 層次結構生成物件的問題是，每當向層次結構中添加一種新類型的 `Pet` 時，必須記住將其添加到 `LiteralPetCreator.java` 的條目中。在一個定期添加更多類的系統中，這可能會成為問題。
 
-你可能会考虑向每个子类添加静态初始值设定项，因此初始值设定项会将其类添加到某个列表中。不幸的是，静态初始值设定项仅在首次加载类时调用，因此存在鸡和蛋的问题：生成器的列表中没有类，因此它无法创建该类的对象，因此类不会被加载并放入列表中。
+你可能會考慮向每個子類添加靜態初始值設定項，因此初始值設定項會將其類添加到某個列表中。不幸的是，靜態初始值設定項僅在首次載入類時呼叫，因此存在雞和蛋的問題：生成器的列表中沒有類，因此它無法建立該類的物件，因此類不會被載入並放入列表中。
 
-基本上，你必须自己手工创建列表（除非你编写了一个工具来搜索和分析源代码，然后创建和编译列表）。所以你能做的最好的事情就是把列表集中放在一个明显的地方。层次结构的基类可能是最好的地方。
+基本上，你必須自己手工建立列表（除非你編寫了一個工具來搜尋和分析原始碼，然後建立和編譯列表）。所以你能做的最好的事情就是把列表集中放在一個明顯的地方。層次結構的基類可能是最好的地方。
 
-我们在这里所做的另一个更改是使用*工厂方法*设计模式将对象的创建推迟到类本身。工厂方法可以以多态方式调用，并为你创建适当类型的对象。事实证明，`java.util.function.Supplier` 用 `T get()` 描述了原型工厂方法。协变返回类型允许 `get()` 为 `Supplier` 的每个子类实现返回不同的类型。
+我們在這裡所做的另一個更改是使用*工廠方法*設計模式將物件的建立推遲到類本身。工廠方法可以以多態方式呼叫，並為你建立適當類型的物件。事實證明，`java.util.function.Supplier` 用 `T get()` 描述了原型工廠方法。協變返回類型允許 `get()` 為 `Supplier` 的每個子類實現返回不同的類型。
 
-在本例中，基类 `Part` 包含一个工厂对象的静态列表，列表成员类型为 `Supplier<Part>`。对于应该由 `get()` 方法生成的类型的工厂，通过将它们添加到 `prototypes` 列表向基类“注册”。奇怪的是，这些工厂本身就是对象的实例。此列表中的每个对象都是用于创建其他对象的*原型*：
+在本例中，基類 `Part` 包含一個工廠物件的靜態列表，列表成員類型為 `Supplier<Part>`。對於應該由 `get()` 方法生成的類型的工廠，透過將它們添加到 `prototypes` 列表向基類“註冊”。奇怪的是，這些工廠本身就是物件的實例。此列表中的每個物件都是用於建立其他物件的*原型*：
 
 ```java
 // typeinfo/RegisteredFactories.java
-// 注册工厂到基础类
+// 註冊工廠到基礎類
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -1238,7 +1238,7 @@ public class RegisteredFactories {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 GeneratorBelt
@@ -1253,19 +1253,19 @@ PowerSteeringBelt
 FuelFilter
 ```
 
-并非层次结构中的所有类都应实例化；这里的 `Filter` 和 `Belt` 只是分类器，这样你就不会创建任何一个类的实例，而是只创建它们的子类（请注意，如果尝试这样做，你将获得 `Part` 基类的行为）。
+並非層次結構中的所有類都應實例化；這裡的 `Filter` 和 `Belt` 只是分類器，這樣你就不會建立任何一個類的實例，而是只建立它們的子類（請注意，如果嘗試這樣做，你將獲得 `Part` 基類的行為）。
 
-因为 `Part implements Supplier<Part>`，`Part` 通过其 `get()` 方法供应其他 `Part`。如果为基类 `Part` 调用 `get()`（或者如果 `generate()` 调用 `get()`），它将创建随机特定的 `Part` 子类型，每个子类型最终都从 `Part` 继承，并重写相应的 `get()` 以生成它们中的一个。
+因為 `Part implements Supplier<Part>`，`Part` 透過其 `get()` 方法供應其他 `Part`。如果為基類 `Part` 呼叫 `get()`（或者如果 `generate()` 呼叫 `get()`），它將建立隨機特定的 `Part` 子類型，每個子類型最終都從 `Part` 繼承，並重寫相應的 `get()` 以生成它們中的一個。
 
 <!-- Instanceof vs. Class Equivalence -->
 
-## 类的等价比较
+## 類的等價比較
 
-当你查询类型信息时，需要注意：instanceof 的形式(即 `instanceof` 或 `isInstance()` ，这两者产生的结果相同) 和 与 Class 对象直接比较 这两者间存在重要区别。下面的例子展示了这种区别：
+當你查詢類型訊息時，需要注意：instanceof 的形式(即 `instanceof` 或 `isInstance()` ，這兩者產生的結果相同) 和 與 Class 物件直接比較 這兩者間存在重要區別。下面的例子展示了這種區別：
 
 ```java
 // typeinfo/FamilyVsExactType.java
-// instanceof 与 class 的差别
+// instanceof 與 class 的差別
 // {java typeinfo.FamilyVsExactType}
 package typeinfo;
 
@@ -1306,7 +1306,7 @@ public class FamilyVsExactType {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Testing x of type class typeinfo.Base
@@ -1329,32 +1329,32 @@ x.getClass().equals(Base.class)) false
 x.getClass().equals(Derived.class)) true
 ```
 
-`test()` 方法使用两种形式的 `instanceof` 对其参数执行类型检查。然后，它获取 `Class` 引用，并使用 `==` 和 `equals()` 测试 `Class` 对象的相等性。令人放心的是，`instanceof` 和 `isInstance()` 产生的结果相同， `equals()` 和 `==` 产生的结果也相同。但测试本身得出了不同的结论。与类型的概念一致，`instanceof` 说的是“你是这个类，还是从这个类派生的类？”。而如果使用 `==` 比较实际的`Class` 对象，则与继承无关 —— 它要么是确切的类型，要么不是。
+`test()` 方法使用兩種形式的 `instanceof` 對其參數執行類型檢查。然後，它獲取 `Class` 引用，並使用 `==` 和 `equals()` 測試 `Class` 物件的相等性。令人放心的是，`instanceof` 和 `isInstance()` 產生的結果相同， `equals()` 和 `==` 產生的結果也相同。但測試本身得出了不同的結論。與類型的概念一致，`instanceof` 說的是“你是這個類，還是從這個類衍生的類？”。而如果使用 `==` 比較實際的`Class` 物件，則與繼承無關 —— 它要嘛是確切的類型，要嘛不是。
 
 <!-- Reflection: Runtime Class Information -->
-## 反射：运行时类信息
+## 反射：執行時類訊息
 
-如果你不知道对象的确切类型，RTTI 会告诉你。但是，有一个限制：必须在编译时知道类型，才能使用 RTTI 检测它，并对信息做一些有用的事情。换句话说，编译器必须知道你使用的所有类。
+如果你不知道物件的確切類型，RTTI 會告訴你。但是，有一個限制：必須在編譯時知道類型，才能使用 RTTI 檢測它，並對訊息做一些有用的事情。換句話說，編譯器必須知道你使用的所有類。
 
-起初，这看起来并没有那么大的限制，但是假设你引用了一个不在程序空间中的对象。实际上，该对象的类在编译时甚至对程序都不可用。也许你从磁盘文件或网络连接中获得了大量的字节，并被告知这些字节代表一个类。由于这个类在编译器为你的程序生成代码后很长时间才会出现，你如何使用这样的类？
+起初，這看起來並沒有那麼大的限制，但是假設你引用了一個不在程式空間中的物件。實際上，該物件的類在編譯時甚至對程式都不可用。也許你從磁碟文件或網路連線中獲得了大量的位元組，並被告知這些位元組代表一個類。由於這個類在編譯器為你的程式生成程式碼後很長時間才會出現，你如何使用這樣的類？
 
-在传统编程环境中，这是一个牵强的场景。但是，当我们进入一个更大的编程世界时，会有一些重要的情况发生。第一个是基于组件的编程，你可以在应用程序构建器*集成开发环境*中使用*快速应用程序开发*（RAD）构建项目。这是一种通过将表示组件的图标移动到窗体上来创建程序的可视化方法。然后，通过在编程时设置这些组件的一些值来配置这些组件。这种设计时配置要求任何组件都是可实例化的，它公开自己的部分，并且允许读取和修改其属性。此外，处理*图形用户界面*（GUI）事件的组件必须公开有关适当方法的信息，以便 IDE 可以帮助程序员覆写这些事件处理方法。反射提供了检测可用方法并生成方法名称的机制。
+在傳統編程環境中，這是一個牽強的場景。但是，當我們進入一個更大的程式世界時，會有一些重要的情況發生。第一個是基於元件的程式，你可以在應用程式構建器*整合開發環境*中使用*快速應用程式開發*（RAD）構建項目。這是一種透過將表示元件的圖示移動到表單上來建立程式的可視化方法。然後，透過在編程時設定這些元件的一些值來配置這些元件。這種設計時配置要求任何元件都是可實例化的，它公開自己的部分，並且允許讀取和修改其屬性。此外，處理*圖形使用者介面*（GUI）事件的元件必須公開有關適當方法的訊息，以便 IDE 可以幫助程式設計師覆寫這些事件處理方法。反射提供了檢測可用方法並生成方法名稱的機制。
 
-在运行时发现类信息的另一个令人信服的动机是提供跨网络在远程平台上创建和执行对象的能力。这称为*远程方法调用*（RMI），它使 Java 程序的对象分布在许多机器上。这种分布有多种原因。如果你想加速一个计算密集型的任务，你可以把它分解成小块放到空闲的机器上。或者你可以将处理特定类型任务的代码（例如，多层次客户机/服务器体系结构中的“业务规则”）放在特定的机器上，这样机器就成为描述这些操作的公共存储库，并且可以很容易地更改它以影响系统中的每个人。分布式计算还支持专门的硬件，这些硬件可能擅长于某个特定的任务——例如矩阵转换——但对于通用编程来说不合适或过于昂贵。
+在執行時發現類訊息的另一個令人信服的動機是提供跨網路在遠端平台上建立和執行物件的能力。這稱為*遠端方法呼叫*（RMI），它使 Java 程式的物件分布在許多機器上。這種分布有多種原因。如果你想加速一個計算密集型的任務，你可以把它分解成小塊放到空閒的機器上。或者你可以將處理特定類型任務的程式碼（例如，多層次客戶機/伺服器體系結構中的“業務規則”）放在特定的機器上，這樣機器就成為描述這些操作的公共儲存庫，並且可以很容易地更改它以影響系統中的每個人。分布式計算還支援專門的硬體，這些硬體可能擅長於某個特定的任務——例如矩陣轉換——但對於通用編程來說不合適或過於昂貴。
 
-类 `Class` 支持*反射*的概念， `java.lang.reflect` 库中包含类 `Field`、`Method` 和 `Constructor`（每一个都实现了 `Member` 接口）。这些类型的对象由 JVM 在运行时创建，以表示未知类中的对应成员。然后，可以使用 `Constructor` 创建新对象，`get()` 和 `set()` 方法读取和修改与 `Field` 对象关联的字段，`invoke()` 方法调用与 `Method` 对象关联的方法。此外，还可以调用便利方法 `getFields()`、`getMethods()`、`getConstructors()` 等，以返回表示字段、方法和构造函数的对象数组。（你可以通过在 JDK 文档中查找类 `Class` 来了解更多信息。）因此，匿名对象的类信息可以在运行时完全确定，编译时不需要知道任何信息。
+類 `Class` 支援*反射*的概念， `java.lang.reflect` 庫中包含類 `Field`、`Method` 和 `Constructor`（每一個都實現了 `Member` 介面）。這些類型的物件由 JVM 在執行時建立，以表示未知類中的對應成員。然後，可以使用 `Constructor` 建立新物件，`get()` 和 `set()` 方法讀取和修改與 `Field` 物件關聯的欄位，`invoke()` 方法呼叫與 `Method` 物件關聯的方法。此外，還可以呼叫便利方法 `getFields()`、`getMethods()`、`getConstructors()` 等，以返回表示欄位、方法和建構子的物件陣列。（你可以透過在 JDK 文件中尋找類 `Class` 來了解更多訊息。）因此，匿名物件的類訊息可以在執行時完全確定，編譯時不需要知道任何訊息。
 
-重要的是要意识到反射没有什么魔力。当你使用反射与未知类型的对象交互时，JVM 将查看该对象，并看到它属于特定的类（就像普通的 RTTI）。在对其执行任何操作之前，必须加载 `Class` 对象。因此，该特定类型的 `.class` 文件必须在本地计算机上或通过网络对 JVM 仍然可用。因此，RTTI 和反射的真正区别在于，使用 RTTI 时，编译器在编译时会打开并检查 `.class` 文件。换句话说，你可以用“正常”的方式调用一个对象的所有方法。通过反射，`.class` 文件在编译时不可用；它由运行时环境打开并检查。
+重要的是要意識到反射沒有什麼魔力。當你使用反射與未知類型的物件互動時，JVM 將查看該物件，並看到它屬於特定的類（就像普通的 RTTI）。在對其執行任何操作之前，必須載入 `Class` 物件。因此，該特定類型的 `.class` 文件必須在本機電腦上或透過網路對 JVM 仍然可用。因此，RTTI 和反射的真正區別在於，使用 RTTI 時，編譯器在編譯時會打開並檢查 `.class` 文件。換句話說，你可以用“正常”的方式呼叫一個物件的所有方法。透過反射，`.class` 文件在編譯時不可用；它由執行時環境打開並檢查。
 
-### 类方法提取器
+### 類方法提取器
 
-通常，你不会直接使用反射工具，但它们可以帮助你创建更多的动态代码。反射是用来支持其他 Java 特性的，例如对象序列化（参见[附录：对象序列化](https://lingcoder.github.io/OnJava8/#/book/Appendix-Object-Serialization)）。但是，有时动态提取有关类的信息很有用。
+通常，你不會直接使用反射工具，但它們可以幫助你建立更多的動態程式碼。反射是用來支援其他 Java 特性的，例如物件序列化（參見[附錄：物件序列化](https://lingcoder.github.io/OnJava8/#/book/Appendix-Object-Serialization)）。但是，有時動態提取有關類的訊息很有用。
 
-考虑一个类方法提取器。查看类定义的源代码或 JDK 文档，只显示*在该类定义中*定义或重写的方法。但是，可能还有几十个来自基类的可用方法。找到它们既单调又费时[^1]。幸运的是，反射提供了一种方法，可以简单地编写一个工具类自动地向你展示所有的接口：
+考慮一個類方法提取器。查看類定義的原始碼或 JDK 文件，只顯示*在該類定義中*定義或重寫的方法。但是，可能還有幾十個來自基類的可用方法。找到它們既單調又費時[^1]。幸運的是，反射提供了一種方法，可以簡單地編寫一個工具類自動地向你展示所有的介面：
 
 ```java
 // typeinfo/ShowMethods.java
-// 使用反射展示一个类的所有方法，甚至包括定义在基类中方法
+// 使用反射展示一個類的所有方法，甚至包括定義在基類中方法
 // {java ShowMethods ShowMethods}
 import java.lang.reflect.*;
 import java.util.regex.*;
@@ -1408,7 +1408,7 @@ public class ShowMethods {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 public static void main(String[])
@@ -1426,27 +1426,27 @@ public final native void notifyAll()
 public ShowMethods()
 ```
 
-`Class` 方法 `getmethods()` 和 `getconstructors()`  分别返回 `Method` 数组和 `Constructor` 数组。这些类中的每一个都有进一步的方法来解析它们所表示的方法的名称、参数和返回值。但你也可以像这里所做的那样，使用 `toString()`，生成带有整个方法签名的 `String`。代码的其余部分提取命令行信息，确定特定签名是否与目标 `String`（使用 `indexOf()`）匹配，并使用正则表达式（在 [Strings](#ch021.xhtml#strings) 一章中介绍）删除名称限定符。
+`Class` 方法 `getmethods()` 和 `getconstructors()`  分別返回 `Method` 陣列和 `Constructor` 陣列。這些類中的每一個都有進一步的方法來解析它們所表示的方法的名稱、參數和返回值。但你也可以像這裡所做的那樣，使用 `toString()`，生成帶有整個方法簽名的 `String`。程式碼的其餘部分提取命令列訊息，確定特定簽名是否與目標 `String`（使用 `indexOf()`）匹配，並使用正規表示式（在 [Strings](#ch021.xhtml#strings) 一章中介紹）刪除名稱限定符。
 
-编译时无法知道 `Class.forName()` 生成的结果，因此所有方法签名信息都是在运行时提取的。如果你研究 JDK 反射文档，你将看到有足够的支持来实际设置和对编译时完全未知的对象进行方法调用（本书后面有这样的例子）。虽然最初你可能认为你永远都不需要这样做，但是反射的全部价值可能会令人惊讶。
+編譯時無法知道 `Class.forName()` 生成的結果，因此所有方法簽名訊息都是在執行時提取的。如果你研究 JDK 反射文件，你將看到有足夠的支援來實際設定和對編譯時完全未知的物件進行方法呼叫（本書後面有這樣的例子）。雖然最初你可能認為你永遠都不需要這樣做，但是反射的全部價值可能會令人驚訝。
 
-上面的输出来自命令行：
+上面的輸出來自命令列：
 
 ```java
 java ShowMethods ShowMethods
 ```
 
-输出包含一个 `public` 无参数构造函数，即使未定义构造函数。你看到的构造函数是由编译器自动合成的。如果将 `ShowMethods` 设置为非 `public` 类（即只有包级访问权），则合成的无参数构造函数将不再显示在输出中。自动为合成的无参数构造函数授予与类相同的访问权。
+輸出包含一個 `public` 無參數建構子，即使未定義建構子。你看到的建構子是由編譯器自動合成的。如果將 `ShowMethods` 設定為非 `public` 類（即只有包級訪問權），則合成的無參數建構子將不再顯示在輸出中。自動為合成的無參數建構子授予與類相同的訪問權。
 
-尝试运行 `java ShowMethods java.lang.String`，并附加一个 `char`、`int`、`String` 等参数。
+嘗試執行 `java ShowMethods java.lang.String`，並附加一個 `char`、`int`、`String` 等參數。
 
-编程时，当你不记得某个类是否有特定的方法，并且不想在 JDK 文档中搜索索引或类层次结构时，或者如果你不知道该类是否可以对 `Color` 对象执行任何操作时，该工具能节省不少时间。
+編程時，當你不記得某個類是否有特定的方法，並且不想在 JDK 文件中搜尋索引或類層次結構時，或者如果你不知道該類是否可以對 `Color` 物件執行任何操作時，該工具能節省不少時間。
 
 <!-- Dynamic Proxies -->
 
-## 动态代理
+## 動態代理
 
-*代理*是基本的设计模式之一。一个对象封装真实对象，代替其提供其他或不同的操作---这些操作通常涉及到与“真实”对象的通信，因此代理通常充当中间对象。这是一个简单的示例，显示代理的结构：
+*代理*是基本的設計模式之一。一個物件封裝真實物件，代替其提供其他或不同的操作---這些操作通常涉及到與“真實”物件的通信，因此代理通常充當中間物件。這是一個簡單的範例，顯示代理的結構：
 
 ```java
 // typeinfo/SimpleProxyDemo.java
@@ -1503,7 +1503,7 @@ class SimpleProxyDemo {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 doSomething
@@ -1514,12 +1514,12 @@ SimpleProxy somethingElse bonobo
 somethingElse bonobo
 ```
 
-因为 `consumer()` 接受 `Interface`，所以它不知道获得的是 `RealObject` 还是 `SimpleProxy`，因为两者都实现了 `Interface`。
-但是，在客户端和 `RealObject` 之间插入的 `SimpleProxy` 执行操作，然后在 `RealObject` 上调用相同的方法。
+因為 `consumer()` 接受 `Interface`，所以它不知道獲得的是 `RealObject` 還是 `SimpleProxy`，因為兩者都實現了 `Interface`。
+但是，在用戶端和 `RealObject` 之間插入的 `SimpleProxy` 執行操作，然後在 `RealObject` 上呼叫相同的方法。
 
-当你希望将额外的操作与“真实对象”做分离时，代理可能会有所帮助，尤其是当你想要轻松地启用额外的操作时，反之亦然（设计模式就是封装变更---所以你必须改变一些东西以证明模式的合理性）。例如，如果你想跟踪对 `RealObject` 中方法的调用，或衡量此类调用的开销，该怎么办？你不想这部分代码耦合到你的程序中，而代理能使你可以很轻松地添加或删除它。
+當你希望將額外的操作與“真實物件”做分離時，代理可能會有所幫助，尤其是當你想要輕鬆地啟用額外的操作時，反之亦然（設計模式就是封裝變更---所以你必須改變一些東西以證明模式的合理性）。例如，如果你想跟蹤對 `RealObject` 中方法的呼叫，或衡量此類呼叫的開銷，該怎麼辦？你不想這部分程式碼耦合到你的程式中，而代理能使你可以很輕鬆地添加或刪除它。
 
-Java 的*动态代理*更进一步，不仅动态创建代理对象而且动态处理对代理方法的调用。在动态代理上进行的所有调用都被重定向到单个*调用处理程序*，该处理程序负责发现调用的内容并决定如何处理。这是 `SimpleProxyDemo.java` 使用动态代理重写的例子：
+Java 的*動態代理*更進一步，不僅動態建立代理物件而且動態處理對代理方法的呼叫。在動態代理上進行的所有呼叫都被重定向到單個*呼叫處理程序*，該處理程序負責發現呼叫的內容並決定如何處理。這是 `SimpleProxyDemo.java` 使用動態代理重寫的例子：
 
 ```java
 // typeinfo/SimpleDynamicProxy.java
@@ -1566,7 +1566,7 @@ class SimpleDynamicProxy {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 doSomething
@@ -1581,11 +1581,11 @@ Interface.somethingElse(java.lang.String), args:
 somethingElse bonobo
 ```
 
-可以通过调用静态方法 `Proxy.newProxyInstance()` 来创建动态代理，该方法需要一个类加载器（通常可以从已加载的对象中获取），希望代理实现的接口列表（不是类或抽象类），以及接口  `InvocationHandler` 的一个实现。动态代理会将所有调用重定向到调用处理程序，因此通常为调用处理程序的构造函数提供对“真实”对象的引用，以便一旦执行中介任务便可以转发请求。
+可以透過呼叫靜態方法 `Proxy.newProxyInstance()` 來建立動態代理，該方法需要一個類載入器（通常可以從已載入的物件中獲取），希望代理實現的介面列表（不是類或抽象類），以及介面  `InvocationHandler` 的一個實現。動態代理會將所有呼叫重定向到呼叫處理程序，因此通常為呼叫處理程序的建構子提供對“真實”物件的引用，以便一旦執行中介任務便可以轉發請求。
 
-`invoke()` 方法被传递给代理对象，以防万一你必须区分请求的来源---但是在很多情况下都无需关心。但是，在 `invoke()` 内的代理上调用方法时要小心，因为接口的调用是通过代理重定向的。
+`invoke()` 方法被傳遞給代理物件，以防萬一你必須區分請求的來源---但是在很多情況下都無需關心。但是，在 `invoke()` 內的代理上呼叫方法時要小心，因為介面的呼叫是透過代理重定向的。
 
-通常执行代理操作，然后使用 `Method.invoke()` 将请求转发给被代理对象，并携带必要的参数。这在一开始看起来是有限制的，好像你只能执行一般的操作。但是，可以过滤某些方法调用，同时传递其他方法调用：
+通常執行代理操作，然後使用 `Method.invoke()` 將請求轉發給被代理物件，並攜帶必要的參數。這在一開始看起來是有限制的，好像你只能執行一般的操作。但是，可以過濾某些方法呼叫，同時傳遞其他方法呼叫：
 
 ```java
 // typeinfo/SelectingMethods.java
@@ -1658,7 +1658,7 @@ class SelectingMethods {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 boring1
@@ -1668,19 +1668,19 @@ interesting bonobo
 boring3
 ```
 
-在这个示例里，我们只是在寻找方法名，但是你也可以寻找方法签名的其他方面，甚至可以搜索特定的参数值。
+在這個範例裡，我們只是在尋找方法名，但是你也可以尋找方法簽名的其他方面，甚至可以搜尋特定的參數值。
 
-动态代理不是你每天都会使用的工具，但是它可以很好地解决某些类型的问题。你可以在 Erich Gamma 等人的*设计模式*中了解有关*代理*和其他设计模式的更多信息。 （Addison-Wesley，1995年），以及[设计模式](./25-Patterns.md)一章。
+動態代理不是你每天都會使用的工具，但是它可以很好地解決某些類型的問題。你可以在 Erich Gamma 等人的*設計模式*中了解有關*代理*和其他設計模式的更多訊息。 （Addison-Wesley，1995年），以及[設計模式](./25-Patterns.md)一章。
 
 <!-- Using Optional -->
 
-## Optional类
+## Optional類
 
-如果你使用内置的 `null` 来表示没有对象，每次使用引用的时候就必须测试一下引用是否为 `null`，这显得有点枯燥，而且势必会产生相当乏味的代码。问题在于 `null` 没什么自己的行为，只会在你想用它执行任何操作的时候产生 `NullPointException`。`java.util.Optional`（首次出现是在[函数式编程](docs/book/13-Functional-Programming.md)这章）为 `null` 值提供了一个轻量级代理，`Optional` 对象可以防止你的代码直接抛出 `NullPointException`。
+如果你使用內建的 `null` 來表示沒有物件，每次使用引用的時候就必須測試一下引用是否為 `null`，這顯得有點枯燥，而且勢必會產生相當乏味的程式碼。問題在於 `null` 沒什麼自己的行為，只會在你想用它執行任何操作的時候產生 `NullPointException`。`java.util.Optional`（首次出現是在[函數式編程](docs/book/13-Functional-Programming.md)這章）為 `null` 值提供了一個輕量級代理，`Optional` 物件可以防止你的程式碼直接拋出 `NullPointException`。
 
-虽然 `Optional` 是 Java 8 为了支持流式编程才引入的，但其实它是一个通用的工具。为了证明这点，在本节中，我们会把它用在普通的类中。因为涉及一些运行时检测，所以把这一小节放在了本章。
+雖然 `Optional` 是 Java 8 為了支援流式編程才引入的，但其實它是一個通用的工具。為了證明這點，在本節中，我們會把它用在普通的類中。因為涉及一些執行時檢測，所以把這一小節放在了本章。
 
-实际上，在所有地方都使用 `Optional` 是没有意义的，有时候检查一下是不是 `null` 也挺好的，或者有时我们可以合理地假设不会出现 `null`，甚至有时候检查 `NullPointException` 异常也是可以接受的。`Optional` 最有用武之地的是在那些“更接近数据”的地方，在问题空间中代表实体的对象上。举个简单的例子，很多系统中都有 `Person` 类型，代码中有些情况下你可能没有一个实际的 `Person` 对象（或者可能有，但是你还没用关于那个人的所有信息）。这时，在传统方法下，你会用到一个 `null` 引用，并且在使用的时候测试它是不是 `null`。而现在，我们可以使用 `Optional`：
+實際上，在所有地方都使用 `Optional` 是沒有意義的，有時候檢查一下是不是 `null` 也挺好的，或者有時我們可以合理地假設不會出現 `null`，甚至有時候檢查 `NullPointException` 異常也是可以接受的。`Optional` 最有用武之地的是在那些“更接近資料”的地方，在問題空間中代表實體的物件上。舉個簡單的例子，很多系統中都有 `Person` 類型，程式碼中有些情況下你可能沒有一個實際的 `Person` 物件（或者可能有，但是你還沒用關於那個人的所有訊息）。這時，在傳統方法下，你會用到一個 `null` 引用，並且在使用的時候測試它是不是 `null`。而現在，我們可以使用 `Optional`：
 
 ```java
 // typeinfo/Person.java
@@ -1737,7 +1737,7 @@ class Person {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 <Empty>
@@ -1746,11 +1746,11 @@ Bob Smith
 Bob Smith 11 Degree Lane, Frostbite Falls, MN
 ```
 
-`Person` 的设计有时候又叫“数据传输对象（DTO，data-transfer object）”。注意，所有字段都是 `public` 和 `final` 的，所以没有 `getter` 和 `setter` 方法。也就是说，`Person` 是不可变的，你只能通过构造器给它赋值，之后就只能读而不能修改它的值（字符串本身就是不可变的，因此你无法修改字符串的内容，也无法给它的字段重新赋值）。如果你想修改一个 `Person`，你只能用一个新的 `Person` 对象来替换它。`empty` 字段在对象创建的时候被赋值，用于快速判断这个 `Person` 对象是不是空对象。
+`Person` 的設計有時候又叫“資料傳輸物件（DTO，data-transfer object）”。注意，所有欄位都是 `public` 和 `final` 的，所以沒有 `getter` 和 `setter` 方法。也就是說，`Person` 是不可變的，你只能透過構造器給它賦值，之後就只能讀而不能修改它的值（字串本身就是不可變的，因此你無法修改字串的內容，也無法給它的欄位重新賦值）。如果你想修改一個 `Person`，你只能用一個新的 `Person` 物件來取代它。`empty` 欄位在物件建立的時候被賦值，用於快速判斷這個 `Person` 物件是不是空物件。
 
-如果想使用 `Person`，就必须使用 `Optional` 接口才能访问它的 `String` 字段，这样就不会意外触发 `NullPointException` 了。
+如果想使用 `Person`，就必須使用 `Optional` 介面才能訪問它的 `String` 欄位，這樣就不會意外觸發 `NullPointException` 了。
 
-现在假设你已经因你惊人的理念而获得了一大笔风险投资，现在你要招兵买马了，但是在虚位以待时，你可以将 `Person Optional` 对象放在每个 `Position` 上：
+現在假設你已經因你驚人的理念而獲得了一大筆風險投資，現在你要招兵買馬了，但是在虛位以待時，你可以將 `Person Optional` 物件放在每個 `Position` 上：
 
 ```java
 // typeinfo/Position.java
@@ -1812,7 +1812,7 @@ class Position {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Position: CEO, Employee: <Empty>
@@ -1820,17 +1820,17 @@ Position: Programmer, Employee: Arthur Fonzarelli
 caught EmptyTitleException
 ```
 
-这里使用 `Optional` 的方式不太一样。请注意，`title` 和 `person` 都是普通字段，不受 `Optional` 的保护。但是，修改这些字段的唯一途径是调用 `setTitle()` 和 `setPerson()` 方法，这两个都借助 `Optional` 对字段进行了严格的限制。
+這裡使用 `Optional` 的方式不太一樣。請注意，`title` 和 `person` 都是普通欄位，不受 `Optional` 的保護。但是，修改這些欄位的唯一途徑是呼叫 `setTitle()` 和 `setPerson()` 方法，這兩個都借助 `Optional` 對欄位進行了嚴格的限制。
 
-同时，我们想保证 `title` 字段永远不会变成 `null` 值。为此，我们可以自己在 `setTitle()` 方法里边检查参数 `newTitle` 的值。但其实还有更好的做法，函数式编程一大优势就是可以让我们重用经过验证的功能（即便是个很小的功能），以减少自己手动编写代码可能产生的一些小错误。所以在这里，我们用 `ofNullable()` 把 `newTitle` 转换一个 `Optional`（如果传入的值为 `null`，`ofNullable()` 返回的将是 `Optional.empty()`）。紧接着我们调用了 `orElseThrow()` 方法，所以如果 `newTitle` 的值是 `null`，你将会得到一个异常。这里我们并没有把 `title` 保存成 `Optional`，但通过应用 `Optional` 的功能，我们仍然如愿以偿地对这个字段施加了约束。
+同時，我們想保證 `title` 欄位永遠不會變成 `null` 值。為此，我們可以自己在 `setTitle()` 方法裡面檢查參數 `newTitle` 的值。但其實還有更好的做法，函數式編程一大優勢就是可以讓我們重用經過驗證的功能（即便是個很小的功能），以減少自己手動編寫程式碼可能產生的一些小錯誤。所以在這裡，我們用 `ofNullable()` 把 `newTitle` 轉換一個 `Optional`（如果傳入的值為 `null`，`ofNullable()` 返回的將是 `Optional.empty()`）。緊接著我們呼叫了 `orElseThrow()` 方法，所以如果 `newTitle` 的值是 `null`，你將會得到一個異常。這裡我們並沒有把 `title` 儲存成 `Optional`，但透過應用 `Optional` 的功能，我們仍然如願以償地對這個欄位施加了約束。
 
-`EmptyTitleException` 是一个 `RuntimeException`，因为它意味着程序存在错误。在这个方案里边，你仍然可能会得到一个异常。但不同的是，在错误产生的那一刻（向 `setTitle()` 传 `null` 值时）就会抛出异常，而不是发生在其它时刻，需要你通过调试才能发现问题所在。另外，使用 `EmptyTitleException` 还有助于定位 BUG。
+`EmptyTitleException` 是一個 `RuntimeException`，因為它意味著程式存在錯誤。在這個方案裡面，你仍然可能會得到一個異常。但不同的是，在錯誤產生的那一刻（向 `setTitle()` 傳 `null` 值時）就會拋出異常，而不是發生在其它時刻，需要你透過除錯才能發現問題所在。另外，使用 `EmptyTitleException` 還有助於定位 BUG。
 
-`Person` 字段的限制又不太一样：如果你把它的值设为 `null`，程序会自动把将它赋值成一个空的 `Person` 对象。先前我们也用过类似的方法把字段转换成 `Optional`，但这里我们是在返回结果的时候使用 `orElse(new Person())` 插入一个空的 `Person` 对象替代了 `null`。
+`Person` 欄位的限制又不太一樣：如果你把它的值設為 `null`，程式會自動把將它賦值成一個空的 `Person` 物件。先前我們也用過類似的方法把欄位轉換成 `Optional`，但這裡我們是在返回結果的時候使用 `orElse(new Person())` 插入一個空的 `Person` 物件替代了 `null`。
 
-在 `Position` 里边，我们没有创建一个表示“空”的标志位或者方法，因为 `person` 字段的 `Person` 对象为空，就表示这个 `Position` 是个空缺位置。之后，你可能会发现你必须添加一个显式的表示“空位”的方法，但是正如 YAGNI[^2] (You Aren't Going to Need It，你永远不需要它)所言，在初稿时“实现尽最大可能的简单”，直到程序在某些方面要求你为其添加一些额外的特性，而不是假设这是必要的。
+在 `Position` 裡面，我們沒有建立一個表示“空”的標誌位或者方法，因為 `person` 欄位的 `Person` 物件為空，就表示這個 `Position` 是個空缺位置。之後，你可能會發現你必須添加一個顯式的表示“空位”的方法，但是正如 YAGNI[^2] (You Aren't Going to Need It，你永遠不需要它)所言，在初稿時“實現盡最大可能的簡單”，直到程式在某些方面要求你為其添加一些額外的特性，而不是假設這是必要的。
 
-请注意，虽然你清楚你使用了 `Optional`，可以免受 `NullPointerExceptions` 的困扰，但是 `Staff` 类却对此毫不知情。
+請注意，雖然你清楚你使用了 `Optional`，可以免受 `NullPointerExceptions` 的困擾，但是 `Staff` 類卻對此毫不知情。
 
 ```java
 // typeinfo/Staff.java
@@ -1890,7 +1890,7 @@ public class Staff extends ArrayList<Position> {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 [Position: President, Employee: Me Last The Top, Lonely
@@ -1906,11 +1906,11 @@ Position: Test Engineer, Employee: <Empty>, Position:
 Technical Writer, Employee: <Empty>]
 ```
 
-注意，在有些地方你可能还是要测试引用是不是 `Optional`，这跟检查是否为 `null` 没什么不同。但是在其它地方（例如本例中的 `toString()` 转换），你就不必执行额外的测试了，而可以直接假设所有对象都是有效的。
+注意，在有些地方你可能還是要測試引用是不是 `Optional`，這跟檢查是否為 `null` 沒什麼不同。但是在其它地方（例如本例中的 `toString()` 轉換），你就不必執行額外的測試了，而可以直接假設所有物件都是有效的。
 
-### 标记接口
+### 標記介面
 
-有时候使用一个**标记接口**来表示空值会更方便。标记接口里边什么都没有，你只要把它的名字当做标签来用就可以。
+有時候使用一個**標記介面**來表示空值會更方便。標記介面裡面什麼都沒有，你只要把它的名字當做標籤來用就可以。
 
 ```java
 // onjava/Null.java
@@ -1918,7 +1918,7 @@ package onjava;
 public interface Null {}
 ```
 
-如果你用接口取代具体类，那么就可以使用 `DynamicProxy` 来自动地创建 `Null` 对象。假设我们有一个 `Robot` 接口，它定义了一个名字、一个模型和一个描述 `Robot` 行为能力的 `List<Operation>`：
+如果你用介面取代具體類，那麼就可以使用 `DynamicProxy` 來自動地建立 `Null` 物件。假設我們有一個 `Robot` 介面，它定義了一個名字、一個模型和一個描述 `Robot` 行為能力的 `List<Operation>`：
 
 ```java
 // typeinfo/Robot.java
@@ -1947,9 +1947,9 @@ public interface Robot {
 }
 ```
 
-你可以通过调用 `operations()` 来访问 `Robot` 的服务。`Robot` 里边还有一个 `static` 方法来执行测试。
+你可以透過呼叫 `operations()` 來訪問 `Robot` 的服務。`Robot` 裡面還有一個 `static` 方法來執行測試。
 
-`Operation` 包含一个描述和一个命令（这用到了**命令模式**）。它们被定义成函数式接口的引用，所以可以把 lambda 表达式或者方法的引用传给 `Operation` 的构造器：
+`Operation` 包含一個描述和一個指令（這用到了**指令模式**）。它們被定義成函數式介面的引用，所以可以把 lambda 表達式或者方法的引用傳給 `Operation` 的構造器：
 
 ```java
 // typeinfo/Operation.java
@@ -1967,7 +1967,7 @@ public class Operation {
 }
 ```
 
-现在我们可以创建一个扫雪 `Robot`：
+現在我們可以建立一個掃雪 `Robot`：
 
 ```java
 // typeinfo/SnowRemovalRobot.java
@@ -2014,7 +2014,7 @@ public class SnowRemovalRobot implements Robot {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Robot name: Slusher
@@ -2027,7 +2027,7 @@ Slusher can clear the roof
 Slusher clearing roof
 ```
 
-假设存在许多不同类型的 `Robot`，我们想让每种 `Robot` 都创建一个 `Null` 对象来执行一些特殊的操作——在本例中，即提供 `Null` 对象所代表 `Robot` 的确切类型信息。这些信息是通过动态代理捕获的：
+假設存在許多不同類型的 `Robot`，我們想讓每種 `Robot` 都建立一個 `Null` 物件來執行一些特殊的操作——在本例中，即提供 `Null` 物件所代表 `Robot` 的確切類型訊息。這些訊息是透過動態代理捕獲的：
 
 ```java
 // typeinfo/NullRobot.java
@@ -2091,7 +2091,7 @@ public class NullRobot {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Robot name: SnowBee
@@ -2107,18 +2107,18 @@ Robot name: SnowRemovalRobot NullRobot
 Robot model: SnowRemovalRobot NullRobot
 ```
 
-无论何时，如果你需要一个空 `Robot` 对象，只需要调用 `newNullRobot()`，并传递需要代理的 `Robot` 的类型。这个代理满足了 `Robot` 和 `Null` 接口的需要，并提供了它所代理的类型的确切名字。
+無論何時，如果你需要一個空 `Robot` 物件，只需要呼叫 `newNullRobot()`，並傳遞需要代理的 `Robot` 的類型。這個代理滿足了 `Robot` 和 `Null` 介面的需要，並提供了它所代理的類型的確切名字。
 
-### Mock 对象和桩
+### Mock 物件和樁
 
-**Mock 对象**和 **桩（Stub）**在逻辑上都是 `Optional` 的变体。他们都是最终程序中所使用的“实际”对象的代理。不过，Mock 对象和桩都是假扮成那些可以传递实际信息的实际对象，而不是像 `Optional` 那样把包含潜在 `null` 值的对象隐藏。
+**Mock 物件**和 **樁（Stub）**在邏輯上都是 `Optional` 的變體。他們都是最終程式中所使用的“實際”物件的代理。不過，Mock 物件和樁都是假扮成那些可以傳遞實際訊息的實際物件，而不是像 `Optional` 那樣把包含潛在 `null` 值的物件隱藏。
 
-Mock 对象和桩之间的的差别在于程度不同。Mock 对象往往是轻量级的，且用于自测试。通常，为了处理各种不同的测试场景，我们会创建出很多 Mock 对象。而桩只是返回桩数据，它通常是重量级的，并且经常在多个测试中被复用。桩可以根据它们被调用的方式，通过配置进行修改。因此，桩是一种复杂对象，它可以做很多事情。至于 Mock 对象，如果你要做很多事，通常会创建大量又小又简单的 Mock 对象。
+Mock 物件和樁之間的的差別在於程度不同。Mock 物件往往是輕量級的，且用於自測試。通常，為了處理各種不同的測試場景，我們會建立出很多 Mock 物件。而樁只是返回樁資料，它通常是重量級的，並且經常在多個測試中被復用。樁可以根據它們被呼叫的方式，透過配置進行修改。因此，樁是一種複雜物件，它可以做很多事情。至於 Mock 物件，如果你要做很多事，通常會建立大量又小又簡單的 Mock 物件。
 
 <!-- Interfaces and Type -->
-## 接口和类型
+## 介面和類型
 
-`interface` 关键字的一个重要目标就是允许程序员隔离组件，进而降低耦合度。使用接口可以实现这一目标，但是通过类型信息，这种耦合性还是会传播出去——接口并不是对解耦的一种无懈可击的保障。比如我们先写一个接口：
+`interface` 關鍵字的一個重要目標就是允許程式設計師隔離元件，進而降低耦合度。使用介面可以實現這一目標，但是透過類型訊息，這種耦合性還是會傳播出去——介面並不是對解耦的一種無懈可擊的保障。比如我們先寫一個介面：
 
 ```java
 // typeinfo/interfacea/A.java
@@ -2129,7 +2129,7 @@ public interface A {
 }
 ```
 
-然后实现这个接口，你可以看到其代码是怎么从实际类型开始顺藤摸瓜的：
+然後實現這個介面，你可以看到其程式碼是怎麼從實際類型開始順藤摸瓜的：
 
 ```java
 // typeinfo/InterfaceViolation.java
@@ -2159,19 +2159,19 @@ public class InterfaceViolation {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 B
 ```
 
-通过使用 RTTI，我们发现 `a` 是用 `B` 实现的。通过将其转型为 `B`，我们可以调用不在 `A` 中的方法。
+透過使用 RTTI，我們發現 `a` 是用 `B` 實現的。透過將其轉型為 `B`，我們可以呼叫不在 `A` 中的方法。
 
-这样的操作完全是合情合理的，但是你也许并不想让客户端开发者这么做，因为这给了他们一个机会，使得他们的代码与你的代码的耦合度超过了你的预期。也就是说，你可能认为 `interface` 关键字正在保护你，但其实并没有。另外，在本例中使用 `B` 来实现 `A` 这种情况是有公开案例可查的[^3]。
+這樣的操作完全是合情合理的，但是你也許並不想讓用戶端開發者這麼做，因為這給了他們一個機會，使得他們的程式碼與你的程式碼的耦合度超過了你的預期。也就是說，你可能認為 `interface` 關鍵字正在保護你，但其實並沒有。另外，在本例中使用 `B` 來實現 `A` 這種情況是有公開案例可查的[^3]。
 
-一种解决方案是直接声明，如果开发者决定使用实际的类而不是接口，他们需要自己对自己负责。这在很多情况下都是可行的，但“可能”还不够，你或许希望能有一些更严格的控制方式。
+一種解決方案是直接聲明，如果開發者決定使用實際的類而不是介面，他們需要自己對自己負責。這在很多情況下都是可行的，但“可能”還不夠，你或許希望能有一些更嚴格的控制方式。
 
-最简单的方式是让实现类只具有包访问权限，这样在包外部的客户端就看不到它了：
+最簡單的方式是讓實現類只具有包訪問權限，這樣在包外部的用戶端就看不到它了：
 
 ```java
 // typeinfo/packageaccess/HiddenC.java
@@ -2209,9 +2209,9 @@ public class HiddenC {
 }
 ```
 
-在这个包中唯一 `public` 的部分就是 `HiddenC`，在被调用时将产生 `A`接口类型的对象。这里有趣之处在于：即使你从 `makeA()` 返回的是 `C` 类型，你在包的外部仍旧不能使用 `A` 之外的任何方法，因为你不能在包的外部命名 `C`。
+在這個包中唯一 `public` 的部分就是 `HiddenC`，在被呼叫時將產生 `A`介面類型的物件。這裡有趣之處在於：即使你從 `makeA()` 返回的是 `C` 類型，你在包的外部仍舊不能使用 `A` 之外的任何方法，因為你不能在包的外部命名 `C`。
 
-现在如果你试着将其向下转型为 `C`，则将被禁止，因为在包的外部没有任何 `C` 类型可用：
+現在如果你試著將其向下轉型為 `C`，則將被禁止，因為在包的外部沒有任何 `C` 類型可用：
 
 ```java
 // typeinfo/HiddenImplementation.java
@@ -2248,7 +2248,7 @@ public class HiddenImplementation {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 public C.f()
@@ -2259,15 +2259,15 @@ protected C.v()
 private C.w()
 ```
 
-正如你所看到的，通过使用反射，仍然可以调用所有方法，甚至是 `private` 方法！如果知道方法名，你就可以在其 `Method` 对象上调用 `setAccessible(true)`，就像在 `callHiddenMethod()` 中看到的那样。
+正如你所看到的，透過使用反射，仍然可以呼叫所有方法，甚至是 `private` 方法！如果知道方法名，你就可以在其 `Method` 物件上呼叫 `setAccessible(true)`，就像在 `callHiddenMethod()` 中看到的那樣。
 
-你可能觉得，可以通过只发布编译后的代码来阻止这种情况，但其实这并不能解决问题。因为只需要运行 `javap`（一个随 JDK 发布的反编译器）即可突破这一限制。下面是一个使用 `javap` 的命令行：
+你可能覺得，可以透過只發布編譯後的程式碼來阻止這種情況，但其實這並不能解決問題。因為只需要執行 `javap`（一個隨 JDK 發布的反編譯器）即可突破這一限制。下面是一個使用 `javap` 的命令列：
 
 ```shell
 javap -private C
 ```
 
-`-private` 标志表示所有的成员都应该显示，甚至包括私有成员。下面是输出：
+`-private` 標誌表示所有的成員都應該顯示，甚至包括私有成員。下面是輸出：
 
 ```
 class typeinfo.packageaccess.C extends
@@ -2281,9 +2281,9 @@ java.lang.Object implements typeinfo.interfacea.A {
 }
 ```
 
-因此，任何人都可以获取你最私有的方法的名字和签名，然后调用它们。
+因此，任何人都可以獲取你最私有的方法的名字和簽名，然後呼叫它們。
 
-那如果把接口实现为一个私有内部类，又会怎么样呢？下面展示了这种情况：
+那如果把介面實現為一個私有內部類，又會怎麼樣呢？下面展示了這種情況：
 
 ```java
 // typeinfo/InnerImplementation.java
@@ -2334,7 +2334,7 @@ public class InnerImplementation {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 public C.f()
@@ -2345,7 +2345,7 @@ protected C.v()
 private C.w()
 ```
 
-这里对反射仍然没有任何东西可以隐藏。那么如果是匿名类呢？
+這裡對反射仍然沒有任何東西可以隱藏。那麼如果是匿名類呢？
 
 ```java
 // typeinfo/AnonymousImplementation.java
@@ -2394,7 +2394,7 @@ public class AnonymousImplementation {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 public C.f()
@@ -2405,7 +2405,7 @@ protected C.v()
 private C.w()
 ```
 
-看起来任何方式都没法阻止反射调用那些非公共访问权限的方法。对于字段来说也是这样，即便是 `private` 字段：
+看起來任何方式都沒辦法阻止反射呼叫那些非公共訪問權限的方法。對於欄位來說也是這樣，即便是 `private` 欄位：
 
 ```java
 // typeinfo/ModifyingPrivateFields.java
@@ -2448,7 +2448,7 @@ public class ModifyingPrivateFields {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 i = 1, I'm totally safe, Am I safe?
@@ -2460,35 +2460,35 @@ f.get(pf): Am I safe?
 i = 47, I'm totally safe, No, you're not!
 ```
 
-但实际上 `final` 字段在被修改时是安全的。运行时系统会在不抛出异常的情况下接受任何修改的尝试，但是实际上不会发生任何修改。
+但實際上 `final` 欄位在被修改時是安全的。執行時系統會在不拋出異常的情況下接受任何修改的嘗試，但是實際上不會發生任何修改。
 
-通常，所有这些违反访问权限的操作并不是什么十恶不赦的。如果有人使用这样的技术去调用标志为 `private` 或包访问权限的方法（很明显这些访问权限表示这些人不应该调用它们），那么对他们来说，如果你修改了这些方法的某些地方，他们不应该抱怨。另一方面，总是在类中留下后门，也许会帮助你解决某些特定类型的问题（这些问题往往除此之外，别无它法）。总之，不可否认，反射给我们带来了很多好处。
+通常，所有這些違反訪問權限的操作並不是什麼十惡不赦的。如果有人使用這樣的技術去呼叫標誌為 `private` 或包訪問權限的方法（很明顯這些訪問權限表示這些人不應該呼叫它們），那麼對他們來說，如果你修改了這些方法的某些地方，他們不應該抱怨。另一方面，總是在類中留下後門，也許會幫助你解決某些特定類型的問題（這些問題往往除此之外，別無它法）。總之，不可否認，反射給我們帶來了很多好處。
 
-程序员往往对编程语言提供的访问控制过于自信，甚至认为 Java 在安全性上比其它提供了（明显）更宽松的访问控制的语言要优越[^4]。然而，正如你所看到的，事实并不是这样。
+程式設計師往往對程式語言提供的訪問控制過於自信，甚至認為 Java 在安全性上比其它提供了（明顯）更寬鬆的訪問控制的語言要優越[^4]。然而，正如你所看到的，事實並不是這樣。
 
 <!-- Summary -->
-## 本章小结
+## 本章小結
 
-RTTI 允许通过匿名类的引用来获取类型信息。初学者极易误用它，因为在学会使用多态调用方法之前，这么做也很有效。有过程化编程背景的人很容易把程序组织成一系列 `switch` 语句，你可以用 RTTI 和 `switch` 实现功能，但这样就损失了多态机制在代码开发和维护过程中的重要价值。面向对象编程语言是想让我们尽可能地使用多态机制，只在非用不可的时候才使用 RTTI。
+RTTI 允許透過匿名類的引用來獲取類型訊息。初學者極易誤用它，因為在學會使用多態呼叫方法之前，這麼做也很有效。有過程化編程背景的人很容易把程式組織成一系列 `switch` 語句，你可以用 RTTI 和 `switch` 實現功能，但這樣就損失了多態機制在程式碼開發和維護過程中的重要價值。物件導向程式語言是想讓我們儘可能地使用多態機制，只在非用不可的時候才使用 RTTI。
 
-然而使用多态机制的方法调用，要求我们拥有基类定义的控制权。因为在你扩展程序的时候，可能会发现基类并未包含我们想要的方法。如果基类来自别人的库，这时 RTTI 便是一种解决之道：可继承一个新类，然后添加你需要的方法。在代码的其它地方，可以检查你自己特定的类型，并调用你自己的方法。这样做不会破坏多态性以及程序的扩展能力，因为这样添加一个新的类并不需要修改程序中的 `switch` 语句。但如果想在程序中增加具有新特性的代码，你就必须使用 RTTI 来检查这个特定的类型。
+然而使用多態機制的方法呼叫，要求我們擁有基類定義的控制權。因為在你擴展程式的時候，可能會發現基類並未包含我們想要的方法。如果基類來自別人的庫，這時 RTTI 便是一種解決之道：可繼承一個新類，然後添加你需要的方法。在程式碼的其它地方，可以檢查你自己特定的類型，並呼叫你自己的方法。這樣做不會破壞多態性以及程式的擴展能力，因為這樣添加一個新的類並不需要修改程式中的 `switch` 語句。但如果想在程式中增加具有新特性的程式碼，你就必須使用 RTTI 來檢查這個特定的類型。
 
-如果只是为了方便某个特定的类，就将某个特性放进基类里边，这将使得从那个基类派生出的所有其它子类都带有这些可能毫无意义的东西。这会导致接口更加不清晰，因为我们必须覆盖从基类继承而来的所有抽象方法，事情就变得很麻烦。举个例子，现在有一个表示乐器 `Instrument` 的类层次结构。假设我们想清理管弦乐队中某些乐器残留的口水，一种办法是在基类 `Instrument` 中放入 `clearSpitValve()` 方法。但这样做会导致类结构混乱，因为这意味着打击乐器 `Percussion`、弦乐器 `Stringed` 和电子乐器 `Electronic` 也需要清理口水。在这个例子中，RTTI 可以提供一种更合理的解决方案。可以将 `clearSpitValve()` 放在某个合适的类中，在这个例子中是管乐器 `Wind`。不过，在这里你可能会发现还有更好的解决方法，就是将 `prepareInstrument()` 放在基类中，但是初次面对这个问题的读者可能想不到还有这样的解决方案，而误认为必须使用 RTTI。
+如果只是為了方便某個特定的類，就將某個特性放進基類裡面，這將使得從那個基類衍生出的所有其它子類都帶有這些可能毫無意義的東西。這會導致介面更加不清晰，因為我們必須覆蓋從基類繼承而來的所有抽象方法，事情就變得很麻煩。舉個例子，現在有一個表示樂器 `Instrument` 的類層次結構。假設我們想清理管弦樂隊中某些樂器殘留的口水，一種辦法是在基類 `Instrument` 中放入 `clearSpitValve()` 方法。但這樣做會導致類結構混亂，因為這意味著打擊樂器 `Percussion`、弦樂器 `Stringed` 和電子樂器 `Electronic` 也需要清理口水。在這個例子中，RTTI 可以提供一種更合理的解決方案。可以將 `clearSpitValve()` 放在某個合適的類中，在這個例子中是管樂器 `Wind`。不過，在這裡你可能會發現還有更好的解決方法，就是將 `prepareInstrument()` 放在基類中，但是初次面對這個問題的讀者可能想不到還有這樣的解決方案，而誤認為必須使用 RTTI。
 
-最后一点，RTTI 有时候也能解决效率问题。假设你的代码运用了多态，但是为了实现多态，导致其中某个对象的效率非常低。这时候，你就可以挑出那个类，使用 RTTI 为它编写一段特别的代码以提高效率。然而必须注意的是，不要太早地关注程序的效率问题，这是个诱人的陷阱。最好先让程序能跑起来，然后再去看看程序能不能跑得更快，下一步才是去解决效率问题（比如使用 Profiler）[^5]。
+最後一點，RTTI 有時候也能解決效率問題。假設你的程式碼運用了多態，但是為了實現多態，導致其中某個物件的效率非常低。這時候，你就可以挑出那個類，使用 RTTI 為它編寫一段特別的程式碼以提高效率。然而必須注意的是，不要太早地關注程式的效率問題，這是個誘人的陷阱。最好先讓程式能跑起來，然後再去看看程式能不能跑得更快，下一步才是去解決效率問題（比如使用 Profiler）[^5]。
 
-我们已经看到，反射，因其更加动态的编程风格，为我们开创了编程的新世界。但对有些人来说，反射的动态特性却是一种困扰。对那些已经习惯于静态类型检查的安全性的人来说，Java 中允许这种动态类型检查（只在运行时才能检查到，并以异常的形式上报检查结果）的操作似乎是一种错误的方向。有些人想得更远，他们认为引入运行时异常本身就是一种指示，指示我们应该避免这种代码。我发现这种意义的安全是一种错觉，因为总是有些事情是在运行时才发生并抛出异常的，即使是在那些不包含任何 `try` 语句块或异常声明的程序中也是如此。因此，我认为一致性错误报告模型的存在使我们能够通过使用反射编写动态代码。当然，尽力编写能够进行静态检查的代码是有价值的，只要你有这样的能力。但是我相信动态代码是将 Java 与其它诸如 C++ 这样的语言区分开的重要工具之一。
+我們已經看到，反射，因其更加動態的程式風格，為我們開創了編程的新世界。但對有些人來說，反射的動態特性卻是一種困擾。對那些已經習慣於靜態類型檢查的安全性的人來說，Java 中允許這種動態類型檢查（只在執行時才能檢查到，並以異常的形式上報檢查結果）的操作似乎是一種錯誤的方向。有些人想得更遠，他們認為引入執行時異常本身就是一種指示，指示我們應該避免這種程式碼。我發現這種意義的安全是一種錯覺，因為總是有些事情是在執行時才發生並拋出異常的，即使是在那些不包含任何 `try` 語句塊或異常聲明的程式中也是如此。因此，我認為一致性錯誤報告模型的存在使我們能夠透過使用反射編寫動態程式碼。當然，盡力編寫能夠進行靜態檢查的程式碼是有價值的，只要你有這樣的能力。但是我相信動態程式碼是將 Java 與其它諸如 C++ 這樣的語言區分開的重要工具之一。
 
-[^1]: 特别是在过去。但现在 Java 的 HTML 文档有了很大的提升，要查看基类的方法已经变得很容易了。
+[^1]: 特別是在過去。但現在 Java 的 HTML 文件有了很大的提升，要查看基類的方法已經變得很容易了。
 
-[^2]: 这是极限编程（XP，Extreme Programming）的原则之一：“Try the simplest thing that could possibly work，实现尽最大可能的简单。”
+[^2]: 這是極限編程（XP，Extreme Programming）的原則之一：“Try the simplest thing that could possibly work，實現盡最大可能的簡單。”
 
-[^3]: 最著名的例子是 Windows 操作系统，Windows 为开发者提供了公开的 API，但是开发者还可以找到一些非公开但是可以调用的函数。为了解决问题，很多程序员使用了隐藏的 API 函数。这就迫使微软公司要像维护公开 API 一样维护这些隐藏的 API，消耗了巨大的成本和精力。
+[^3]: 最著名的例子是 Windows 作業系統，Windows 為開發者提供了公開的 API，但是開發者還可以找到一些非公開但是可以呼叫的函數。為了解決問題，很多程式設計師使用了隱藏的 API 函數。這就迫使微軟公司要像維護公開 API 一樣維護這些隱藏的 API，消耗了巨大的成本和精力。
 
-[^4]: 比如，Python 中在元素前面添加双下划线 `__`，就表示你想隐藏这个元素。如果你在类或者包外面调用了这个元素，运行环境就会报错。
+[^4]: 比如，Python 中在元素前面添加雙下劃線 `__`，就表示你想隱藏這個元素。如果你在類或者包外面呼叫了這個元素，執行環境就會報錯。
 
-[^5]: 译者注：Java Profiler 是一种 Java 性能分析工具，用于在 JVM 级别监视 Java 字节码的构造和执行。主流的 Profiler 有 JProfiler、YourKit 和 Java VisualVM 等。
+[^5]: 譯者註：Java Profiler 是一種 Java 性能分析工具，用於在 JVM 級別監視 Java 位元組碼的構造和執行。主流的 Profiler 有 JProfiler、YourKit 和 Java VisualVM 等。
 
-<!-- 分页 -->
+<!-- 分頁 -->
 
 <div style="page-break-after: always;"></div>

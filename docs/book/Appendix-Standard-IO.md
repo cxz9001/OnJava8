@@ -1,17 +1,17 @@
-[TOC]
+﻿[TOC]
 
 <!-- Appendix: Standard I/O -->
-# 附录:标准IO
+# 附錄:標準IO
 
->*标准 I/O*这个术语参考Unix中的概念，指程序所使用的单一信息流（这种思想在大多数操作系统中，也有相似形式的实现）。
+>*標準 I/O*這個術語參考Unix中的概念，指程式所使用的單一訊息流（這種思想在大多數作業系統中，也有相似形式的實現）。
 
-程序的所有输入都可以来自于*标准输入*，其所有输出都可以流向*标准输出*，并且其所有错误信息均可以发送到*标准错误*。*标准 I/O* 的意义在于程序之间可以很容易地连接起来，一个程序的标准输出可以作为另一个程序的标准输入。这是一个非常强大的工具。
+程式的所有輸入都可以來自於*標準輸入*，其所有輸出都可以流向*標準輸出*，並且其所有錯誤訊息均可以發送到*標準錯誤*。*標準 I/O* 的意義在於程式之間可以很容易地連接起來，一個程式的標準輸出可以作為另一個程式的標準輸入。這是一個非常強大的工具。
 
-## 从标准输入中读取
+## 從標準輸入中讀取
 
-遵循标准 I/O 模型，Java 提供了标准输入流 `System.in`、标准输出流 `System.out` 和标准错误流 `System.err`。在本书中，你已经了解到如何使用 `System.out`将数据写到标准输出。 `System.out` 已经预先包装[^1]成了 `PrintStream` 对象。标准错误流 `System.err` 也预先包装为 `PrintStream` 对象，但是标准输入流 `System.in` 是原生的没有经过包装的 `InputStream`。这意味着尽管可以直接使用标准输出流 `System.out` 和标准错误流 `System.err`，但是在读取 `System.in` 之前必须先对其进行包装。
+遵循標準 I/O 模型，Java 提供了標準輸入流 `System.in`、標準輸出流 `System.out` 和標準錯誤流 `System.err`。在本書中，你已經了解到如何使用 `System.out`將資料寫到標準輸出。 `System.out` 已經預先包裝[^1]成了 `PrintStream` 物件。標準錯誤流 `System.err` 也預先包裝為 `PrintStream` 物件，但是標準輸入流 `System.in` 是原生的沒有經過包裝的 `InputStream`。這意味著儘管可以直接使用標準輸出流 `System.out` 和標準錯誤流 `System.err`，但是在讀取 `System.in` 之前必須先對其進行包裝。
 
-我们通常一次一行地读取输入。为了实现这个功能，将 `System.in` 包装成 `BufferedReader` 来使用，这要求我们用 `InputStreamReader` 把 `System.in` 转换[^2]成 `Reader` 。下面这个例子将键入的每一行显示出来：
+我們通常一次一行地讀取輸入。為了實現這個功能，將 `System.in` 包裝成 `BufferedReader` 來使用，這要求我們用 `InputStreamReader` 把 `System.in` 轉換[^2]成 `Reader` 。下面這個例子將鍵入的每一行顯示出來：
 
 ```java
 // standardio/Echo.java
@@ -33,11 +33,11 @@ public class Echo {
 }
 ```
 
-`BufferedReader` 提供了 `lines()` 方法，返回类型是 `Stream<String>` 。这显示出流模型的的灵活性：仅使用标准输入就能很好地工作。 `peek()` 方法重启 `TimeAbort`，只要保证至少每隔两秒有输入就能够使程序保持开启状态。
+`BufferedReader` 提供了 `lines()` 方法，返回類型是 `Stream<String>` 。這顯示出流模型的的靈活性：僅使用標準輸入就能很好地工作。 `peek()` 方法重啟 `TimeAbort`，只要保證至少每隔兩秒有輸入就能夠使程式保持開啟狀態。
 
-## 将 System.out 转换成 PrintWriter
+## 將 System.out 轉換成 PrintWriter
 
-`System.out` 是一个 `PrintStream`，而 `PrintStream` 是一个`OutputStream`。 `PrintWriter` 有一个把 `OutputStream` 作为参数的构造器。因此，如果你需要的话，可以使用这个构造器把 `System.out` 转换成 `PrintWriter` 。
+`System.out` 是一個 `PrintStream`，而 `PrintStream` 是一個`OutputStream`。 `PrintWriter` 有一個把 `OutputStream` 作為參數的構造器。因此，如果你需要的話，可以使用這個構造器把 `System.out` 轉換成 `PrintWriter` 。
 
 ```java
 // standardio/ChangeSystemOut.java
@@ -54,22 +54,22 @@ public class ChangeSystemOut {
 }
 ```
 
-输出结果：
+輸出結果：
 
 ```
 Hello, world
 ```
 
-要使用 `PrintWriter` 带有两个参数的构造器，并设置第二个参数为 `true`，从而使能自动刷新到输出缓冲区的功能；否则，可能无法看到打印输出。
+要使用 `PrintWriter` 帶有兩個參數的構造器，並設定第二個參數為 `true`，從而使能自動重新整理到輸出緩衝區的功能；否則，可能無法看到列印輸出。
 
-## 重定向标准 I/O
+## 重定向標準 I/O
 
-Java的 `System` 类提供了简单的 `static` 方法调用，从而能够重定向标准输入流、标准输出流和标准错误流：
+Java的 `System` 類提供了簡單的 `static` 方法呼叫，從而能夠重定向標準輸入流、標準輸出流和標準錯誤流：
 - setIn（InputStream）
 - setOut（PrintStream）
 - setErr(PrintStream)
 
-如果我们突然需要在显示器上创建大量的输出，而这些输出滚动的速度太快以至于无法阅读时，重定向输出就显得格外有用，可把输出内容重定向到文件中供后续查看。对于我们想重复测试特定的用户输入序列的命令行程序来说，重定向输入就很有价值。下例简单演示了这些方法的使用：
+如果我們突然需要在顯示器上建立大量的輸出，而這些輸出滾動的速度太快以至於無法閱讀時，重定向輸出就顯得格外有用，可把輸出內容重定向到文件中供後續查看。對於我們想重複測試特定的使用者輸入序列的命令列程式來說，重定向輸入就很有價值。下例簡單示範了這些方法的使用：
 
 ```java
 // standardio/Redirecting.java
@@ -102,18 +102,18 @@ public class Redirecting {
 }
 ```
 
-该程序将文件中内容载入到标准输入，并把标准输出和标准错误重定向到另一个文件。它在程序的开始保存了最初对 `System.out` 对象的引用，并且在程序结束时将系统输出恢复到了该对象上。
+該程式將文件中內容載入到標準輸入，並把標準輸出和標準錯誤重定向到另一個文件。它在程式的開始儲存了最初對 `System.out` 物件的引用，並且在程式結束時將系統輸出復原到了該物件上。
 
-I/O重定向操作的是字节流而不是字符流，因此使用 `InputStream` 和 `OutputStream`，而不是 `Reader` 和 `Writer`。
+I/O重定向操作的是位元組流而不是字元流，因此使用 `InputStream` 和 `OutputStream`，而不是 `Reader` 和 `Writer`。
 
 <!-- Process Control -->
-## 执行控制
+## 執行控制
 
-你经常需要在Java内部直接执行操作系统的程序，并控制这些程序的输入输出，Java类库提供了执行这些操作的类。
+你經常需要在Java內部直接執行作業系統的程式，並控制這些程式的輸入輸出，Java類庫提供了執行這些操作的類。
 
-一项常见的任务是运行程序并将输出结果发送到控制台。本节包含了一个可以简化此任务的实用工具。
+一項常見的任務是執行程式並將輸出結果發送到控制台。本節包含了一個可以簡化此任務的實用工具。
 
-在使用这个工具时可能会产生两种类型的错误：导致异常的普通错误——对于这些错误我们只需要重新抛出一个 `RuntimeException` 即可，以及进程自身的执行过程中导致的错误——我们需要用单独的异常来报告这些错误：
+在使用這個工具時可能會產生兩種類型的錯誤：導致異常的普通錯誤——對於這些錯誤我們只需要重新拋出一個 `RuntimeException` 即可，以及行程自身的執行過程中導致的錯誤——我們需要用單獨的異常來報告這些錯誤：
 
 ```java
 // onjava/OSExecuteException.java
@@ -126,7 +126,7 @@ public class OSExecuteException extends RuntimeException {
 }
 ```
 
-为了运行程序，我们需要传递给 `OSExecute.command()` 一个 `String command`，我们可以在控制台键入同样的指令运行程序。该命令传递给 `java.lang.ProcessBuilder` 的构造器（需要将其作为 `String` 对象的序列），然后启动生成的 `ProcessBuilder` 对象。
+為了執行程式，我們需要傳遞給 `OSExecute.command()` 一個 `String command`，我們可以在控制台鍵入同樣的指令執行程式。該指令傳遞給 `java.lang.ProcessBuilder` 的構造器（需要將其作為 `String` 物件的序列），然後啟動生成的 `ProcessBuilder` 物件。
 
 ```java
 // onjava/OSExecute.java
@@ -165,13 +165,13 @@ public class OSExecute {
 }
 ```
 
-为了捕获在程序执行时产生的标准输出流，我们可以调用 `getInputStream()`。这是因为 `InputStream` 是我们可以从中读取信息的流。
+為了捕獲在程式執行時產生的標準輸出流，我們可以呼叫 `getInputStream()`。這是因為 `InputStream` 是我們可以從中讀取訊息的流。
 
-这里这些行只是被打印了出来，但是你也可以从 `command()` 捕获和返回它们。
+這裡這些行只是被列印了出來，但是你也可以從 `command()` 捕獲和返回它們。
 
-该程序的错误被发送到了标准错误流，可以调用 `getErrorStream()` 捕获。如果存在任何错误，它们都会被打印并且抛出 `OSExcuteException` ，以便调用程序处理这个问题。
+該程式的錯誤被發送到了標準錯誤流，可以呼叫 `getErrorStream()` 捕獲。如果存在任何錯誤，它們都會被列印並且拋出 `OSExcuteException` ，以便呼叫程式處理這個問題。
 
-下面是展示如何使用 `OSExecute` 的示例：
+下面是展示如何使用 `OSExecute` 的範例：
 
 ```java
 // standardio/OSExecuteDemo.java
@@ -182,7 +182,7 @@ import onjava.*;
 public class OSExecuteDemo {}
 ```
 
-这里使用 `javap` 反编译器（随JDK发布）来反编译程序，编译结果：
+這裡使用 `javap` 反編譯器（隨JDK發布）來反編譯程式，編譯結果：
 
 ```
 Compiled from "OSExecuteDemo.java"
@@ -191,10 +191,10 @@ public class OSExecuteDemo {
 }
 ```
 
-[^1]: 译者注：这里用到了**装饰器模式**。
+[^1]: 譯者註：這裡用到了**裝飾器模式**。
 
-[^2]: 译者注：这里用到了**适配器模式**。
+[^2]: 譯者註：這裡用到了**適配器模式**。
 
-<!-- 分页 -->
+<!-- 分頁 -->
 
 <div style="page-break-after: always;"></div>

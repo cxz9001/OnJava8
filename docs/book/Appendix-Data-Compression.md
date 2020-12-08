@@ -1,32 +1,32 @@
-[TOC]
+﻿[TOC]
 
 <!-- Appendix: Data Compression -->
-# 附录:数据压缩
+# 附錄:資料壓縮
 
-Java I/O 类库提供了可以读写压缩格式流的类。你可以将其他 I/O 类包装起来用于提供压缩功能。
+Java I/O 類庫提供了可以讀寫壓縮格式流的類。你可以將其他 I/O 類包裝起來用於提供壓縮功能。
 
-这些类不是从 **Reader** 和 **Writer** 类派生的，而是 **InputStream** 和 **OutputStream** 层级结构的一部分。这是由于压缩库处理的是字节，而不是字符。但是，你可能会被迫混合使用两种类型的流（请记住，你可以使用 **InputStreamReader** 和 **OutputStreamWriter**，这两个类可以在字节类型和字符类型之间轻松转换）。
+這些類不是從 **Reader** 和 **Writer** 類衍生的，而是 **InputStream** 和 **OutputStream** 層級結構的一部分。這是由於壓縮庫處理的是位元組，而不是字元。但是，你可能會被迫混合使用兩種類型的流（請記住，你可以使用 **InputStreamReader** 和 **OutputStreamWriter**，這兩個類可以在位元組類型和字元類型之間輕鬆轉換）。
 
-| 压缩类                   | 功能                                                         |
+| 壓縮類                   | 功能                                                         |
 | ------------------------ | ------------------------------------------------------------ |
-| **CheckedInputStream**   | `getCheckSum()` 可以对任意 **InputStream** 计算校验和（而不只是解压） |
-| **CheckedOutputStream**  | `getCheckSum()` 可以对任意 **OutputStream** 计算校验和（而不只是压缩） |
-| **DeflaterOutputStream** | 压缩类的基类                                                 |
-| **ZipOutputStream**      | **DeflaterOutputStream** 类的一种，用于压缩数据到 Zip 文件结构 |
-| **GZIPOutputStream**     | **DeflaterOutputStream** 类的一种，用于压缩数据到 GZIP 文件结构 |
-| **InflaterInputStream**  | 解压类的基类                                                 |
-| **ZipInputStream**       | **InflaterInputStream** 类的一种，用于解压 Zip 文件结构的数据 |
-| **GZIPInputStream**      | **InflaterInputStream** 类的一种，用于解压 GZIP 文件结构的数据 |
+| **CheckedInputStream**   | `getCheckSum()` 可以對任意 **InputStream** 計算校驗和（而不只是解壓） |
+| **CheckedOutputStream**  | `getCheckSum()` 可以對任意 **OutputStream** 計算校驗和（而不只是壓縮） |
+| **DeflaterOutputStream** | 壓縮類的基類                                                 |
+| **ZipOutputStream**      | **DeflaterOutputStream** 類的一種，用於壓縮資料到 Zip 文件結構 |
+| **GZIPOutputStream**     | **DeflaterOutputStream** 類的一種，用於壓縮資料到 GZIP 文件結構 |
+| **InflaterInputStream**  | 解壓類的基類                                                 |
+| **ZipInputStream**       | **InflaterInputStream** 類的一種，用於解壓 Zip 文件結構的資料 |
+| **GZIPInputStream**      | **InflaterInputStream** 類的一種，用於解壓 GZIP 文件結構的資料 |
 
-尽管存在很多压缩算法，但是 Zip 和 GZIP 可能是最常见的。你可以使用许多用于读取和写入这些格式的工具，来轻松操作压缩数据。
+儘管存在很多壓縮演算法，但是 Zip 和 GZIP 可能是最常見的。你可以使用許多用於讀取和寫入這些格式的工具，來輕鬆操作壓縮資料。
 
 <!-- Simple Compression with GZIP -->
 
-## 使用 Gzip 简单压缩
+## 使用 Gzip 簡單壓縮
 
 <!-- Multifile Storage with Zip -->
 
-GZIP 接口十分简单，因此当你有一个需要压缩的数据流（而不是一个包含不同数据分片的容器）时，使用 GZIP 更为合适。如下是一个压缩单个文件的示例：
+GZIP 介面十分簡單，因此當你有一個需要壓縮的資料流（而不是一個包含不同資料分片的容器）時，使用 GZIP 更為合適。如下是一個壓縮單個文件的範例：
 
 ```java
 // compression/GZIPcompress.java
@@ -75,11 +75,11 @@ public class GZIPcompress {
 
 ```
 
-使用压缩类非常简单，你只需要把你的输出流包装在 **GZIPOutputStream** 或 **ZipOutputStream** 中，将输入流包装在 **GZIPInputStream** 或 **ZipInputStream**。其他的一切就只是普通的 I/O 读写。这是面向字符流和面向字节流的混合示例；in 使用 Reader 类，而 **GZIPOutputStreams** 构造函数只能接受 **OutputStream** 对象，而不能接受 **Writer** 对象。当打开文件的时候，**GZIPInputStream** 会转换成为 **Reader**。
+使用壓縮類非常簡單，你只需要把你的輸出流包裝在 **GZIPOutputStream** 或 **ZipOutputStream** 中，將輸入流包裝在 **GZIPInputStream** 或 **ZipInputStream**。其他的一切就只是普通的 I/O 讀寫。這是面向字元流和面向位元組流的混合範例；in 使用 Reader 類，而 **GZIPOutputStreams** 建構子只能接受 **OutputStream** 物件，而不能接受 **Writer** 物件。當打開文件的時候，**GZIPInputStream** 會轉換成為 **Reader**。
 
-## 使用 zip 多文件存储
+## 使用 zip 多文件儲存
 
-支持 Zip 格式的库比 GZIP 库更广泛。有了它，你可以轻松存储多个文件，甚至还有一个单独的类可以轻松地读取 Zip 文件。该库使用标准 Zip 格式，因此它可以与当前可在 Internet 上下载的所有 Zip 工具无缝协作。以下示例与前一个示例具有相同的形式，但它可以根据需要处理任意数量的命令行参数。此外，它还显示了 **Checksum** 类计算和验证文件的校验和。有两种校验和类型：Adler32（更快）和 CRC32（更慢但更准确）。
+支援 Zip 格式的庫比 GZIP 庫更廣泛。有了它，你可以輕鬆儲存多個文件，甚至還有一個單獨的類可以輕鬆地讀取 Zip 文件。該庫使用標準 Zip 格式，因此它可以與目前可在 Internet 上下載的所有 Zip 工具無縫協作。以下範例與前一個範例具有相同的形式，但它可以根據需要處理任意數量的命令列參數。此外，它還顯示了 **Checksum** 類計算和驗證文件的校驗和。有兩種校驗和類型：Adler32（更快）和 CRC32（更慢但更準確）。
 
 ```java
 // compression/ZipCompress.java
@@ -163,13 +163,13 @@ public class ZipCompress {
 }
 ```
 
-对于要添加到存档的每个文件，必须调用 `putNextEntry()` 并传递 **ZipEntry** 对象。 **ZipEntry** 对象包含一个扩展接口，用于获取和设置 Zip 文件中该特定条目的所有可用数据：名称，压缩和未压缩大小，日期，CRC 校验和，额外字段数据，注释，压缩方法以及它是否是目录条目。但是，即使 Zip 格式有设置密码的方法，Java 的 Zip 库也不支持。虽然 **CheckedInputStream** 和 **CheckedOutputStream** 都支持 Adler32 和 CRC32 校验和，但 **ZipEntry** 类仅支持 CRC 接口。这是对基础 Zip 格式的限制，但它可能会限制你使用更快的 Adler32。
+對於要添加到存檔的每個文件，必須呼叫 `putNextEntry()` 並傳遞 **ZipEntry** 物件。 **ZipEntry** 物件包含一個擴展介面，用於獲取和設定 Zip 文件中該特定條目的所有可用資料：名稱，壓縮和未壓縮大小，日期，CRC 校驗和，額外欄位資料，注釋，壓縮方法以及它是否是目錄條目。但是，即使 Zip 格式有設定密碼的方法，Java 的 Zip 庫也不支援。雖然 **CheckedInputStream** 和 **CheckedOutputStream** 都支援 Adler32 和 CRC32 校驗和，但 **ZipEntry** 類僅支援 CRC 介面。這是對基礎 Zip 格式的限制，但它可能會限制你使用更快的 Adler32。
 
-要提取文件，**ZipInputStream** 有一个 `getNextEntry()` 方法，这个方法在有文件存在的情况下调用，会返回下一个 **ZipEntry**。作为一个更简洁的替代方法，你可以使用 **ZipFile** 对象读取该文件，该对象具有方法 entries() 返回一个包裹 **ZipEntries** 的 **Enumeration**。
+要提取文件，**ZipInputStream** 有一個 `getNextEntry()` 方法，這個方法在有文件存在的情況下呼叫，會返回下一個 **ZipEntry**。作為一個更簡潔的替代方法，你可以使用 **ZipFile** 物件讀取該文件，該物件具有方法 entries() 返回一個包裹 **ZipEntries** 的 **Enumeration**。
 
-要读取校验和，你必须以某种方式访问关联的 **Checksum** 对象。这里保留了对 **CheckedOutputStream** 和 **CheckedInputStream** 对象的引用，但你也可以保持对 **Checksum** 对象的引用。 Zip 流中的一个令人困惑的方法是 `setComment()`。如 **ZipCompress** 所示。在 Java 中，你可以在编写文件时设置注释，但是没有办法恢复 **ZipInputStream** 中的注释。注释似乎仅通过 **ZipEntry** 在逐个条目的基础上完全支持。
+要讀取校驗和，你必須以某種方式訪問關聯的 **Checksum** 物件。這裡保留了對 **CheckedOutputStream** 和 **CheckedInputStream** 物件的引用，但你也可以保持對 **Checksum** 物件的引用。 Zip 流中的一個令人困惑的方法是 `setComment()`。如 **ZipCompress** 所示。在 Java 中，你可以在編寫文件時設定注釋，但是沒有辦法復原 **ZipInputStream** 中的注釋。注釋似乎僅透過 **ZipEntry** 在逐個條目的基礎上完全支援。
 
-使用 GZIP 或 Zip 库时，你不仅被限制于文件——你可以压缩任何内容，包括通过网络连接发送的数据。
+使用 GZIP 或 Zip 庫時，你不僅被限制於文件——你可以壓縮任何內容，包括透過網路連接發送的資料。
 
 
 
@@ -177,76 +177,75 @@ public class ZipCompress {
 
 ## Java 的 jar
 
-Zip 格式也用于 JAR（Java ARchive）文件格式，这是一种将一组文件收集到单个压缩文件中的方法，就像 Zip 一样。但是，与 Java 中的其他所有内容一样，JAR 文件是跨平台的，因此你不必担心平台问题。你还可以将音频和图像文件像类文件一样包含在其中。
+Zip 格式也用於 JAR（Java ARchive）檔案格式，這是一種將一組文件收集到單個壓縮文件中的方法，就像 Zip 一樣。但是，與 Java 中的其他所有內容一樣，JAR 文件是跨平台的，因此你不必擔心平台問題。你還可以將音訊和圖像文件像類文件一樣包含在其中。
 
-JAR 文件由一个包含压缩文件集合的文件和一个描述它们的“清单（manifest）”组成。（你可以创建自己的清单文件；否则，jar 程序将为你执行此操作。）你可以在 JDK 文档中，找到更多关于 JAR 清单的信息。
+JAR 文件由一個包含壓縮文件集合的文件和一個描述它們的“清單（manifest）”組成。（你可以建立自己的清單文件；否則，jar 程式將為你執行此操作。）你可以在 JDK 文件中，找到更多關於 JAR 清單的訊息。
 
-JDK 附带的 jar 工具会自动压缩你选择的文件。你可以在命令行上调用它：
+JDK 附帶的 jar 工具會自動壓縮你選擇的文件。你可以在命令列上呼叫它：
 
 ```shell
 jar [options] destination [manifest] inputfile(s)
 ```
 
-选项是一组字母（不需要连字符或任何其他指示符）。 Unix / Linux 用户会注意到这些选项与 tar 命令选项的相似性。这些是：
+選項是一組字母（不需要連字號或任何其他指示符）。 Unix / Linux 使用者會注意到這些選項與 tar 指令選項的相似性。這些是：
 
-| 选项       | 功能                                                         |
+| 選項       | 功能                                                         |
 | ---------- | ------------------------------------------------------------ |
-| **c**      | 创建一个新的或者空的归档文件                                 |
-| **t**      | 列出内容目录                                                 |
+| **c**      | 建立一個新的或者空的歸檔文件                                 |
+| **t**      | 列出內容目錄                                                 |
 | **x**      | 提取所有文件                                                 |
 | **x** file | 提取指定的文件                                               |
-| **f**      | 这代表着，“传递文件的名称。”如果你不使用它，jar 假定它的输入将来自标准输入，或者，如果它正在创建一个文件，它的输出将转到标准输出。 |
-| **m**      | 代表第一个参数是用户创建的清单文件的名称。                   |
-| **v**      | 生成详细的输出用于表述 jar 所作的事情                        |
-| **0**      | 仅存储文件;不压缩文件（用于创建放在类路径中的 JAR 文件）。   |
-| **M**      | 不要自动创建清单文件                                         |
+| **f**      | 這代表著，“傳遞文件的名稱。”如果你不使用它，jar 假定它的輸入將來自標準輸入，或者，如果它正在建立一個文件，它的輸出將轉到標準輸出。 |
+| **m**      | 代表第一個參數是使用者建立的清單文件的名稱。                   |
+| **v**      | 生成詳細的輸出用於表述 jar 所作的事情                        |
+| **0**      | 僅儲存文件;不壓縮文件（用於建立放在類路徑中的 JAR 文件）。   |
+| **M**      | 不要自動建立清單文件                                         |
 
-如果放入 JAR 文件的文件中包含子目录，则会自动添加该子目录，包括其所有子目录等。还会保留路径信息。
+如果放入 JAR 文件的文件中包含子目錄，則會自動添加該子目錄，包括其所有子目錄等。還會保留路徑訊息。
 
-以下是一些调用 jar 的典型方法。以下命令创建名为 myJarFile 的 JAR 文件。 jar 包含当前目录中的所有类文件，以及自动生成的清单文件：
+以下是一些呼叫 jar 的典型方法。以下指令建立名為 myJarFile 的 JAR 文件。 jar 包含目前目錄中的所有類文件，以及自動生成的清單文件：
 
 ```shell
 jar cf myJarFile.jar *.class
 ```
 
-下一个命令与前面的示例类似，但它添加了一个名为 myManifestFile.mf 的用户创建的清单文件。 ：
+下一個指令與前面的範例類似，但它添加了一個名為 myManifestFile.mf 的使用者建立的清單文件。 ：
 
 ```shell
 jar cmf myJarFile.jar myManifestFile.mf *.class
 ```
 
-这个命令输出了 myJarFile.jar 中的文件目录：
+這個指令輸出了 myJarFile.jar 中的文件目錄：
 
 ```shell
 jar tf myJarFile.jar
 ```
 
-如下添加了一个“verbose”的标志，用于生成更多关于 myJarFile.jar 中文件的详细信息：
+如下添加了一個“verbose”的標誌，用於生成更多關於 myJarFile.jar 中文件的詳細訊息：
 
 ```shell
 jar tvf myJarFile.jar
 ```
 
-假设 audio，classes 和 image 都是子目录，它将所有子目录组合到文件 myApp.jar 中。还包括“verbose”标志，以便在 jar 程序工作时提供额外的反馈：
+假設 audio，classes 和 image 都是子目錄，它將所有子目錄組合到文件 myApp.jar 中。還包括“verbose”標誌，以便在 jar 程式工作時提供額外的回饋：
 
 ```shell
 jar cvf myApp.jar audio classes image
 ```
 
-如果你在创建 JAR 文件时使用了 0（零） 选项，该文件将会被替换在你的类路径（CLASSPATH）中：
+如果你在建立 JAR 文件時使用了 0（零） 選項，該文件將會被取代在你的類路徑（CLASSPATH）中：
 
 ```shell
 CLASSPATH="lib1.jar;lib2.jar;"
 ```
 
-然后 Java 可以搜索到 lib1.jar 和 lib2.jar 的类文件。
+然後 Java 可以搜尋到 lib1.jar 和 lib2.jar 的類文件。
 
-jar 工具不像 Zip 实用程序那样通用。例如，你无法将文件添加或更新到现有 JAR 文件；只能从头开始创建 JAR 文件。
+jar 工具不像 Zip 實用程式那樣通用。例如，你無法將文件添加或更新到現有 JAR 文件；只能從頭開始建立 JAR 文件。
 
-此外，你无法将文件移动到 JAR 文件中，在移动文件时将其删除。
+此外，你無法將文件移動到 JAR 文件中，在移動文件時將其刪除。
 
-但是，在一个平台上创建的 JAR 文件可以通过任何其他平台上的 jar 工具透明地读取（这个问题有时会困扰 Zip 实用程序）。
+但是，在一個平台上建立的 JAR 文件可以透過任何其他平台上的 jar 工具透明地讀取（這個問題有時會困擾 Zip 實用程式）。
 
-<!-- 分页 -->
-
+<!-- 分頁 -->
 <div style="page-break-after: always;"></div>

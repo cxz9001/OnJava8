@@ -1,14 +1,14 @@
-[TOC]
+﻿[TOC]
 
 <!-- Appendix: Collection Topics -->
-# 附录:集合主题
+# 附錄:集合主題
 
-> 本附录是一些比[第十二章 集合]()中介绍的更高级的内容。
+> 本附錄是一些比[第十二章 集合]()中介紹的更進階的內容。
 
 <!-- Sample Data -->
-## 示例数据
+## 範例資料
 
-这里创建一些样本数据用于集合示例。 以下数据将颜色名称与HTML颜色的RGB值相关联。请注意，每个键和值都是唯一的：
+這裡建立一些樣本資料用於集合範例。 以下資料將顏色名稱與HTML顏色的RGB值相關聯。請注意，每個鍵和值都是唯一的：
 
 ```java
 // onjava/HTMLColors.java
@@ -246,15 +246,15 @@ public class HTMLColors {
 }
 ```
 
-**MAP** 是使用Streams（[第十四章 流式编程]()）创建的。 二维数组 **ARRAY** 作为流传输到 **Map** 中，但请注意我们不仅仅是使用简单版本的 `Collectors.toMap()` 。 那个版本生成一个 **HashMap** ，它使用散列函数来控制对键的排序。 为了保留原来的顺序，我们必须将键值对直接放入 **TreeMap** 中，这意味着我们需要使用更复杂的 `Collectors.toMap()` 版本。这需要两个函数从每个流元素中提取键和值，就像简单版本的`Collectors.toMap()` 一样。 然后它需要一个*合并函数*（merge function），它解决了与同一个键相关的两个值之间的冲突。这里的数据已经预先审查过，因此绝不会发生这种情况，如果有的话，这里会抛出异常。最后，传递生成所需类型的空map的函数，然后用流来填充它。
+**MAP** 是使用Streams（[第十四章 流式編程]()）建立的。 二維陣列 **ARRAY** 作為流傳輸到 **Map** 中，但請注意我們不僅僅是使用簡單版本的 `Collectors.toMap()` 。 那個版本生成一個 **HashMap** ，它使用散列函數來控制對鍵的排序。 為了保留原來的順序，我們必須將鍵值對直接放入 **TreeMap** 中，這意味著我們需要使用更複雜的 `Collectors.toMap()` 版本。這需要兩個函數從每個流元素中提取鍵和值，就像簡單版本的`Collectors.toMap()` 一樣。 然後它需要一個*合併函數*（merge function），它解決了與同一個鍵相關的兩個值之間的衝突。這裡的資料已經預先審查過，因此絕不會發生這種情況，如果有的話，這裡會拋出異常。最後，傳遞生成所需類型的空map的函數，然後用流來填充它。
 
-`rgb()` 方法是一个便捷函数（convenience function），它接受颜色名称 **String** 参数并生成其数字RGB值。为此，我们需要一个反转版本的 **COLORS** ，它接受一个 **String**键并查找RGB的 **Integer** 值。 这是通过 `invert()` 方法实现的，如果任何 **COLORS** 值不唯一，则抛出异常。
+`rgb()` 方法是一個便捷函數（convenience function），它接受顏色名稱 **String** 參數並生成其數字RGB值。為此，我們需要一個反轉版本的 **COLORS** ，它接受一個 **String**鍵並尋找RGB的 **Integer** 值。 這是透過 `invert()` 方法實現的，如果任何 **COLORS** 值不唯一，則拋出異常。
 
-我们还创建包含所有名称的 **LIST** ，以及包含十六进制表示法的RGB值的 **RGBLIST** 。
+我們還建立包含所有名稱的 **LIST** ，以及包含十六進位制表示法的RGB值的 **RGBLIST** 。
 
-第一个 `show()` 方法接受一个 **Map.Entry** 并显示以十六进制表示的键，以便轻松地对原始 **ARRAY** 进行双重检查。 名称以 **show** 开头的每个方法都会重载两个版本，其中一个版本采用 **count** 参数来指示要显示的元素数量，第二个版本显示序列中的所有元素。
+第一個 `show()` 方法接受一個 **Map.Entry** 並顯示以十六進位制表示的鍵，以便輕鬆地對原始 **ARRAY** 進行雙重檢查。 名稱以 **show** 開頭的每個方法都會重載兩個版本，其中一個版本採用 **count** 參數來指示要顯示的元素數量，第二個版本顯示序列中的所有元素。
 
-这里是一个基本的测试：
+這裡是一個基本的測試：
 
 ```java
 // collectiontopics/HTMLColorTest.java
@@ -359,21 +359,21 @@ Cyan
 */
 ```
 
-可以看到，使用 **LinkedHashMap** 确实能够保留 **HTMLColors.ARRAY** 的顺序。
+可以看到，使用 **LinkedHashMap** 確實能夠保留 **HTMLColors.ARRAY** 的順序。
 
 <!-- List Behavior -->
-## List行为
+## List行為
 
-**Lists** 是存储和检索对象（次于数组）的最基本方法。基本列表操作包括：
+**Lists** 是儲存和檢索物件（次於陣列）的最基本方法。基本列表操作包括：
 
-- `add()` 用于插入元素
-- `get()` 用于随机访问元素
-- `iterator()` 获取序列上的一个 **Iterator**
-- `stream()` 生成元素的一个 **Stream**
+- `add()` 用於插入元素
+- `get()` 用於隨機訪問元素
+- `iterator()` 獲取序列上的一個 **Iterator**
+- `stream()` 生成元素的一個 **Stream**
 
-列表构造方法始终保留元素的添加顺序。
+列表構造方法始終保留元素的添加順序。
 
-以下示例中的方法各自涵盖了一组不同的行为：每个 **List** 可以执行的操作（ `basicTest()` ），使用 **Iterator** （ `iterMotion()` ）遍历序列，使用 **Iterator** （ `iterManipulation()` ）更改内容，查看 **List** 操作（ `testVisual()` ）的效果，以及仅可用于 **LinkedLists** 的操作：
+以下範例中的方法各自涵蓋了一組不同的行為：每個 **List** 可以執行的操作（ `basicTest()` ），使用 **Iterator** （ `iterMotion()` ）遍歷序列，使用 **Iterator** （ `iterManipulation()` ）更改內容，查看 **List** 操作（ `testVisual()` ）的效果，以及僅可用於 **LinkedLists** 的操作：
 
 ```java
 // collectiontopics/ListOps.java
@@ -542,14 +542,14 @@ Bisque, Black, BlanchedAlmond, Blue]
 */
 ```
 
-在 `basicTest()` 和 `iterMotion()` 中，方法调用是为了展示正确的语法，尽管获取了返回值，但不会使用它。在某些情况下，根本不会去获取返回值。在使用这些方法之前，请查看JDK文档中这些方法的完整用法。
+在 `basicTest()` 和 `iterMotion()` 中，方法呼叫是為了展示正確的語法，儘管獲取了返回值，但不會使用它。在某些情況下，根本不會去獲取返回值。在使用這些方法之前，請查看JDK文件中這些方法的完整用法。
 
 <!-- Set Behavior -->
-## Set行为
+## Set行為
 
-**Set** 的主要用处是测试成员身份，不过也可以将其用作删除重复元素的工具。如果不关心元素顺序或并发性， **HashSet** 总是最好的选择，因为它是专门为了快速查找而设计的（这里使用了在[附录：理解equals和hashCode方法]()章节中探讨的散列函数）。
+**Set** 的主要用處是測試成員身份，不過也可以將其用作刪除重複元素的工具。如果不關心元素順序或並發性， **HashSet** 總是最好的選擇，因為它是專門為了快速尋找而設計的（這裡使用了在[附錄：理解equals和hashCode方法]()章節中探討的散列函數）。
 
-其它的 **Set** 实现产生不同的排序行为：
+其它的 **Set** 實現產生不同的排序行為：
 
 ```java
 // collectiontopics/SetOrder.java
@@ -643,22 +643,22 @@ Teal
 */
 ```
 
-这里需要使用 **@SuppressWarnings(“unchecked”)** ，因为这里将一个 **String** （可能是任何东西）传递给了 `Class.forName(type).newInstance()` 。编译器并不能保证这是一次成功的操作。
+這裡需要使用 **@SuppressWarnings(“unchecked”)** ，因為這裡將一個 **String** （可能是任何東西）傳遞給了 `Class.forName(type).newInstance()` 。編譯器並不能保證這是一次成功的操作。
 
-**RLIST** 是 **HTMLColors.LIST** 的反转版本。因为 `Collections.reverse()` 是通过修改参数来执行反向操作，而不是返回包含反向元素的新 **List** ，所以该调用在 **static** 块内执行。  **RLIST** 可以防止我们意外地认为 **Set** 对其结果进行了排序。
+**RLIST** 是 **HTMLColors.LIST** 的反轉版本。因為 `Collections.reverse()` 是透過修改參數來執行反向操作，而不是返回包含反向元素的新 **List** ，所以該呼叫在 **static** 塊內執行。  **RLIST** 可以防止我們意外地認為 **Set** 對其結果進行了排序。
 
-**HashSet** 的输出结果似乎没有可辨别的顺序，因为它是基于散列函数的。 **TreeSet** 和 **ConcurrentSkipListSet** 都对它们的元素进行了排序，它们都实现了 **SortedSet** 接口来标识这个特点。因为实现该接口的 **Set** 按顺序排列，所以该接口还有一些其他的可用操作。 **LinkedHashSet** 和 **CopyOnWriteArraySet** 尽管没有用于标识的接口，但它们还是保留了元素的插入顺序。
+**HashSet** 的輸出結果似乎沒有可辨別的順序，因為它是基於散列函數的。 **TreeSet** 和 **ConcurrentSkipListSet** 都對它們的元素進行了排序，它們都實現了 **SortedSet** 介面來標識這個特點。因為實現該介面的 **Set** 按順序排列，所以該介面還有一些其他的可用操作。 **LinkedHashSet** 和 **CopyOnWriteArraySet** 儘管沒有用於標識的介面，但它們還是保留了元素的插入順序。
 
-**ConcurrentSkipListSet** 和 **CopyOnWriteArraySet** 是线程安全的。
+**ConcurrentSkipListSet** 和 **CopyOnWriteArraySet** 是執行緒安全的。
 
-在附录的最后，我们将了解在非 **HashSet** 实现的 **Set** 上添加额外排序的性能成本，以及不同实现中的任何其他功能的成本。
+在附錄的最後，我們將了解在非 **HashSet** 實現的 **Set** 上添加額外排序的效能成本，以及不同實現中的任何其他功能的成本。
 
 <!-- Using Functional Operations with any Map -->
-## 在Map中使用函数式操作
+## 在Map中使用函數式操作
 
-与 **Collection** 接口一样，`forEach()` 也内置在 **Map** 接口中。但是如果想要执行任何其他的基本功能操作，比如 `map()` ，`flatMap()` ，`reduce()` 或 `filter()` 时，该怎么办？ 查看 **Map** 接口发现并没有这些。
+與 **Collection** 介面一樣，`forEach()` 也內建在 **Map** 介面中。但是如果想要執行任何其他的基本功能操作，比如 `map()` ，`flatMap()` ，`reduce()` 或 `filter()` 時，該怎麼辦？ 查看 **Map** 介面發現並沒有這些。
 
-可以通过 `entrySet()` 连接到这些方法，该方法会生成一个由 **Map.Entry** 对象组成的 **Set** 。这个 **Set** 包含 `stream()` 和 `parallelStream()` 方法。只需要记住一件事，这里正在使用的是 **Map.Entry** 对象：
+可以透過 `entrySet()` 連接到這些方法，該方法會生成一個由 **Map.Entry** 物件組成的 **Set** 。這個 **Set** 包含 `stream()` 和 `parallelStream()` 方法。只需要記住一件事，這裡正在使用的是 **Map.Entry** 物件：
 
 ```java
 // collectiontopics/FunctionalMap.java
@@ -698,12 +698,12 @@ HotViolet
 */
 ```
 
-生成 **Stream** 后，所有的基本功能方法，甚至更多就都可以使用了。
+生成 **Stream** 後，所有的基本功能方法，甚至更多就都可以使用了。
 
 <!-- Selecting Parts of a Map -->
-## 选择Map片段
+## 選擇Map片段
 
-由 **TreeMap** 和 **ConcurrentSkipListMap** 实现的 **NavigableMap** 接口解决了需要选择Map片段的问题。下面是一个示例，使用了 **HTMLColors** ：
+由 **TreeMap** 和 **ConcurrentSkipListMap** 實現的 **NavigableMap** 介面解決了需要選擇Map片段的問題。下面是一個範例，使用了 **HTMLColors** ：
 
 ```java
 // collectiontopics/NavMap.java
@@ -801,16 +801,16 @@ public class NavMap {
 */
 ```
 
-在主方法中可以看到 **NavigableMap** 的各种功能。 因为 **NavigableMap** 具有键顺序，所以它使用了 `firstEntry()` 和 `lastEntry()` 的概念。调用 `headMap()` 会生成一个 **NavigableMap** ，其中包含了从 **Map** 的开头到 `headMap()` 参数中所指向的一组元素，其中 **boolean** 值指示结果中是否包含该参数。调用 `tailMap()` 执行了类似的操作，只不过是从参数开始到 **Map** 的末尾。 `subMap()` 则允许生成 **Map** 中间的一部分。
+在主方法中可以看到 **NavigableMap** 的各種功能。 因為 **NavigableMap** 具有鍵順序，所以它使用了 `firstEntry()` 和 `lastEntry()` 的概念。呼叫 `headMap()` 會生成一個 **NavigableMap** ，其中包含了從 **Map** 的開頭到 `headMap()` 參數中所指向的一組元素，其中 **boolean** 值指示結果中是否包含該參數。呼叫 `tailMap()` 執行了類似的操作，只不過是從參數開始到 **Map** 的末尾。 `subMap()` 則允許生成 **Map** 中間的一部分。
 
-`ceilingEntry()` 从当前键值对向上搜索下一个键值对，`floorEntry()` 则是向下搜索。 `descendingMap()` 反转了 **NavigableMap** 的顺序。
+`ceilingEntry()` 從目前鍵值對向上搜尋下一個鍵值對，`floorEntry()` 則是向下搜尋。 `descendingMap()` 反轉了 **NavigableMap** 的順序。
 
-如果需要通过分割 **Map** 来简化所正在解决的问题，则 **NavigableMap** 可以做到。具有类似的功能的其它集合实现也可以用来帮助解决问题。
+如果需要透過分割 **Map** 來簡化所正在解決的問題，則 **NavigableMap** 可以做到。具有類似的功能的其它集合實現也可以用來幫助解決問題。
 
 <!-- Filling Collections -->
 ## 填充集合
 
-与 **Arrays** 一样，这里有一个名为 **Collections** 的伴随类（companion class），包含了一些 **static** 的实用方法，其中包括一个名为 `fill()` 的方法。 `fill()` 只复制整个集合中的单个对象引用。此外，它仅适用于 **List** 对象，但结果列表可以传递给构造方法或 `addAll()` 方法：
+與 **Arrays** 一樣，這裡有一個名為 **Collections** 的伴隨類（companion class），包含了一些 **static** 的實用方法，其中包括一個名為 `fill()` 的方法。 `fill()` 只複製整個集合中的單個物件引用。此外，它僅適用於 **List** 物件，但結果列表可以傳遞給構造方法或 `addAll()` 方法：
 
 ```java
 // collectiontopics/FillingLists.java
@@ -847,13 +847,13 @@ StringAddress@6d06d69c World!]
 */
 ```
 
-这个示例展示了两种使用对单个对象的引用来填充 **Collection** 的方法。 第一个： `Collections.nCopies()` ，创建一个 **List**，并传递给 **ArrayList** 的构造方法，进而填充了 **ArrayList** 。
+這個範例展示了兩種使用對單個物件的引用來填充 **Collection** 的方法。 第一個： `Collections.nCopies()` ，建立一個 **List**，並傳遞給 **ArrayList** 的構造方法，進而填充了 **ArrayList** 。
 
-**StringAddress** 中的 `toString()` 方法调用了 `Object.toString()` ，它先生成类名，后跟着对象的哈希码的无符号十六进制表示（哈希吗由 `hashCode()` 方法生成）。 输出显示所有的引用都指向同一个对象。调用第二个方法 `Collections.fill()` 后也是如此。 `fill()` 方法的用处非常有限，它只能替换 **List** 中已有的元素,而且不会添加新元素，
+**StringAddress** 中的 `toString()` 方法呼叫了 `Object.toString()` ，它先生成類名，後跟著物件的雜湊碼的無符號十六進位制表示（雜湊嗎由 `hashCode()` 方法生成）。 輸出顯示所有的引用都指向同一個物件。呼叫第二個方法 `Collections.fill()` 後也是如此。 `fill()` 方法的用處非常有限，它只能取代 **List** 中已有的元素,而且不會添加新元素，
 
 ### 使用 Suppliers 填充集合
 
-[第二十章 泛型]()章节中介绍的 **onjava.Suppliers** 类为填充集合提供了通用解决方案。 这是一个使用 **Suppliers** 初始化几种不同类型的 **Collection** 的示例：
+[第二十章 泛型]()章節中介紹的 **onjava.Suppliers** 類為填充集合提供了通用解決方案。 這是一個使用 **Suppliers** 初始化幾種不同類型的 **Collection** 的範例：
 
 ```java
 // collectiontopics/SuppliersCollectionTest.java
@@ -922,15 +922,15 @@ swords, is, no, basis, for, a, system, of, government]
 */
 ```
 
-**LinkedHashSet** 中的的元素按插入顺序排列，因为它维护一个链表来保存该顺序。
+**LinkedHashSet** 中的的元素按插入順序排列，因為它維護一個鍊表來儲存該順序。
 
-但是请注意示例的第二部分：大多数情况下都可以使用 **Stream** 来创建和填充 **Collection** 。在本例中的 **Stream** 版本不需要声明 **Supplier** 所想要创建的元素数量;，它直接吸收了 **Stream** 中的所有元素。
+但是請注意範例的第二部分：大多數情況下都可以使用 **Stream** 來建立和填充 **Collection** 。在本例中的 **Stream** 版本不需要聲明 **Supplier** 所想要建立的元素數量;，它直接吸收了 **Stream** 中的所有元素。
 
-尽可能优先选择 **Stream** 来解决问题。
+儘可能優先選擇 **Stream** 來解決問題。
 
 ### Map Suppliers
 
-使用 **Supplier** 来填充 **Map** 时需要一个 **Pair** 类，因为每次调用一个 **Supplier** 的 `get()` 方法时，都必须生成一对对象（一个键和一个值）：
+使用 **Supplier** 來填充 **Map** 時需要一個 **Pair** 類，因為每次呼叫一個 **Supplier** 的 `get()` 方法時，都必須生成一對物件（一個鍵和一個值）：
 
 ```java
 // onjava/Pair.java
@@ -951,7 +951,7 @@ public class Pair<K, V> {
 }
 ```
 
-**Pair** 是一个只读的 *数据传输对象* （Data Transfer Object）或 *信使* （Messenger）。 这与[第二十章 泛型]()章节中的 **Tuple2** 基本相同，但名字更适合 **Map** 初始化。我还添加了静态的 `make()` 方法，以便为创建 **Pair** 对象提供一个更简洁的名字。
+**Pair** 是一個唯讀的 *資料傳輸物件* （Data Transfer Object）或 *信使* （Messenger）。 這與[第二十章 泛型]()章節中的 **Tuple2** 基本相同，但名字更適合 **Map** 初始化。我還添加了靜態的 `make()` 方法，以便為建立 **Pair** 物件提供一個更簡潔的名字。
 
 Java 8 的 **Stream** 提供了填充 **Map** 的便捷方法：
 
@@ -1010,7 +1010,7 @@ o=Val}
 */
 ```
 
-上面的示例中出现了一个模式，可以使用它来创建一个自动创建和填充 **Map** 的工具：
+上面的範例中出現了一個模式，可以使用它來建立一個自動建立和填充 **Map** 的工具：
 
 ```java
 // onjava/FillMap.java
@@ -1050,9 +1050,9 @@ public class FillMap {
 }
 ```
 
-basic() 方法生成一个默认的 **Map** ，而 `create()` 方法允许指定一个确切的 **Map** 类型，并返回那个确切的类型。
+basic() 方法生成一個預設的 **Map** ，而 `create()` 方法允許指定一個確切的 **Map** 類型，並返回那個確切的類型。
 
-下面是一个测试：
+下面是一個測試：
 
 ```java
 // collectiontopics/FillMapTest.java
@@ -1087,13 +1087,13 @@ ztdv=6}
 ```
 
 <!-- Custom Collection and Map using Flyweight -->
-## 使用享元（Flyweight）自定义Collection和Map
+## 使用享元（Flyweight）自訂Collection和Map
 
-本节介绍如何创建自定义 **Collection** 和 **Map** 实现。每个 **java.util** 中的集合都有自己的 **Abstract** 类，它提供了该集合的部分实现，因此只需要实现必要的方法来生成所需的集合。你将看到通过继承 **java.util.Abstract** 类来创建自定义 **Map** 和 **Collection** 是多么简单。例如，要创建一个只读的 **Set** ，则可以从 **AbstractSet** 继承并实现 `iterator()` 和 `size()` 。最后一个示例是生成测试数据的另一种方法。生成的集合通常是只读的，并且所提供的方法最少。
+本節介紹如何建立自訂 **Collection** 和 **Map** 實現。每個 **java.util** 中的集合都有自己的 **Abstract** 類，它提供了該集合的部分實現，因此只需要實現必要的方法來生成所需的集合。你將看到透過繼承 **java.util.Abstract** 類來建立自訂 **Map** 和 **Collection** 是多麼簡單。例如，要建立一個唯讀的 **Set** ，則可以從 **AbstractSet** 繼承並實現 `iterator()` 和 `size()` 。最後一個範例是生成測試資料的另一種方法。生成的集合通常是唯讀的，並且所提供的方法最少。
 
-该解决方案还演示了 *享元* （Flyweight）设计模式。当普通解决方案需要太多对象时，或者当生成普通对象占用太多空间时，可以使用享元。享元设计模式将对象的一部分外部化（externalizes）。相比于把对象的所有内容都包含在对象中，这样做使得对象的部分或者全部可以在更有效的外部表中查找，或通过一些节省空间的其他计算生成。
+該解決方案還示範了 *享元* （Flyweight）設計模式。當普通解決方案需要太多物件時，或者當生成普通物件占用太多空間時，可以使用享元。享元設計模式將物件的一部分外部化（externalizes）。相比於把物件的所有內容都包含在物件中，這樣做使得物件的部分或者全部可以在更有效的外部表中尋找，或透過一些節省空間的其他計算生成。
 
-下面是一个可以是任何大小的 **List** ，并且（有效地）使用 **Integer** 数据进行预初始化。要从 **AbstractList** 创建只读 **List** ，必须实现 `get()` 和 `size()`：
+下面是一個可以是任何大小的 **List** ，並且（有效地）使用 **Integer** 資料進行預初始化。要從 **AbstractList** 建立唯讀 **List** ，必須實現 `get()` 和 `size()`：
 
 ```java
 // onjava/CountingIntegerList.java
@@ -1129,13 +1129,13 @@ extends AbstractList<Integer> {
 */
 ```
 
-只有当想要限制 **List** 的长度时， **size** 值才是重要的，就像在主方法中那样。即使在这种情况下， `get()` 也会产生任何值。
+只有當想要限制 **List** 的長度時， **size** 值才是重要的，就像在主方法中那樣。即使在這種情況下， `get()` 也會產生任何值。
 
-这个类是享元模式的一个简洁的例子。当需要的时候， `get()` “计算”所需的值，因此没必要存储和初始化实际的底层 **List** 结构。
+這個類是享元模式的一個簡潔的例子。當需要的時候， `get()` “計算”所需的值，因此沒必要儲存和初始化實際的底層 **List** 結構。
 
-在大多数程序中，这里所保存的存储结构永远都不会改变。但是，它允许用非常大的 **index** 来调用 `List.get()` ，而 **List** 并不需要填充到这么大。此外，还可以在程序中大量使用 **CountingIntegerLists** 而无需担心存储问题。实际上，享元的一个好处是它允许使用更好的抽象而不用担心资源。
+在大多數程式中，這裡所儲存的儲存結構永遠都不會改變。但是，它允許用非常大的 **index** 來呼叫 `List.get()` ，而 **List** 並不需要填充到這麼大。此外，還可以在程式中大量使用 **CountingIntegerLists** 而無需擔心儲存問題。實際上，享元的一個好處是它允許使用更好的抽象而不用擔心資源。
 
-可以使用享元设计模式来实现具有任何大小数据集的其他“初始化”自定义集合。下面是一个 **Map** ，它为每一个 **Integer** 键产生唯一的值：
+可以使用享元設計模式來實現具有任何大小資料集的其他“初始化”自訂集合。下面是一個 **Map** ，它為每一個 **Integer** 鍵產生唯一的值：
 
 ```java
 // onjava/CountMap.java
@@ -1234,11 +1234,11 @@ N16
 */
 ```
 
-要创建一个只读的 **Map** ，则从 **AbstractMap** 继承并实现 `entrySet()` 。私有的 `value()` 方法计算任何键的值，并在 `get()` 和 `Entry.getValue()` 中使用。可以忽略 **CountMap** 的大小。
+要建立一個唯讀的 **Map** ，則從 **AbstractMap** 繼承並實現 `entrySet()` 。私有的 `value()` 方法計算任何鍵的值，並在 `get()` 和 `Entry.getValue()` 中使用。可以忽略 **CountMap** 的大小。
 
-这里是使用了 **LinkedHashSet** 而不是创建自定义 **Set** 类，因此并未完全实现享元。只有在调用 `entrySet()` 时才会生成此对象。
+這裡是使用了 **LinkedHashSet** 而不是建立自訂 **Set** 類，因此並未完全實現享元。只有在呼叫 `entrySet()` 時才會生成此物件。
 
-现在创建一个更复杂的享元。这个示例中的数据集是世界各国及其首都的 **Map** 。 `capitals()` 方法生成一个国家和首都的 **Map** 。 `names()` 方法生成一个由国家名字组成的 **List** 。 当给定了表示所需大小的 **int** 参数时，两种方法都生成对应大小的列表片段：
+現在建立一個更複雜的享元。這個範例中的資料集是世界各國及其首都的 **Map** 。 `capitals()` 方法生成一個國家和首都的 **Map** 。 `names()` 方法生成一個由國家名字組成的 **List** 。 當給定了表示所需大小的 **int** 參數時，兩種方法都生成對應大小的列表片段：
 
 ```java
 // onjava/Countries.java
@@ -1591,37 +1591,37 @@ Brasilia
 */
 ```
 
-二维数组 **String DATA** 是 **public** 的，因此可以在别处使用。 **FlyweightMap** 必须实现 `entrySet()` 方法，该方法需要一个自定义 **Set** 实现和一个自定义 **Map.Entry** 类。这是实现享元的另一种方法：每个 **Map.Entry** 对象存储它自身的索引，而不是实际的键和值。当调用 `getKey()` 或 `getValue()` 时，它使用索引返回相应的 **DATA** 元素。 **EntrySet** 确保它的 **size** 不大于 **DATA** 。
+二維陣列 **String DATA** 是 **public** 的，因此可以在別處使用。 **FlyweightMap** 必須實現 `entrySet()` 方法，該方法需要一個自訂 **Set** 實現和一個自訂 **Map.Entry** 類。這是實現享元的另一種方法：每個 **Map.Entry** 物件儲存它自身的索引，而不是實際的鍵和值。當呼叫 `getKey()` 或 `getValue()` 時，它使用索引返回相應的 **DATA** 元素。 **EntrySet** 確保它的 **size** 不大於 **DATA** 。
 
-享元的另一部分在 **EntrySet.Iterator** 中实现。相比于为 **DATA** 中的每个数据对创建一个 **Map.Entry** 对象，这里每个迭代器只有一个 **Map.Entry** 对象。 **Entry** 对象作为数据的窗口，它只包含 **String** 静态数组的索引。每次为迭代器调用 `next()` 时，**Entry** 中的索引都会递增，因此它会指向下一个数据对，然后从 `next()` 返回 **Iterators** 的单个 **Entry** 对象。[^1]
+享元的另一部分在 **EntrySet.Iterator** 中實現。相比於為 **DATA** 中的每個資料對建立一個 **Map.Entry** 物件，這裡每個疊代器只有一個 **Map.Entry** 物件。 **Entry** 物件作為資料的視窗，它只包含 **String** 靜態陣列的索引。每次為疊代器呼叫 `next()` 時，**Entry** 中的索引都會遞增，因此它會指向下一個資料對，然後從 `next()` 返回 **Iterators** 的單個 **Entry** 物件。[^1]
 
-`select()` 方法生成一个包含所需大小的 **EntrySet** 的 **FlyweightMap** ，这用于在主方法中演示的重载的 `capitals()` 和 `names()` 方法。
+`select()` 方法生成一個包含所需大小的 **EntrySet** 的 **FlyweightMap** ，這用於在主方法中示範的重載的 `capitals()` 和 `names()` 方法。
 
 <!-- Collection Functionality -->
 ## 集合功能
 
-下面这个表格展示了可以对 **Collection** 执行的所有操作（不包括自动继承自 **Object** 的方法），因此，可以用 **List** ， **Set** ， **Queue** 或 **Deque** 执行这里的所有操作（这些接口可能也提供了一些其他的功能）。**Map** 不是从 **Collection** 继承的，所以要单独处理它。
+下面這個表格展示了可以對 **Collection** 執行的所有操作（不包括自動繼承自 **Object** 的方法），因此，可以用 **List** ， **Set** ， **Queue** 或 **Deque** 執行這裡的所有操作（這些介面可能也提供了一些其他的功能）。**Map** 不是從 **Collection** 繼承的，所以要單獨處理它。
 
 | 方法名 | 描述 |
 | :---: | :--- |
-| **boolean add(T)** | 确保集合包含该泛型类型 **T** 的参数。如果不添加参数，则返回 **false** 。 （这是一种“可选”方法，将在下一节中介绍。） |
-| **boolean addAll(Collection\<? extends T\>)** | 添加参数集合中的所有元素。只要有元素被成功添加则返回 **true**。（“可选的”） |
-| **void clear()** | 删除集合中的所有元素。（“可选的”） |
-| **boolean contains(T)** | 如果目标集合包含该泛型类型 **T** 的参数，则返回 **true** 。 |
-| **boolean containsAll(Collection\<?\>)** | 如果目标集合包含参数集合中的所有元素，则返回 **true** |
-| **boolean isEmpty()** | 如果集合为空，则返回 **true** |
-| **Iterator\<T\> iterator() Spliterator\<T\> spliterator()** | 返回一个迭代器来遍历集合中的元素。 **Spliterators** 更复杂一些，它用在并发场景 |
-| **boolean remove(Object)** | 如果目标集合包含该参数，则在集合中删除该参数，如果成功删除则返回 **true** 。（“可选的”） |
-| **boolean removeAll(Collection\<?\>)** | 删除目标集合中，参数集合所包含的全部元素。如果有元素被成功删除则返回 **true** 。 （“可选的”） |
-| **boolean removeIf(Predicate\<? super E\>)** | 删除此集合中，满足给定断言（predicate）的所有元素 |
-| **Stream\<E\> stream() Stream\<E\> parallelStream()** | 返回由该 **Collection** 中元素所组成的一个 **Stream** |
-| **int size()** | 返回集合中所包含元素的个数 |
-| **Object[] toArrat()** | 返回包含该集合所有元素的一个数组 |
-| **\<T\> T[] toArray(T[] a)** | 返回包含该集合所有元素的一个数组。结果的运行时类型是参数数组而不是普通的 **Object** 数组。 |
+| **boolean add(T)** | 確保集合包含該泛型類型 **T** 的參數。如果不添加參數，則返回 **false** 。 （這是一種“可選”方法，將在下一節中介紹。） |
+| **boolean addAll(Collection\<? extends T\>)** | 添加參數集合中的所有元素。只要有元素被成功添加則返回 **true**。（“可選的”） |
+| **void clear()** | 刪除集合中的所有元素。（“可選的”） |
+| **boolean contains(T)** | 如果目標集合包含該泛型類型 **T** 的參數，則返回 **true** 。 |
+| **boolean containsAll(Collection\<?\>)** | 如果目標集合包含參數集合中的所有元素，則返回 **true** |
+| **boolean isEmpty()** | 如果集合為空，則返回 **true** |
+| **Iterator\<T\> iterator() Spliterator\<T\> spliterator()** | 返回一個疊代器來遍歷集合中的元素。 **Spliterators** 更複雜一些，它用在併發場景 |
+| **boolean remove(Object)** | 如果目標集合包含該參數，則在集合中刪除該參數，如果成功刪除則返回 **true** 。（“可選的”） |
+| **boolean removeAll(Collection\<?\>)** | 刪除目標集合中，參數集合所包含的全部元素。如果有元素被成功刪除則返回 **true** 。 （“可選的”） |
+| **boolean removeIf(Predicate\<? super E\>)** | 刪除此集合中，滿足給定斷言（predicate）的所有元素 |
+| **Stream\<E\> stream() Stream\<E\> parallelStream()** | 返回由該 **Collection** 中元素所組成的一個 **Stream** |
+| **int size()** | 返回集合中所包含元素的個數 |
+| **Object[] toArrat()** | 返回包含該集合所有元素的一個陣列 |
+| **\<T\> T[] toArray(T[] a)** | 返回包含該集合所有元素的一個陣列。結果的執行時類型是參數陣列而不是普通的 **Object** 陣列。 |
 
-这里没有提供用于随机访问元素的 **get()** 方法，因为 **Collection** 还包含 **Set** ，它维护自己的内部排序，所以随机访问查找就没有意义了。因此，要查找 **Collection** 中的元素必须使用迭代器。
+這裡沒有提供用於隨機訪問元素的 **get()** 方法，因為 **Collection** 還包含 **Set** ，它維護自己的內部排序，所以隨機訪問尋找就沒有意義了。因此，要尋找 **Collection** 中的元素必須使用疊代器。
 
-下面这个示例演示了 **Collection** 的所有方法。这里以 **ArrayList** 为例：
+下面這個範例示範了 **Collection** 的所有方法。這裡以 **ArrayList** 為例：
 
 ```java
 // collectiontopics/CollectionMethods.java
@@ -1758,29 +1758,29 @@ after c.clear():[]
 */
 ```
 
-为了只演示 **Collection** 接口的方法，而没有其它额外的内容，所以这里创建包含不同数据集的 **ArrayList** ，并向上转型为 **Collection** 对象。
+為了只示範 **Collection** 介面的方法，而沒有其它額外的內容，所以這裡建立包含不同資料集的 **ArrayList** ，並向上轉型為 **Collection** 物件。
 
 <!-- Optional Operations -->
-## 可选操作
+## 可選操作
 
-在 **Collection** 接口中执行各种添加和删除操作的方法是 *可选操作* （optional operations）。这意味着实现类不需要为这些方法提供功能定义。
+在 **Collection** 介面中執行各種添加和刪除操作的方法是 *可選操作* （optional operations）。這意味著實現類不需要為這些方法提供功能定義。
 
-这是一种非常不寻常的定义接口的方式。正如我们所知，接口是一种合约（contract）。它表达的意思是，“无论你如何选择实现这个接口，我保证你可以将这些消息发送到这个对象”（我在这里使用术语“接口”来描述正式的 **interface** 关键字和“任何类或子类都支持的方法”的更一般含义）。但“可选”操作违反了这一基本原则，它表示调用某些方法不会执行有意义的行为。相反，它们会抛出异常！这看起来似乎丢失了编译时的类型安全性。
+這是一種非常不尋常的定義介面的方式。正如我們所知，介面是一種合約（contract）。它表達的意思是，“無論你如何選擇實現這個介面，我保證你可以將這些消息發送到這個物件”（我在這裡使用術語“介面”來描述正式的 **interface** 關鍵字和“任何類或子類都支援的方法”的更一般含義）。但“可選”操作違反了這一基本原則，它表示呼叫某些方法不會執行有意義的行為。相反，它們會拋出異常！這看起來似乎遺失了編譯時的類型安全性。
 
-其实没那么糟糕。如果操作是可选的，编译器仍然能够限制你仅调用该接口中的方法。它不像动态语言那样，可以为任何对象调用任何方法，并在运行时查找特定的调用是否可行。[^2]此外，大多数将 **Collection** 作为参数的方法仅从该 **Collection** 中读取，并且 **Collection** 的所有“读取”方法都不是可选的。
+其實沒那麼糟糕。如果操作是可選的，編譯器仍然能夠限制你僅呼叫該介面中的方法。它不像動態語言那樣，可以為任何物件呼叫任何方法，並在執行時尋找特定的呼叫是否可行。[^2]此外，大多數將 **Collection** 作為參數的方法僅從該 **Collection** 中讀取，並且 **Collection** 的所有“讀取”方法都不是可選的。
 
-为什么要将方法定义为“可选”的？因为这样做可以防止设计中的接口爆炸。集合库的其他设计往往会产生令人困惑的过多接口来描述主题的每个变体。这甚至使得不可能捕获到接口中的所有特殊情况，因为总有人能发明一个新的接口。“不支持的操作（unsupported operation）”这种方式实现了Java集合库的一个重要目标：集合要易于学习和使用。不支持的操作是一种特殊情况，可以推迟到必要的时候。但是，要使用此方法：
+為什麼要將方法定義為“可選”的？因為這樣做可以防止設計中的介面爆炸。集合庫的其他設計往往會產生令人困惑的過多介面來描述主題的每個變體。這甚至使得不可能捕獲到介面中的所有特殊情況，因為總有人能發明一個新的介面。“不支援的操作（unsupported operation）”這種方式實現了Java集合庫的一個重要目標：集合要易於學習和使用。不支援的操作是一種特殊情況，可以推遲到必要的時候。但是，要使用此方法：
 
-1. **UnsupportedOperationException** 必须是一个罕见的事件。也就是说，对于大多数类，所有操作都应该起作用，并且只有在特殊情况下才应该不支持某项操作。这在Java集合库中是正确的，因为99%的时间使用到的类 —— **ArrayList** ， **LinkedList** ， **HashSet** 和 **HashMap** ，以及其他具体实现，都支持所有操作。该设计确实为创建一个新的 **Collection** 提供了一个“后门”，可以不为 **Collection** 接口中的所有方法都提供有意义的定义，这些定义仍然适合现有的类库。
+1. **UnsupportedOperationException** 必須是一個罕見的事件。也就是說，對於大多數類，所有操作都應該起作用，並且只有在特殊情況下才應該不支援某項操作。這在Java集合庫中是正確的，因為99%的時間使用到的類 —— **ArrayList** ， **LinkedList** ， **HashSet** 和 **HashMap** ，以及其他具體實現，都支援所有操作。該設計確實為建立一個新的 **Collection** 提供了一個“後門”，可以不為 **Collection** 介面中的所有方法都提供有意義的定義，這些定義仍然適合現有的類庫。
 
-2. 当不支持某个操作时， **UnsupportedOperationException** 应该出现在实现阶段，而不是在将产品发送给客户之后。毕竟，这个异常表示编程错误：错误地使用了一个具体实现。
+2. 當不支援某個操作時， **UnsupportedOperationException** 應該出現在實現階段，而不是在將產品發送給客戶之後。畢竟，這個異常表示編程錯誤：錯誤地使用了一個具體實現。
 
-值得注意的是，不支持的操作只能在运行时检测到，因此这代表动态类型检查。如果你来自像 C++ 这样的静态类型语言，Java 可能看起来只是另一种静态类型语言。当然， Java 肯定有静态类型检查，但它也有大量的动态类型，因此很难说它只是静态语言或动态语言。一旦你开始注意到这一点，你就会开始看到 Java 中动态类型检查的其他示例。
+值得注意的是，不支援的操作只能在執行時檢測到，因此這代表動態類型檢查。如果你來自像 C++ 這樣的靜態類型語言，Java 可能看起來只是另一種靜態類型語言。當然， Java 肯定有靜態類型檢查，但它也有大量的動態類型，因此很難說它只是靜態語言或動態語言。一旦你開始注意到這一點，你就會開始看到 Java 中動態類型檢查的其他範例。
 
 <!-- Unsupported Operations -->
-### 不支持的操作
+### 不支援的操作
 
-不支持的操作的常见来源是由固定大小的数据结构所支持的集合。使用 `Arrays.asList()` 方法将数组转换为 **List** 时，就会得到这样的集合。此外，还可以选择使用 **Collections** 类中的“不可修改（unmodifiable）”方法使任何集合（包括 **Map** ）抛出 **UnsupportedOperationException** 异常。此示例展示了这两种情况：
+不支援的操作的常見來源是由固定大小的資料結構所支援的集合。使用 `Arrays.asList()` 方法將陣列轉換為 **List** 時，就會得到這樣的集合。此外，還可以選擇使用 **Collections** 類中的“不可修改（unmodifiable）”方法使任何集合（包括 **Map** ）拋出 **UnsupportedOperationException** 異常。此範例展示了這兩種情況：
 
 ```java
 // collectiontopics/Unsupported.java
@@ -1842,33 +1842,33 @@ List.set(): java.lang.UnsupportedOperationException
 */
 ```
 
-因为 `Arrays.asList()` 生成的 **List** 由一个固定大小的数组所支持，所以唯一支持的操作是那些不改变数组大小的操作。任何会导致更改基础数据结构大小的方法都会产生 **UnsupportedOperationException** 异常，来说明这是对不支持的方法的调用（编程错误）。
+因為 `Arrays.asList()` 生成的 **List** 由一個固定大小的陣列所支援，所以唯一支援的操作是那些不改變陣列大小的操作。任何會導致更改基礎資料結構大小的方法都會產生 **UnsupportedOperationException** 異常，來說明這是對不支援的方法的呼叫（編程錯誤）。
 
-请注意，始终可以将 `Arrays.asList()` 的结果作为一个参数传递给任何 **Collection** 的构造方法（或使用 `addAll()` 方法或静态的 `Collections.addAll()` 方法）来创建一个允许使用所有方法的常规集合，在主方法中第一次调用 `test()` 时显示了这种情况。这种调用产生了一个新的可调整大小的底层数据结构。
+請注意，始終可以將 `Arrays.asList()` 的結果作為一個參數傳遞給任何 **Collection** 的構造方法（或使用 `addAll()` 方法或靜態的 `Collections.addAll()` 方法）來建立一個允許使用所有方法的一般集合，在主方法中第一次呼叫 `test()` 時顯示了這種情況。這種呼叫產生了一個新的可調整大小的底層資料結構。
 
-**Collections** 类中的“unmodifiable”方法会将集合包装一个代理中，如果执行任何想要修改集合的操作，则该代理会生成 **UnsupportedOperationException** 异常。使用这些方法的目的是生成一个“常量”集合对象。稍后将描述“unmodifiable“集合方法的完整列表。
+**Collections** 類中的“unmodifiable”方法會將集合包裝一個代理中，如果執行任何想要修改集合的操作，則該代理會生成 **UnsupportedOperationException** 異常。使用這些方法的目的是生成一個“常量”集合物件。稍後將描述“unmodifiable“集合方法的完整列表。
 
-`test()` 中的最后一个 `check()` 用于测试**List** 的 `set()` 方法。这里，“不支持的操作”技术的粒度（granularity）就派上用场了，得到的“接口”可以通过一种方法在 `Arrays.asList()` 返回的对象和 `Collections.unmodifiableList()` 返回的对象之间变换。 `Arrays.asList()` 返回固定大小的 **List** ，而 `Collections.unmodifiableList()` 生成无法更改的 **List** 。如输出中所示， `Arrays.asList()` 返回的 **List** 中的元素是可以修改的，因为这不会违反该 **List** 的“固定大小”特性。但很明显， `unmodifiableList()` 的结果不应该以任何方式修改。如果使用接口来描述，则需要两个额外的接口，一个具有可用的 `set()` 方法，而另一个没有。 **Collection** 的各种不可修改的子类型都将需要额外的接口。
+`test()` 中的最後一個 `check()` 用於測試**List** 的 `set()` 方法。這裡，“不支援的操作”技術的粒度（granularity）就派上用場了，得到的“介面”可以透過一種方法在 `Arrays.asList()` 返回的物件和 `Collections.unmodifiableList()` 返回的物件之間變換。 `Arrays.asList()` 返回固定大小的 **List** ，而 `Collections.unmodifiableList()` 生成無法更改的 **List** 。如輸出中所示， `Arrays.asList()` 返回的 **List** 中的元素是可以修改的，因為這不會違反該 **List** 的“固定大小”特性。但很明顯， `unmodifiableList()` 的結果不應該以任何方式修改。如果使用介面來描述，則需要兩個額外的介面，一個具有可用的 `set()` 方法，而另一個沒有。 **Collection** 的各種不可修改的子類型都將需要額外的介面。
 
-如果一个方法将一个集合作为它的参数，那么它的文档应该说明必须实现哪些可选方法。
+如果一個方法將一個集合作為它的參數，那麼它的文件應該說明必須實現哪些可選方法。
 
 <!-- Sets and Storage Order -->
-## Set和存储顺序
+## Set和儲存順序
 
-[第十二章 集合]()章节中的 **Set** 有关示例对 **Set** 的基本操作做了很好的介绍。 但是，这些示例可以方便地使用预定义的 Java 类型，例如 **Integer** 和 **String** ，它们可以在集合中使用。在创建自己的类型时请注意， **Set** （以及稍后会看到的 **Map** ）需要一种维护存储顺序的方法，该顺序因 **Set** 的不同实现而异。因此，不同的 **Set** 实现不仅具有不同的行为，而且它们对可以放入特定 **Set** 中的对象类型也有不同的要求：
+[第十二章 集合]()章節中的 **Set** 有關範例對 **Set** 的基本操作做了很好的介紹。 但是，這些範例可以方便地使用預定義的 Java 類型，例如 **Integer** 和 **String** ，它們可以在集合中使用。在建立自己的類型時請注意， **Set** （以及稍後會看到的 **Map** ）需要一種維護儲存順序的方法，該順序因 **Set** 的不同實現而異。因此，不同的 **Set** 實現不僅具有不同的行為，而且它們對可以放入特定 **Set** 中的物件類型也有不同的要求：
 
-| **Set** 类型 | 约束 |
+| **Set** 類型 | 約束 |
 | :---: | :--- |
-| **Set(interface)** | 添加到 **Set** 中的每个元素必须是唯一的，否则，**Set** 不会添加重复元素。添加到 **Set** 的元素必须至少定义 `equals()` 方法以建立对象唯一性。 **Set** 与 **Collection** 具有完全相同的接口。 **Set** 接口不保证它将以任何特定顺序维护其元素。 |
-| **HashSet\*** | 注重快速查找元素的集合，其中元素必须定义 `hashCode()` 和 `equals()` 方法。 |
-| **TreeSet** | 由树支持的有序 **Set**。这样，就可以从 **Set** 中获取有序序列，其中元素必须实现 **Comparable** 接口。 |
-| **LinkedHashSet** | 具有 **HashSet** 的查找速度，但在内部使用链表维护元素的插入顺序。因此，当在遍历 **Set** 时，结果将按元素的插入顺序显示。元素必须定义 `hashCode()` 和 `equals()` 方法。 |
+| **Set(interface)** | 添加到 **Set** 中的每個元素必須是唯一的，否則，**Set** 不會添加重複元素。添加到 **Set** 的元素必須至少定義 `equals()` 方法以建立物件唯一性。 **Set** 與 **Collection** 具有完全相同的介面。 **Set** 介面不保證它將以任何特定順序維護其元素。 |
+| **HashSet\*** | 注重快速尋找元素的集合，其中元素必須定義 `hashCode()` 和 `equals()` 方法。 |
+| **TreeSet** | 由樹支援的有序 **Set**。這樣，就可以從 **Set** 中獲取有序序列，其中元素必須實現 **Comparable** 介面。 |
+| **LinkedHashSet** | 具有 **HashSet** 的尋找速度，但在內部使用鍊表維護元素的插入順序。因此，當在遍歷 **Set** 時，結果將按元素的插入順序顯示。元素必須定義 `hashCode()` 和 `equals()` 方法。 |
 
-**HashSet** 上的星号表示，在没有其他约束的情况下，这应该是你的默认选择，因为它针对速度进行了优化。
+**HashSet** 上的星號表示，在沒有其他約束的情況下，這應該是你的預設選擇，因為它針對速度進行了最佳化。
 
-定义 `hashCode()` 方法在[附录:理解equals和hashCode方法]()中进行了描述。必须为散列和树存储结构创建 `equals()` 方法，但只有当把类放在 **HashSet** 中时才需要 `hashCode()` （当然这很有可能，因为 **HashSet** 通常应该是作为 **Set** 实现的首选）或 **LinkedHashSet** 。 但是，作为一种良好的编程风格，在覆盖 `equals()` 时应始终覆盖 `hashCode()` 。
+定義 `hashCode()` 方法在[附錄:理解equals和hashCode方法]()中進行了描述。必須為散列和樹儲存結構建立 `equals()` 方法，但只有當把類放在 **HashSet** 中時才需要 `hashCode()` （當然這很有可能，因為 **HashSet** 通常應該是作為 **Set** 實現的首選）或 **LinkedHashSet** 。 但是，作為一種良好的程式風格，在覆蓋 `equals()` 時應始終覆蓋 `hashCode()` 。
 
-下面的示例演示了成功使用具有特定 **Set** 实现的类型所需的方法：
+下面的範例示範了成功使用具有特定 **Set** 實現的類型所需的方法：
 
 ```java
 // collectiontopics/TypesForSets.java
@@ -1963,35 +1963,35 @@ HashType cannot be cast to java.lang.Comparable
 */
 ```
 
-为了证明特定 **Set** 需要哪些方法，同时避免代码重复，这里创建了三个类。基类 **SetType** 存储一个 **int** 值，并通过 `toString()` 方法打印它。由于存储在 **Set** 中的所有类都必须具有 `equals()` ，因此该方法也放在基类中。基于 `int i` 来判断元素是否相等。
+為了證明特定 **Set** 需要哪些方法，同時避免程式碼重複，這裡建立了三個類。基類 **SetType** 儲存一個 **int** 值，並透過 `toString()` 方法列印它。由於儲存在 **Set** 中的所有類都必須具有 `equals()` ，因此該方法也放在基類中。基於 `int i` 來判斷元素是否相等。
 
-**HashType** 继承自 **SetType** ，并添加了 `hashCode()` 方法，该方法对于 **Set** 的散列实现是必需的。
+**HashType** 繼承自 **SetType** ，並添加了 `hashCode()` 方法，該方法對於 **Set** 的散列實現是必需的。
 
-要在任何类型的有序集合中使用对象，由 **TreeType** 实现的 **Comparable** 接口都是必需的，例如 **SortedSet** （ **TreeSet** 是其唯一实现）。在 `compareTo()` 中，请注意我没有使用“简单明了”的形式： `return i-i2` 。虽然这是一个常见的编程错误，但只有当 **i** 和 **i2** 是“无符号（unsigned）”整型时才能正常工作（如果 Java 有一个“unsigned”关键字的话，不过它没有）。它破坏了 Java 的有符号 **int** ，它不足以代表两个有符号整数的差异。如果 **i** 是一个大的正整数而 **j** 是一个大的负整数， `i-j` 将溢出并返回一个负值，这不是我们所需要的。
+要在任何類型的有序集合中使用物件，由 **TreeType** 實現的 **Comparable** 介面都是必需的，例如 **SortedSet** （ **TreeSet** 是其唯一實現）。在 `compareTo()` 中，請注意我沒有使用“簡單明瞭”的形式： `return i-i2` 。雖然這是一個常見的程式錯誤，但只有當 **i** 和 **i2** 是“無符號（unsigned）”整型時才能正常工作（如果 Java 有一個“unsigned”關鍵字的話，不過它沒有）。它破壞了 Java 的有符號 **int** ，它不足以代表兩個有符號整數的差異。如果 **i** 是一個大的正整數而 **j** 是一個大的負整數， `i-j` 將溢位並返回一個負值，這不是我們所需要的。
 
-通常希望 `compareTo()` 方法生成与 `equals()` 方法一致的自然顺序。如果 `equals()` 对于特定比较产生 **true**，则 `compareTo()` 应该为该比较返回结果 零，并且如果 `equals()` 为比较产生 **false** ，则 `compareTo()` 应该为该比较产生非零结果。
+通常希望 `compareTo()` 方法生成與 `equals()` 方法一致的自然順序。如果 `equals()` 對於特定比較產生 **true**，則 `compareTo()` 應該為該比較返回結果 零，並且如果 `equals()` 為比較產生 **false** ，則 `compareTo()` 應該為該比較產生非零結果。
 
-在 **TypesForSets** 中， `fill()` 和 `test()` 都是使用泛型定义的，以防止代码重复。为了验证 **Set** 的行为， `test()` 在测试集上调用 `fill()` 三次，尝试引入重复的对象。 `fill()` 方法的参数可以接收任意一个 **Set** 类型，以及生成该类型的 **Function** 对象。因为此示例中使用的所有对象都有一个带有单个 **int** 参数的构造方法，所以可以将构造方法作为此 **Function** 传递，它将提供用于填充 **Set** 的对象。
+在 **TypesForSets** 中， `fill()` 和 `test()` 都是使用泛型定義的，以防止程式碼重複。為了驗證 **Set** 的行為， `test()` 在測試集上呼叫 `fill()` 三次，嘗試引入重複的物件。 `fill()` 方法的參數可以接收任意一個 **Set** 類型，以及生成該類型的 **Function** 物件。因為此範例中使用的所有物件都有一個帶有單個 **int** 參數的構造方法，所以可以將構造方法作為此 **Function** 傳遞，它將提供用於填充 **Set** 的物件。
 
-请注意， `fill()` 方法按降序添加前五个元素，按升序添加后五个元素，以此来指出生成的存储顺序。输出显示 **HashSet** 按升序保留元素，但是，在[附录:理解equals和hashCode方法]()中，你会发现这只是偶然的，因为散列会创建自己的存储顺序。这里只是因为元素是一个简单的 **int** ，在这种情况下它是升序的。 **LinkedHashSet** 按照插入顺序保存元素，**TreeSet** 按排序顺序维护元素（在此示例中因为 `compareTo()` 的实现方式，所以元素按降序排列。）
+請注意， `fill()` 方法按降序添加前五個元素，按升序添加後五個元素，以此來指出生成的儲存順序。輸出顯示 **HashSet** 按升序保留元素，但是，在[附錄:理解equals和hashCode方法]()中，你會發現這只是偶然的，因為散列會建立自己的儲存順序。這裡只是因為元素是一個簡單的 **int** ，在這種情況下它是升序的。 **LinkedHashSet** 按照插入順序儲存元素，**TreeSet** 按排序順序維護元素（在此範例中因為 `compareTo()` 的實現方式，所以元素按降序排列。）
 
-特定的 **Set** 类型一般都有所必需的操作，如果尝试使用没能正确支持这些操作的类型，那么事情就会出错。将没有重新定义 `hashCode()` 方法的 **SetType** 或 **TreeType** 对象放入任何散列实现会导致重复值，因此违反了 **Set** 的主要契约。 这是相当令人不安的，因为这甚至不产生运行时错误。但是，默认的 `hashCode()` 是合法的，所以即使它是不正确的，这也是合法的行为。确保此类程序正确性的唯一可靠方法是将单元测试合并到构建系统中。
+特定的 **Set** 類型一般都有所必需的操作，如果嘗試使用沒能正確支援這些操作的類型，那麼事情就會出錯。將沒有重新定義 `hashCode()` 方法的 **SetType** 或 **TreeType** 物件放入任何散列實現會導致重複值，因此違反了 **Set** 的主要契約。 這是相當令人不安的，因為這甚至不產生執行時錯誤。但是，預設的 `hashCode()` 是合法的，所以即使它是不正確的，這也是合法的行為。確保此類程式正確性的唯一可靠方法是將單元測試合併到構建系統中。
 
-如果尝试在 **TreeSet** 中使用没有实现 **Comparable** 接口的类型，则会得到更明确的结果：当 **TreeSet** 尝试将对象用作一个 **Comparable** 时，将会抛出异常。
+如果嘗試在 **TreeSet** 中使用沒有實現 **Comparable** 介面的類型，則會得到更明確的結果：當 **TreeSet** 嘗試將物件用作一個 **Comparable** 時，將會拋出異常。
 
 <!-- SortedSet -->
 ### SortedSet
 
-**SortedSet** 中的元素保证按排序规则顺序， **SortedSet** 接口中的以下方法可以产生其他功能：
+**SortedSet** 中的元素保證按排序規則順序， **SortedSet** 介面中的以下方法可以產生其他功能：
 
-- `Comparator comparator()` ：生成用于此 **Set** 的**Comparator** 或 **null** 来用于自然排序。
-- `Object first()` ：返回第一个元素。
-- `Object last()` ：返回最后一个元素。
-- `SortedSet subSet(fromElement，toElement)` ：使用 **fromElement** （包含）和 **toElement** （不包括）中的元素生成此 **Set** 的一个视图。
-- `SortedSet headSet(toElement)` ：使用顺序在 **toElement** 之前的元素生成此 **Set** 的一个视图。
-- `SortedSet tailSet(fromElement)` ：使用顺序在 **fromElement** 之后（包含 **fromElement** ）的元素生成此 **Set** 的一个视图。
+- `Comparator comparator()` ：生成用於此 **Set** 的**Comparator** 或 **null** 來用於自然排序。
+- `Object first()` ：返回第一個元素。
+- `Object last()` ：返回最後一個元素。
+- `SortedSet subSet(fromElement，toElement)` ：使用 **fromElement** （包含）和 **toElement** （不包括）中的元素生成此 **Set** 的一個檢視。
+- `SortedSet headSet(toElement)` ：使用順序在 **toElement** 之前的元素生成此 **Set** 的一個檢視。
+- `SortedSet tailSet(fromElement)` ：使用順序在 **fromElement** 之後（包含 **fromElement** ）的元素生成此 **Set** 的一個檢視。
 
-下面是一个简单的演示：
+下面是一個簡單的示範：
 
 ```java
 // collectiontopics/SortedSetDemo.java
@@ -2035,12 +2035,12 @@ two
 */
 ```
 
-注意， **SortedSet** 表示“根据对象的比较函数进行排序”，而不是“根据插入顺序”。可以使用 **LinkedHashSet** 保留元素的插入顺序。
+注意， **SortedSet** 表示“根據物件的比較函數進行排序”，而不是“根據插入順序”。可以使用 **LinkedHashSet** 保留元素的插入順序。
 
 <!-- Queues -->
-## 队列
+## 佇列
 
-有许多 **Queue** 实现，其中大多数是为并发应用程序设计的。许多实现都是通过排序行为而不是性能来区分的。这是一个涉及大多数 **Queue** 实现的基本示例，包括基于并发的队列。队列将元素从一端放入并从另一端取出：
+有許多 **Queue** 實現，其中大多數是為並發應用程式設計的。許多實現都是透過排序行為而不是性能來區分的。這是一個涉及大多數 **Queue** 實現的基本範例，包括基於並發的佇列。佇列將元素從一端放入並從另一端取出：
 
 ```java
 // collectiontopics/QueueBehavior.java
@@ -2092,12 +2092,12 @@ public class QueueBehavior {
 */
 ```
 
-**Deque** 接口也继承自 **Queue** 。 除优先级队列外，**Queue** 按照元素的插入顺序生成元素。 在此示例中，**SynchronousQueue** 不会产生任何结果，因为它是一个阻塞队列，其中每个插入操作必须等待另一个线程执行相应的删除操作，反之亦然。
+**Deque** 介面也繼承自 **Queue** 。 除優先度佇列外，**Queue** 按照元素的插入順序生成元素。 在此範例中，**SynchronousQueue** 不會產生任何結果，因為它是一個阻塞佇列，其中每個插入操作必須等待另一個執行緒執行相應的刪除操作，反之亦然。
 
 <!-- Priority Queues -->
-### 优先级队列
+### 優先度佇列
 
-考虑一个待办事项列表，其中每个对象包含一个 **String** 以及主要和次要优先级值。通过实现 **Comparable** 接口来控制此待办事项列表的顺序：
+考慮一個待辦事項列表，其中每個物件包含一個 **String** 以及主要和次要優先度值。透過實現 **Comparable** 介面來控制此待辦事項列表的順序：
 
 ```java
 // collectiontopics/ToDoList.java
@@ -2155,12 +2155,12 @@ C4: Empty trash
 */
 ```
 
-这展示了通过优先级队列自动排序待办事项。
+這展示了透過優先度佇列自動排序待辦事項。
 
 <!-- Deque -->
-### 双端队列
+### 雙端佇列
 
-**Deque** （双端队列）就像一个队列，但是可以从任一端添加和删除元素。 Java 6为 **Deque** 添加了一个显式接口。以下是对实现了 **Deque** 的类的最基本的 **Deque** 方法的测试：
+**Deque** （雙端佇列）就像一個佇列，但是可以從任一端添加和刪除元素。 Java 6為 **Deque** 添加了一個顯式介面。以下是對實現了 **Deque** 的類的最基本的 **Deque** 方法的測試：
 
 ```java
 // collectiontopics/SimpleDeques.java
@@ -2232,14 +2232,14 @@ ConcurrentLinkedDeque
 */
 ```
 
-我只使用了 **Deque** 方法的“offer”和“poll”版本，因为当 **LinkedBlockingDeque** 的大小有限时，这些方法不会抛出异常。请注意， **LinkedBlockingDeque** 仅填充到它的限制大小为止，然后忽略额外的添加。
+我只使用了 **Deque** 方法的“offer”和“poll”版本，因為當 **LinkedBlockingDeque** 的大小有限時，這些方法不會拋出異常。請注意， **LinkedBlockingDeque** 僅填充到它的限制大小為止，然後忽略額外的添加。
 
 <!-- Understanding Maps -->
 ## 理解Map
 
-正如在[第十二章 集合]()章节中所了解到的，**Map**（也称为 *关联数组* ）维护键值关联（对），因此可以使用键来查找值。标准 Java 库包含不同的 **Map** 基本实现，例如 **HashMap** ， **TreeMap** ， **LinkedHashMap** ， **WeakHashMap** ， **ConcurrentHashMap** 和 **IdentityHashMap** 。 它们都具有相同的基本 **Map** 接口，但它们的行为不同，包括效率，键值对的保存顺序和呈现顺序，保存对象的时间，如何在多线程程序中工作，以及如何确定键的相等性。 **Map** 接口的实现数量应该告诉你一些关于此工具重要性的信息。
+正如在[第十二章 集合]()章節中所了解到的，**Map**（也稱為 *關聯陣列* ）維護鍵值關聯（對），因此可以使用鍵來尋找值。標準 Java 庫包含不同的 **Map** 基本實現，例如 **HashMap** ， **TreeMap** ， **LinkedHashMap** ， **WeakHashMap** ， **ConcurrentHashMap** 和 **IdentityHashMap** 。 它們都具有相同的基本 **Map** 介面，但它們的行為不同，包括效率，鍵值對的儲存順序和呈現順序，儲存物件的時間，如何在多執行緒程式中工作，以及如何確定鍵的相等性。 **Map** 介面的實現數量應該告訴你一些關於此工具重要性的訊息。
 
-为了更深入地了解 **Map** ，学习如何构造关联数组会很有帮助。下面是一个非常简单的实现：
+為了更深入地了解 **Map** ，學習如何構造關聯陣列會很有幫助。下面是一個非常簡單的實現：
 
 ```java
 // collectiontopics/AssociativeArray.java
@@ -2305,33 +2305,33 @@ dancing
 */
 ```
 
-关联数组中的基本方法是 `put()` 和 `get()` ，但为了便于显示，重写了 `toString()` 方法以打印键值对。为了显示它的工作原理，主方法加载一个带有字符串对的 **AssociativeArray** 并打印生成的映射，然后调用其中一个值的 `get()` 方法。
+關聯陣列中的基本方法是 `put()` 和 `get()` ，但為了便於顯示，重寫了 `toString()` 方法以列印鍵值對。為了顯示它的工作原理，主方法載入一個帶有字串對的 **AssociativeArray** 並列印生成的映射，然後呼叫其中一個值的 `get()` 方法。
 
-要使用 `get()` 方法，可以传入要查找的 **key** ，它将生成相关联的值作为结果，如果找不到则返回 **null** 。 `get()` 方法使用可能是效率最低的方法来定位值：从数组的头部开始并使用 `equals()` 来比较键。但这里是侧重于简单，而不是效率。
+要使用 `get()` 方法，可以傳入要尋找的 **key** ，它將生成相關聯的值作為結果，如果找不到則返回 **null** 。 `get()` 方法使用可能是效率最低的方法來定位值：從陣列的頭部開始並使用 `equals()` 來比較鍵。但這裡是側重於簡單，而不是效率。
 
-这个版本很有启发性，但它不是很有效，而且它只有一个固定的大小，这是不灵活的。幸运的是， **java.util** 中的那些 **Map** 没有这些问题。
+這個版本很有啟發性，但它不是很有效，而且它只有一個固定的大小，這是不靈活的。幸運的是， **java.util** 中的那些 **Map** 沒有這些問題。
 
 <!-- Performance -->
 ### 性能
 
-性能是 **Map** 的基本问题，在 `get()` 中使用线性方法搜索一个键时会非常慢。这就是 **HashMap** 要加速的地方。它使用一个称为 *哈希码* 的特殊值来替代慢速搜索一个键。哈希码是一种从相关对象中获取一些信息并将其转换为该对象的“相对唯一” **int** 的方法。 `hashCode()` 是根类 **Object** 中的一个方法，因此所有 Java 对象都可以生成哈希码。 **HashMap** 获取对象的 `hashCode()` 并使用它来快速搜索键。这就使得性能有了显著的提升。[^3]
+性能是 **Map** 的基本問題，在 `get()` 中使用線性方法搜尋一個鍵時會非常慢。這就是 **HashMap** 要加速的地方。它使用一個稱為 *雜湊碼* 的特殊值來替代慢速搜尋一個鍵。雜湊碼是一種從相關物件中獲取一些訊息並將其轉換為該物件的“相對唯一” **int** 的方法。 `hashCode()` 是根類 **Object** 中的一個方法，因此所有 Java 物件都可以生成雜湊碼。 **HashMap** 獲取物件的 `hashCode()` 並使用它來快速搜尋鍵。這就使得效能有了顯著的提升。[^3]
 
-以下是基本的 **Map** 实现。 **HashMap**上的星号表示，在没有其他约束的情况下，这应该是你的默认选择，因为它针对速度进行了优化。其他实现强调其他特性，因此不如 **HashMap** 快。
+以下是基本的 **Map** 實現。 **HashMap**上的星號表示，在沒有其他約束的情況下，這應該是你的預設選擇，因為它針對速度進行了最佳化。其他實現強調其他特性，因此不如 **HashMap** 快。
 
-| **Map** 实现 | 描述 |
+| **Map** 實現 | 描述 |
 | :---: | :--- |
-| **HashMap\*** | 基于哈希表的实现。（使用此类来代替 **Hashtable** 。）为插入和定位键值对提供了常数时间性能。可以通过构造方法调整性能，这些构造方法允许你设置哈希表的容量和装填因子。 |
-| **LinkedHashMap** | 与 **HashMap** 类似，但是当遍历时，可以按插入顺序或最近最少使用（LRU）顺序获取键值对。只比 **HashMap** 略慢，一个例外是在迭代时，由于其使用链表维护内部顺序，所以会更快些。 |
-| **TreeMap** | 基于红黑树的实现。当查看键或键值对时，它们按排序顺序（由 **Comparable** 或 **Comparator** 确定）。 **TreeMap** 的侧重点是按排序顺序获得结果。 **TreeMap** 是唯一使用 `subMap()` 方法的 **Map** ，它返回红黑树的一部分。 |
-| **WeakHashMap** | 一种具有 *弱键*（weak keys） 的 **Map** ，为了解决某些类型的问题，它允许释放 **Map** 所引用的对象。如果在 **Map** 外没有对特定键的引用，则可以对该键进行垃圾回收。 |
-| **ConcurrentHashMap** | 不使用同步锁定的线程安全 **Map** 。这在[第二十四章 并发编程]() 一章中讨论。 |
-| **IdentityHashMap** | 使用 `==` 而不是 `equals()` 来比较键。仅用于解决特殊问题，不适用于一般用途。 |
+| **HashMap\*** | 基於雜湊表的實現。（使用此類來代替 **Hashtable** 。）為插入和定位鍵值對提供了常數時間性能。可以透過構造方法調整性能，這些構造方法允許你設定雜湊表的容量和裝填因子。 |
+| **LinkedHashMap** | 與 **HashMap** 類似，但是當遍歷時，可以按插入順序或最近最少使用（LRU）順序獲取鍵值對。只比 **HashMap** 略慢，一個例外是在疊代時，由於其使用鍊表維護內部順序，所以會更快些。 |
+| **TreeMap** | 基於紅黑樹的實現。當查看鍵或鍵值對時，它們按排序順序（由 **Comparable** 或 **Comparator** 確定）。 **TreeMap** 的側重點是按排序順序獲得結果。 **TreeMap** 是唯一使用 `subMap()` 方法的 **Map** ，它返回紅黑樹的一部分。 |
+| **WeakHashMap** | 一種具有 *弱鍵*（weak keys） 的 **Map** ，為了解決某些類型的問題，它允許釋放 **Map** 所引用的物件。如果在 **Map** 外沒有對特定鍵的引用，則可以對該鍵進行垃圾回收。 |
+| **ConcurrentHashMap** | 不使用同步鎖定的執行緒安全 **Map** 。這在[第二十四章 並發編程]() 一章中討論。 |
+| **IdentityHashMap** | 使用 `==` 而不是 `equals()` 來比較鍵。僅用於解決特殊問題，不適用於一般用途。 |
 
-散列是在 **Map** 中存储元素的最常用方法。
+散列是在 **Map** 中儲存元素的最常用方法。
 
-**Map** 中使用的键的要求与 **Set** 中的元素的要求相同。可以在 **TypesForSets.java** 中看到这些。任何键必须具有 `equals()` 方法。如果键用于散列映射，则它还必须具有正确的 `hashCode()` 方法。如果键在 **TreeMap** 中使用，则必须实现 **Comparable** 接口。
+**Map** 中使用的鍵的要求與 **Set** 中的元素的要求相同。可以在 **TypesForSets.java** 中看到這些。任何鍵必須具有 `equals()` 方法。如果鍵用於散列映射，則它還必須具有正確的 `hashCode()` 方法。如果鍵在 **TreeMap** 中使用，則必須實現 **Comparable** 介面。
 
-以下示例使用先前定义的 **CountMap** 测试数据集显示通过 **Map** 接口可用的操作：
+以下範例使用先前定義的 **CountMap** 測試資料集顯示透過 **Map** 介面可用的操作：
 
 ```java
 // collectiontopics/MapOps.java
@@ -2409,23 +2409,23 @@ map.isEmpty(): true
 */
 ```
 
-`printKeys()` 方法演示了如何生成 **Map** 的 **Collection** 视图。 `keySet()` 方法生成一个由 **Map** 中的键组成的 **Set** 。 打印 `values()` 方法的结果会生成一个包含 **Map** 中所有值的 **Collection** 。（请注意，键必须是唯一的，但值可以包含重复项。）由于这些 **Collection** 由 **Map** 支持，因此 **Collection** 中的任何更改都会反映在所关联的 **Map** 中。
+`printKeys()` 方法示範了如何生成 **Map** 的 **Collection** 檢視。 `keySet()` 方法生成一個由 **Map** 中的鍵組成的 **Set** 。 列印 `values()` 方法的結果會生成一個包含 **Map** 中所有值的 **Collection** 。（請注意，鍵必須是唯一的，但值可以包含重複項。）由於這些 **Collection** 由 **Map** 支援，因此 **Collection** 中的任何更改都會反映在所關聯的 **Map** 中。
 
-程序的其余部分提供了每个 **Map** 操作的简单示例，并测试了每种基本类型的 **Map** 。
+程式的其餘部分提供了每個 **Map** 操作的簡單範例，並測試了每種基本類型的 **Map** 。
 
 <!-- SortedMap -->
 ### SortedMap
 
-使用 **SortedMap** （由 **TreeMap** 或 **ConcurrentSkipListMap** 实现），键保证按排序顺序，这允许在 **SortedMap** 接口中使用这些方法来提供其他功能：
+使用 **SortedMap** （由 **TreeMap** 或 **ConcurrentSkipListMap** 實現），鍵保證按排序順序，這允許在 **SortedMap** 介面中使用這些方法來提供其他功能：
 
-- `Comparator comparator()` ：生成用于此 **Map** 的比较器， **null** 表示自然排序。
-- `T firstKey()` ：返回第一个键。
-- `T lastKey()` ：返回最后一个键。
-- `SortedMap subMap(fromKey，toKey)` ：生成此 **Map** 的视图，其中键从 **fromKey**（包括），到 **toKey** （不包括）。
-- `SortedMap headMap(toKey)` ：使用小于 **toKey** 的键生成此 **Map** 的视图。
-- `SortedMap tailMap(fromKey)` ：使用大于或等于 **fromKey** 的键生成此 **Map** 的视图。
+- `Comparator comparator()` ：生成用於此 **Map** 的比較器， **null** 表示自然排序。
+- `T firstKey()` ：返回第一個鍵。
+- `T lastKey()` ：返回最後一個鍵。
+- `SortedMap subMap(fromKey，toKey)` ：生成此 **Map** 的檢視，其中鍵從 **fromKey**（包括），到 **toKey** （不包括）。
+- `SortedMap headMap(toKey)` ：使用小於 **toKey** 的鍵生成此 **Map** 的檢視。
+- `SortedMap tailMap(fromKey)` ：使用大於或等於 **fromKey** 的鍵生成此 **Map** 的檢視。
 
-这是一个类似于 **SortedSetDemo.java** 的示例，显示了 **TreeMap** 的这种额外行为：
+這是一個類似於 **SortedSetDemo.java** 的範例，顯示了 **TreeMap** 的這種額外行為：
 
 ```java
 // collectiontopics/SortedMapDemo.java
@@ -2469,12 +2469,12 @@ public class SortedMapDemo {
 */
 ```
 
-这里，键值对按照键的排序顺序进行排序。因为 **TreeMap** 中存在顺序感，所以“位置”的概念很有意义，因此可以拥有第一个、最后一个元素或子图。
+這裡，鍵值對按照鍵的排序順序進行排序。因為 **TreeMap** 中存在順序感，所以“位置”的概念很有意義，因此可以擁有第一個、最後一個元素或子圖。
 
 <!-- LinkedHashMap -->
 ### LinkedHashMap
 
-**LinkedHashMap** 针对速度进行哈希处理，但在遍历期间也会按插入顺序生成键值对（ `System.out.println()` 可以遍历它，因此可以看到遍历的结果）。 此外，可以在构造方法中配置 **LinkedHashMap** 以使用基于访问的 *最近最少使用*（LRU） 算法，因此未访问的元素（因此是删除的候选者）会出现在列表的前面。 这样可以轻松创建一个能够定期清理以节省空间的程序。下面是一个显示这两个功能的简单示例：
+**LinkedHashMap** 針對速度進行雜湊處理，但在遍歷期間也會按插入順序生成鍵值對（ `System.out.println()` 可以遍歷它，因此可以看到遍歷的結果）。 此外，可以在構造方法中配置 **LinkedHashMap** 以使用基於訪問的 *最近最少使用*（LRU） 演算法，因此未訪問的元素（因此是刪除的候選者）會出現在列表的前面。 這樣可以輕鬆建立一個能夠定期清理以節省空間的程式。下面是一個顯示這兩個功能的簡單範例：
 
 ```java
 // collectiontopics/LinkedHashMapDemo.java
@@ -2507,40 +2507,40 @@ public class LinkedHashMapDemo {
 */
 ```
 
-这些键值对确实是按照插入顺序进行遍历，即使对于LRU版本也是如此。 但是，在LRU版本中访问前六项（仅限）后，最后三项将移至列表的前面。然后，当再次访问“ **0** ”后，它移动到了列表的后面。
+這些鍵值對確實是按照插入順序進行遍歷，即使對於LRU版本也是如此。 但是，在LRU版本中訪問前六項（僅限）後，最後三項將移至列表的前面。然後，當再次訪問“ **0** ”後，它移動到了列表的後面。
 
 <!-- Utilities -->
-## 集合工具类
+## 集合工具類
 
-集合有许多独立的实用工具程序，在 **java.util.Collections** 中表示为静态方法。之前已经见过其中一些，例如 `addAll()` ， `reverseOrder()` 和 `binarySearch()` 。以下是其他内容（同步和不可修改的实用工具程序将在后面的章节中介绍）。在此表中，在需要的时候使用了泛型：
+集合有許多獨立的實用工具程式，在 **java.util.Collections** 中表示為靜態方法。之前已經見過其中一些，例如 `addAll()` ， `reverseOrder()` 和 `binarySearch()` 。以下是其他內容（同步和不可修改的實用工具程式將在後面的章節中介紹）。在此表中，在需要的時候使用了泛型：
 
 | 方法 | 描述 |
 | :--- | :--- |
-| **checkedCollection(Collection\<T> c, Class\<T> type)** <br><br> **checkedList(List\<T> list, Class\<T> type)** <br><br> **checkedMap(Map\<K, V> m, Class\<K> keyType, Class\<V> valueType)** <br><br> **checkedSet(Set\<T> s, Class\<T> type)** <br><br> **checkedSortedMap(SortedMap\<K, V> m, Class\<K> keyType, Class\<V> valueType)** <br><br> **checkedSortedSet(SortedSet\<T> s, Class\<T> type)** | 生成 **Collection** 的动态类型安全视图或 **Collection** 的特定子类型。 当无法使用静态检查版本时使用这个版本。 <br><br> 这些方法的使用在[第九章 多态]()章节的“动态类型安全”标题下进行了展示。 |
-| **max(Collection)** <br><br> **min(Collection)** | 使用 **Collection** 中对象的自然比较方法生成参数集合中的最大或最小元素。 |
-| **max(Collection, Comparator)** <br><br> **min(Collection, Comparator)** | 使用 **Comparator** 指定的比较方法生成参数集合中的最大或最小元素。 |
-| **indexOfSubList(List source, List target)** | 返回 **target** 在 **source** 内第一次出现的起始索引，如果不存在则返回 -1。 |
-| **lastIndexOfSubList(List source, List target)** | 返回 **target** 在 **source** 内最后一次出现的起始索引，如果不存在则返回 -1。 |
-| **replaceAll(List\<T> list, T oldVal, T newVal)** | 用 **newVal** 替换列表中所有的 **oldVal** 。 |
-| **reverse(List)**| 反转列表 |
-| **reverseOrder()** <br><br> **reverseOrder(Comparator\<T>)** | 返回一个 **Comparator** ，它与集合中实现了 **comparable\<T>** 接口的对象的自然顺序相反。第二个版本颠倒了所提供的 **Comparator** 的顺序。 |
-| **rotate(List, int distance)** | 将所有元素向前移动 **distance** ，将尾部的元素移到开头。（译者注：即循环移动） |
-| **shuffle(List)** <br><br> **shuffle(List, Random)**  | 随机置换指定列表（即打乱顺序）。第一个版本使用了默认的随机化源，或者也可以使用第二个版本，提供自己的随机化源。 |
-| **sort(List\<T>)** <br><br> **sort(List\<T>, Comparator\<? super T> c)** | 第一个版本使用元素的自然顺序排序该 **List\<T>** 。第二个版本根据提供的 **Comparator** 排序。 |
-| **copy(List\<? super T> dest, List\<? extends T> src)** | 将 **src** 中的元素复制到 **dest** 。 |
-| **swap(List, int i, int j)** | 交换 **List** 中位置 **i** 和 位置 **j** 的元素。可能比你手工编写的速度快。 |
-| **fill(List\<? super T>, T x)** | 用 **x** 替换 **List** 中的所有元素。|
-| **nCopies(int n, T x)** | 返回大小为 **n** 的不可变 **List\<T>** ，其引用都指向 **x** 。 |
-| **disjoint(Collection, Collection)** | 如果两个集合没有共同元素，则返回 **true** 。 |
-| **frequency(Collection, Object x)** | 返回 **Collection** 中，等于 **x** 的元素个数。 |
-| **emptyList()** <br><br> **emptyMap()** <br><br> **emptySet()** | 返回不可变的空 **List** ， **Map** 或 **Set** 。这些是泛型的，因此生成的 **Collection** 可以被参数化为所需的类型。 |
-| **singleton(T x)** <br><br> **singletonList(T x)** <br><br> **singletonMap(K key, V value)** | 生成一个不可变的 **List** ， **Set** 或 **Map** ，其中只包含基于给定参数的单个元素。 |
-| **list(Enumeration\<T> e)** | 生成一个 **ArrayList\<T>** ，其中元素为（旧式） **Enumeration** （ **Iterator** 的前身）中的元素。用于从遗留代码向新式转换。 |
-| **enumeration(Collection\<T>)** | 为参数集合生成一个旧式的 **Enumeration\<T>** 。 |
+| **checkedCollection(Collection\<T> c, Class\<T> type)** <br><br> **checkedList(List\<T> list, Class\<T> type)** <br><br> **checkedMap(Map\<K, V> m, Class\<K> keyType, Class\<V> valueType)** <br><br> **checkedSet(Set\<T> s, Class\<T> type)** <br><br> **checkedSortedMap(SortedMap\<K, V> m, Class\<K> keyType, Class\<V> valueType)** <br><br> **checkedSortedSet(SortedSet\<T> s, Class\<T> type)** | 生成 **Collection** 的動態類型安全檢視或 **Collection** 的特定子類型。 當無法使用靜態檢查版本時使用這個版本。 <br><br> 這些方法的使用在[第九章 多態]()章節的“動態類型安全”標題下進行了展示。 |
+| **max(Collection)** <br><br> **min(Collection)** | 使用 **Collection** 中物件的自然比較方法生成參數集合中的最大或最小元素。 |
+| **max(Collection, Comparator)** <br><br> **min(Collection, Comparator)** | 使用 **Comparator** 指定的比較方法生成參數集合中的最大或最小元素。 |
+| **indexOfSubList(List source, List target)** | 返回 **target** 在 **source** 內第一次出現的起始索引，如果不存在則返回 -1。 |
+| **lastIndexOfSubList(List source, List target)** | 返回 **target** 在 **source** 內最後一次出現的起始索引，如果不存在則返回 -1。 |
+| **replaceAll(List\<T> list, T oldVal, T newVal)** | 用 **newVal** 取代列表中所有的 **oldVal** 。 |
+| **reverse(List)**| 反轉列表 |
+| **reverseOrder()** <br><br> **reverseOrder(Comparator\<T>)** | 返回一個 **Comparator** ，它與集合中實現了 **comparable\<T>** 介面的物件的自然順序相反。第二個版本顛倒了所提供的 **Comparator** 的順序。 |
+| **rotate(List, int distance)** | 將所有元素向前移動 **distance** ，將尾部的元素移到開頭。（譯者註：即循環移動） |
+| **shuffle(List)** <br><br> **shuffle(List, Random)**  | 隨機置換指定列表（即打亂順序）。第一個版本使用了預設的隨機化源，或者也可以使用第二個版本，提供自己的隨機化源。 |
+| **sort(List\<T>)** <br><br> **sort(List\<T>, Comparator\<? super T> c)** | 第一個版本使用元素的自然順序排序該 **List\<T>** 。第二個版本根據提供的 **Comparator** 排序。 |
+| **copy(List\<? super T> dest, List\<? extends T> src)** | 將 **src** 中的元素複製到 **dest** 。 |
+| **swap(List, int i, int j)** | 交換 **List** 中位置 **i** 和 位置 **j** 的元素。可能比你手工編寫的速度快。 |
+| **fill(List\<? super T>, T x)** | 用 **x** 取代 **List** 中的所有元素。|
+| **nCopies(int n, T x)** | 返回大小為 **n** 的不可變 **List\<T>** ，其引用都指向 **x** 。 |
+| **disjoint(Collection, Collection)** | 如果兩個集合沒有共同元素，則返回 **true** 。 |
+| **frequency(Collection, Object x)** | 返回 **Collection** 中，等於 **x** 的元素個數。 |
+| **emptyList()** <br><br> **emptyMap()** <br><br> **emptySet()** | 返回不可變的空 **List** ， **Map** 或 **Set** 。這些是泛型的，因此生成的 **Collection** 可以被參數化為所需的類型。 |
+| **singleton(T x)** <br><br> **singletonList(T x)** <br><br> **singletonMap(K key, V value)** | 生成一個不可變的 **List** ， **Set** 或 **Map** ，其中只包含基於給定參數的單個元素。 |
+| **list(Enumeration\<T> e)** | 生成一個 **ArrayList\<T>** ，其中元素為（舊式） **Enumeration** （ **Iterator** 的前身）中的元素。用於從遺留程式碼向新式轉換。 |
+| **enumeration(Collection\<T>)** | 為參數集合生成一個舊式的 **Enumeration\<T>** 。 |
 
-请注意， `min（)` 和 `max()` 使用 **Collection** 对象，而不使用 **List** ，因此不必担心是否应对 **Collection** 进行排序。（如前所述，在执行 `binarySearch()` 之前，将会对 **List** 或数组进行`sort()` 排序。）
+請注意， `min（)` 和 `max()` 使用 **Collection** 物件，而不使用 **List** ，因此不必擔心是否應對 **Collection** 進行排序。（如前所述，在執行 `binarySearch()` 之前，將會對 **List** 或陣列進行`sort()` 排序。）
 
-下面是一个示例，展示了上表中大多数实用工具程序的基本用法：
+下面是一個範例，展示了上表中大多數實用工具程式的基本用法：
 
 ```java
 // collectiontopics/Utilities.java
@@ -2630,12 +2630,12 @@ arrayList: [snap, snap, snap]
 */
 ```
 
-输出解释了每种实用方法的行为。请注意由于大小写的缘故，普通版本的 `min()` 和 `max()` 与带有 **String.CASE_INSENSITIVE_ORDER** 比较器参数的版本的区别。
+輸出解釋了每種實用方法的行為。請注意由於大小寫的緣故，普通版本的 `min()` 和 `max()` 與帶有 **String.CASE_INSENSITIVE_ORDER** 比較器參數的版本的區別。
 
 <!-- Sorting and Searching Lists -->
-### 排序和搜索列表
+### 排序和搜尋列表
 
-用于执行排序和搜索 **List** 的实用工具程序与用于排序对象数组的程序具有相同的名字和方法签名，只不过是 **Collections** 的静态方法而不是 **Arrays** 。 这是一个使用 **Utilities.java** 中的 **list** 数据的示例：
+用於執行排序和搜尋 **List** 的實用工具程式與用於排序物件陣列的程式具有相同的名字和方法簽名，只不過是 **Collections** 的靜態方法而不是 **Arrays** 。 這是一個使用 **Utilities.java** 中的 **list** 資料的範例：
 
 ```java
 // collectiontopics/ListSortSearch.java
@@ -2694,14 +2694,14 @@ Location of three is 7, list.get(7) = three
 */
 ```
 
-就像使用数组进行搜索和排序一样，如果使用 **Comparator** 进行排序，则必须使用相同的 **Comparator** 执行 `binarySearch()` 。
+就像使用陣列進行搜尋和排序一樣，如果使用 **Comparator** 進行排序，則必須使用相同的 **Comparator** 執行 `binarySearch()` 。
 
-该程序还演示了 **Collections** 中的 `shuffle()` 方法，该方法随机打乱了 **List** 的顺序。 **ListIterator** 是在打乱后的列表中的特定位置创建的，用于从该位置删除元素，直到列表末尾。
+該程式還示範了 **Collections** 中的 `shuffle()` 方法，該方法隨機打亂了 **List** 的順序。 **ListIterator** 是在打亂後的列表中的特定位置建立的，用於從該位置刪除元素，直到列表末尾。
 
 <!-- Making a Collection or Map Unmodifiable -->
-### 创建不可修改的 Collection 或 Map
+### 建立不可修改的 Collection 或 Map
 
-通常，创建 **Collection** 或 **Map** 的只读版本会很方便。 **Collections** 类通过将原始集合传递给一个方法然后返回一个只读版本的集合。 对于 **Collection** （如果不能将 **Collection** 视为更具体的类型）， **List** ， **Set** 和 **Map** ，这类方法有许多变体。这个示例展示了针对每种类型，正确构建只读版本集合的方法：
+通常，建立 **Collection** 或 **Map** 的唯讀版本會很方便。 **Collections** 類透過將原始集合傳遞給一個方法然後返回一個唯讀版本的集合。 對於 **Collection** （如果不能將 **Collection** 視為更具體的類型）， **List** ， **Set** 和 **Map** ，這類方法有許多變體。這個範例展示了針對每種類型，正確構建唯讀版本集合的方法：
 
 ```java
 // collectiontopics/ReadOnly.java
@@ -2759,14 +2759,14 @@ BURUNDI=Bujumbura}
 */
 ```
 
-为特定类型调用 “unmodifiable” 方法不会导致编译时检查，但是一旦发生转换，对修改特定集合内容的任何方法调用都将产生 **UnsupportedOperationException** 异常。
+為特定類型呼叫 “unmodifiable” 方法不會導致編譯時檢查，但是一旦發生轉換，對修改特定集合內容的任何方法呼叫都將產生 **UnsupportedOperationException** 異常。
 
-在每种情况下，在将集合设置为只读之前，必须使用有意义的数据填充集合。填充完成后，最好的方法是用 “unmodifiable” 方法调用生成的引用替换现有引用。这样，一旦使得内容无法修改，那么就不会冒有意外更改内容的风险。另一方面，此工具还允许将可修改的集合保留为类中的**私有**集合，并从方法调用处返回对该集合的只读引用。所以，你可以在类内修改它，但其他人只能读它。
+在每種情況下，在將集合設定為唯讀之前，必須使用有意義的資料填充集合。填充完成後，最好的方法是用 “unmodifiable” 方法呼叫生成的引用取代現有引用。這樣，一旦使得內容無法修改，那麼就不會冒有意外更改內容的風險。另一方面，此工具還允許將可修改的集合保留為類中的**私有**集合，並從方法呼叫處返回對該集合的唯讀引用。所以，你可以在類內修改它，但其他人只能讀它。
 
 <!-- Synchronizing a Collection or Map -->
 ### 同步 Collection 或 Map
 
-**synchronized** 关键字是多线程主题的重要组成部分，更复杂的内容在[第二十四章 并发编程]()中介绍。在这里，只需要注意到 **Collections** 类包含一种自动同步整个集合的方法。 语法类似于 “unmodifiable” 方法：
+**synchronized** 關鍵字是多執行緒主題的重要組成部分，更複雜的內容在[第二十四章 並發編程]()中介紹。在這裡，只需要注意到 **Collections** 類包含一種自動同步整個集合的方法。 語法類似於 “unmodifiable” 方法：
 
 ```java
 // collectiontopics/Synchronization.java
@@ -2792,14 +2792,14 @@ public class Synchronization {
 }
 ```
 
-最好立即通过适当的 “synchronized” 方法传递新集合，如上所示。这样，就不会意外地暴露出非同步版本。
+最好立即透過適當的 “synchronized” 方法傳遞新集合，如上所示。這樣，就不會意外地暴露出非同步版本。
 
 <!-- Fail Fast -->
 #### Fail Fast
 
-Java 集合还具有防止多个进程修改集合内容的机制。如果当前正在迭代集合，然后有其他一些进程介入并插入，删除或更改该集合中的对象，则会出现此问题。也许在集合中已经遍历过了那个元素，也许还没有遍历到，也许在调用 `size()` 之后集合的大小会缩小...有许多灾难情景。 Java 集合库使用一种 *fail-fast* 的机制，该机制可以检测到除了当前进程引起的更改之外，其它任何对集合的更改操作。如果它检测到其他人正在修改集合，则会立即生成 **ConcurrentModificationException** 异常。这就是“fail-fast”的含义——它不会在以后使用更复杂的算法尝试检测问题（快速失败）。
+Java 集合還具有防止多個行程修改集合內容的機制。如果目前正在疊代集合，然後有其他一些行程介入並插入，刪除或更改該集合中的物件，則會出現此問題。也許在集合中已經遍歷過了那個元素，也許還沒有遍歷到，也許在呼叫 `size()` 之後集合的大小會縮小...有許多災難情景。 Java 集合庫使用一種 *fail-fast* 的機制，該機制可以檢測到除了目前行程引起的更改之外，其它任何對集合的更改操作。如果它檢測到其他人正在修改集合，則會立即生成 **ConcurrentModificationException** 異常。這就是“fail-fast”的含義——它不會在以後使用更複雜的演算法嘗試檢測問題（快速失敗）。
 
-通过创建迭代器并向迭代器指向的集合中添加元素，可以很容易地看到操作中的 fail-fast 机制，如下所示：
+透過建立疊代器並向疊代器指向的集合中添加元素，可以很容易地看到操作中的 fail-fast 機制，如下所示：
 
 ```java
 // collectiontopics/FailFast.java
@@ -2823,24 +2823,24 @@ java.util.ConcurrentModificationException
 */
 ```
 
-异常来自于在从集合中获得迭代器之后，又尝试在集合中添加元素。程序的两个部分可能会修改同一个集合，这种可能性的存在会产生不确定状态，因此异常会通知你更改代码。在这种情况下，应先将所有元素添加到集合，然后再获取迭代器。
+異常來自於在從集合中獲得疊代器之後，又嘗試在集合中添加元素。程式的兩個部分可能會修改同一個集合，這種可能性的存在會產生不確定狀態，因此異常會通知你更改程式碼。在這種情況下，應先將所有元素添加到集合，然後再獲取疊代器。
 
-**ConcurrentHashMap** ， **CopyOnWriteArrayList** 和 **CopyOnWriteArraySet** 使用了特定的技术来避免产生 **ConcurrentModificationException** 异常。
+**ConcurrentHashMap** ， **CopyOnWriteArrayList** 和 **CopyOnWriteArraySet** 使用了特定的技術來避免產生 **ConcurrentModificationException** 異常。
 
 <!-- Holding References -->
 ## 持有引用
 
-**java.lang.ref** 中库包含一组类，这些类允许垃圾收集具有更大的灵活性。特别是当拥有可能导致内存耗尽的大对象时，这些类特别有用。这里有三个从抽象类 **Reference** 继承来的类： **SoftReference** （软引用）， **WeakReference** （弱引用）和 **PhantomReference** （虚引用）继承了三个类。如果一个对象只能通过这其中的一个 **Reference** 对象访问，那么这三种类型每个都为垃圾收集器提供不同级别的间接引用（indirection）。
+**java.lang.ref** 中庫包含一組類，這些類允許垃圾收集具有更大的靈活性。特別是當擁有可能導致記憶體耗盡的大物件時，這些類特別有用。這裡有三個從抽象類 **Reference** 繼承來的類： **SoftReference** （軟引用）， **WeakReference** （弱引用）和 **PhantomReference** （虛引用）繼承了三個類。如果一個物件只能透過這其中的一個 **Reference** 物件訪問，那麼這三種類型每個都為垃圾收集器提供不同級別的間接引用（indirection）。
 
-如果一个对象是 *可达的*（reachable），那么意味着在程序中的某个位置可以找到该对象。这可能意味着在栈上有一个直接引用该对象的普通引用，但也有可能是引用了一个对该对象有引用的对象，这可以有很多中间环节。如果某个对象是可达的，则垃圾收集器无法释放它，因为它仍然被程序所使用。如果某个对象是不可达的，则程序无法使用它，那么垃圾收集器回收该对象就是安全的。
+如果一個物件是 *可達的*（reachable），那麼意味著在程式中的某個位置可以找到該物件。這可能意味著在堆疊上有一個直接引用該物件的普通引用，但也有可能是引用了一個對該物件有引用的物件，這可以有很多中間環節。如果某個物件是可達的，則垃圾收集器無法釋放它，因為它仍然被程式所使用。如果某個物件是不可達的，則程式無法使用它，那麼垃圾收集器回收該物件就是安全的。
 
-使用 **Reference** 对象继续保持对该对象的引用，以到达该对象，但也允许垃圾收集器释放该对象。因此，程序可以使用该对象，但如果内存即将耗尽，则允许释放该对象。
+使用 **Reference** 物件繼續保持對該物件的引用，以到達該物件，但也允許垃圾收集器釋放該物件。因此，程式可以使用該物件，但如果記憶體即將耗盡，則允許釋放該物件。
 
-可以通过使用 **Reference** 对象作为你和普通引用之间的中介（代理）来实现此目的。此外，必须没有对象的普通引用（未包含在 **Reference** 对象中的对象）。如果垃圾收集器发现对象可通过普通引用访问，则它不会释放该对象。
+可以透過使用 **Reference** 物件作為你和普通引用之間的中介（代理）來實現此目的。此外，必須沒有物件的普通引用（未包含在 **Reference** 物件中的物件）。如果垃圾收集器發現物件可透過普通引用訪問，則它不會釋放該物件。
 
-按照 **SoftReference** ， **WeakReference** 和 **PhantomReference** 的顺序，每个都比前一个更“弱”，并且对应于不同的可达性级别。软引用用于实现对内存敏感的缓存。弱引用用于实现“规范化映射”（ canonicalized mappings）——对象的实例可以在程序的多个位置同时使用，以节省存储，但不会阻止其键（或值）被回收。虚引用用于调度 pre-mortem 清理操作，这是一种比 Java 终结机制（Java finalization mechanism）更灵活的方式。
+按照 **SoftReference** ， **WeakReference** 和 **PhantomReference** 的順序，每個都比前一個更“弱”，並且對應於不同的可達性級別。軟引用用於實現對記憶體敏感的快取。弱引用用於實現“規範化映射”（ canonicalized mappings）——物件的實例可以在程式的多個位置同時使用，以節省儲存，但不會阻止其鍵（或值）被回收。虛引用用於調度 pre-mortem 清理操作，這是一種比 Java 終結機制（Java finalization mechanism）更靈活的方式。
 
-使用 **SoftReference** 和 **WeakReference** ，可以选择是否将它们放在 **ReferenceQueue** （用于 pre-mortem 清理操作的设备）中，但 **PhantomReference** 只能在 **ReferenceQueue** 上构建。下面是一个简单的演示：
+使用 **SoftReference** 和 **WeakReference** ，可以選擇是否將它們放在 **ReferenceQueue** （用於 pre-mortem 清理操作的裝置）中，但 **PhantomReference** 只能在 **ReferenceQueue** 上構建。下面是一個簡單的示範：
 
 ```java
 // collectiontopics/References.java
@@ -2933,15 +2933,15 @@ In queue: null
 */
 ```
 
-当运行此程序（将输出重定向到文本文件以查看页面中的输出）时，将会看到对象是被垃圾收集了的，虽然仍然可以通过 **Reference** 对象访问它们（使用 `get()` 来获取实际的对象引用）。 还可以看到 **ReferenceQueue** 始终生成包含 **null** 对象的 **Reference** 。 要使用它，请从特定的 **Reference** 类继承，并为新类添加更多有用的方法。
+當執行此程式（將輸出重定向到文字文件以查看頁面中的輸出）時，將會看到物件是被垃圾收集了的，雖然仍然可以透過 **Reference** 物件訪問它們（使用 `get()` 來獲取實際的物件引用）。 還可以看到 **ReferenceQueue** 始終生成包含 **null** 物件的 **Reference** 。 要使用它，請從特定的 **Reference** 類繼承，並為新類添加更多有用的方法。
 
 
 <!-- The WeakHashMap -->
 ### WeakHashMap
 
-集合类库中有一个特殊的 **Map** 来保存弱引用： **WeakHashMap** 。 此类可以更轻松地创建规范化映射。在这种映射中，可以通过仅仅创建一个特定值的实例来节省存储空间。当程序需要该值时，它会查找映射中的现有对象并使用它（而不是从头开始创建一个）。 该映射可以将值作为其初始化的一部分，但更有可能的是在需要时创建该值。
+集合類庫中有一個特殊的 **Map** 來儲存弱引用： **WeakHashMap** 。 此類可以更輕鬆地建立規範化映射。在這種映射中，可以透過僅僅建立一個特定值的實例來節省儲存空間。當程式需要該值時，它會尋找映射中的現有物件並使用它（而不是從頭開始建立一個）。 該映射可以將值作為其初始化的一部分，但更有可能的是在需要時建立該值。
 
-由于这是一种节省存储空间的技术，因此 **WeakHashMap** 允许垃圾收集器自动清理键和值，这是非常方便的。不能对放在 **WeakHashMap** 中的键和值做任何特殊操作，它们由 map 自动包装在 **WeakReference** 中。当键不再被使用的时候才允许清理，如下所示：
+由於這是一種節省儲存空間的技術，因此 **WeakHashMap** 允許垃圾收集器自動清理鍵和值，這是非常方便的。不能對放在 **WeakHashMap** 中的鍵和值做任何特殊操作，它們由 map 自動包裝在 **WeakReference** 中。當鍵不再被使用的時候才允許清理，如下所示：
 
 ```java
 // collectiontopics/CanonicalMapping.java
@@ -2998,25 +2998,25 @@ public class CanonicalMapping {
 }
 ```
 
-**Key** 类必须具有 `hashCode()` 和 `equals()` ，因为它将被用作散列数据结构中的键。 `hashCode()` 的内容在[附录：理解hashCode和equals方法]()中进行了描述。
+**Key** 類必須具有 `hashCode()` 和 `equals()` ，因為它將被用作散列資料結構中的鍵。 `hashCode()` 的內容在[附錄：理解hashCode和equals方法]()中進行了描述。
 
-运行程序，你会看到垃圾收集器每三个键跳过一次。对该键的普通引用也被放置在 **keys** 数组中，因此这些对象不能被垃圾收集。
+執行程式，你會看到垃圾收集器每三個鍵跳過一次。對該鍵的普通引用也被放置在 **keys** 陣列中，因此這些物件不能被垃圾收集。
 
 <!-- Java 1.0/1.1 Collections -->
-## Java 1.0 / 1.1 的集合类
+## Java 1.0 / 1.1 的集合類
 
-不幸的是，许多代码是使用 Java 1.0 / 1.1 中的集合编写的，甚至新代码有时也是使用这些类编写的。编写新代码时切勿使用旧集合。旧的集合类有限，所以关于它们的讨论不多。由于它们是不合时宜的，所以我会尽量避免过分强调一些可怕的设计决定。
+不幸的是，許多程式碼是使用 Java 1.0 / 1.1 中的集合編寫的，甚至新程式碼有時也是使用這些類編寫的。編寫新程式碼時切勿使用舊集合。舊的集合類有限，所以關於它們的討論不多。由於它們是不合時宜的，所以我會儘量避免過分強調一些可怕的設計決定。
 
 <!-- Vector & Enumeration -->
 ### Vector 和 Enumeration
 
-Java 1.0 / 1.1 中唯一的自扩展序列是 **Vector** ，因此它被用于很多地方。它的缺陷太多了，无法在这里描述（参见《Java编程思想》第1版，可从[www.OnJava8.com](www.OnJava8.com)免费下载）。基本上，你可以将它看作是具有冗长且笨拙的方法名称的 **ArrayList** 。在修订后的 Java 集合库中，**Vector** 已经被调整适配过，因此可以作为 **Collection** 和 **List** 来使用。事实证明这有点不正常，集合类库仍然包含它只是为了支持旧的 Java 代码，但这会让一些人误以为 **Vector** 已经变得更好了。
+Java 1.0 / 1.1 中唯一的自擴展序列是 **Vector** ，因此它被用於很多地方。它的缺陷太多了，無法在這裡描述（參見《Java編程思想》第1版，可從[www.OnJava8.com](www.OnJava8.com)免費下載）。基本上，你可以將它看作是具有冗長且笨拙的方法名稱的 **ArrayList** 。在修訂後的 Java 集合庫中，**Vector** 已經被調整適配過，因此可以作為 **Collection** 和 **List** 來使用。事實證明這有點不正常，集合類庫仍然包含它只是為了支援舊的 Java 程式碼，但這會讓一些人誤以為 **Vector** 已經變得更好了。
 
-迭代器的 Java 1.0 / 1.1 版本选择创建一个新名称“enumeration”，而不是使用每个人都熟悉的术语（“iterator”）。 **Enumeration** 接口小于 **Iterator** ，只包含两个方法，并且它使用更长的方法名称：如果还有更多元素，则 `boolean hasMoreElements()` 返回 `true` ， `Object nextElement()` 返回此enumeration的下一个元素 （否则会抛出异常）。
+疊代器的 Java 1.0 / 1.1 版本選擇建立一個新名稱“enumeration”，而不是使用每個人都熟悉的術語（“iterator”）。 **Enumeration** 介面小於 **Iterator** ，只包含兩個方法，並且它使用更長的方法名稱：如果還有更多元素，則 `boolean hasMoreElements()` 返回 `true` ， `Object nextElement()` 返回此enumeration的下一個元素 （否則會拋出異常）。
 
-**Enumeration** 只是一个接口，而不是一个实现，甚至新的类库有时仍然使用旧的 **Enumeration** ，这是不幸的，但通常是无害的。应该总是在自己的代码中使用 **Iterator** ，但要做好准备应对那些提供 **Enumeration** 的类库。
+**Enumeration** 只是一個介面，而不是一個實現，甚至新的類庫有時仍然使用舊的 **Enumeration** ，這是不幸的，但通常是無害的。應該總是在自己的程式碼中使用 **Iterator** ，但要做好準備應對那些提供 **Enumeration** 的類庫。
 
-此外，可以使用 `Collections.enumeration()` 方法为任何 **Collection** 生成 **Enumeration** ，如下例所示：
+此外，可以使用 `Collections.enumeration()` 方法為任何 **Collection** 生成 **Enumeration** ，如下例所示：
 
 ```java
 // collectiontopics/Enumerations.java
@@ -3042,21 +3042,21 @@ REPUBLIC, CHAD,
 */
 ```
 
-要生成 **Enumeration** ，可以调用 `elements()` ，然后可以使用它来执行向前迭代。
+要生成 **Enumeration** ，可以呼叫 `elements()` ，然後可以使用它來執行向前疊代。
 
-最后一行创建一个 **ArrayList** ，并使用 `enumeration() ` 来将 **ArrayList** 适配为一个 **Enumeration** 。 因此，如果有旧代码需要使用 **Enumeration** ，你仍然可以使用新集合。
+最後一行建立一個 **ArrayList** ，並使用 `enumeration() ` 來將 **ArrayList** 適配為一個 **Enumeration** 。 因此，如果有舊程式碼需要使用 **Enumeration** ，你仍然可以使用新集合。
 
 <!-- Hashtable -->
 ### Hashtable
 
-正如你在本附录中的性能比较中所看到的，基本的 **Hashtable** 与 **HashMap** 非常相似，甚至方法名称都相似。在新代码中没有理由使用 **Hashtable** 而不是 **HashMap** 。
+正如你在本附錄中的效能比較中所看到的，基本的 **Hashtable** 與 **HashMap** 非常相似，甚至方法名稱都相似。在新程式碼中沒有理由使用 **Hashtable** 而不是 **HashMap** 。
 
 <!-- Stack -->
 ### Stack
 
-之前使用 **LinkedList** 引入了栈的概念。 Java 1.0 / 1.1 **Stack** 的奇怪之处在于，不是以组合方式使用 **Vector** ，而是继承自 **Vector** 。 因此它具有 **Vector** 的所有特征和行为以及一些额外的 **Stack** 行为。很难去知道设计师是否有意识地认为这样做是有用的，或者它是否只是太天真了，无论如何，它在进入发行版之前显然没有经过审查，所以这个糟糕的设计仍然存在（但不要使用它）。
+之前使用 **LinkedList** 引入了堆疊的概念。 Java 1.0 / 1.1 **Stack** 的奇怪之處在於，不是以組合方式使用 **Vector** ，而是繼承自 **Vector** 。 因此它具有 **Vector** 的所有特徵和行為以及一些額外的 **Stack** 行為。很難去知道設計師是否有意識地認為這樣做是有用的，或者它是否只是太天真了，無論如何，它在進入發行版之前顯然沒有經過審查，所以這個糟糕的設計仍然存在（但不要使用它）。
 
-这是 **Stack** 的简单演示，向栈中放入枚举中每一个类型的 **String** 形式。它还展示了如何轻松地将 **LinkedList** 用作栈，或者使用在[第十二章：集合]()章节中创建的 **Stack** 类：
+這是 **Stack** 的簡單示範，向堆疊中放入列舉中每一個類型的 **String** 形式。它還展示了如何輕鬆地將 **LinkedList** 用作堆疊，或者使用在[第十二章：集合]()章節中建立的 **Stack** 類：
 
 ```java
 // collectiontopics/Stacks.java
@@ -3119,18 +3119,18 @@ MARCH FEBRUARY JANUARY
 */
 ```
 
-**String** 形式是由 **Month** 中的枚举常量生成的，使用 `push()` 压入到栈中，然后使用 `pop()` 从栈顶部取出。为了说明一点，将 **Vector** 的操作也在 **Stack** 对象上执行， 这是可能的，因为凭借继承， **Stack** 是 **Vector** 。 因此，可以在 **Vector** 上执行的所有操作也可以在 **Stack** 上执行，例如 `elementAt()` 。
+**String** 形式是由 **Month** 中的列舉常量生成的，使用 `push()` 壓入到堆疊中，然後使用 `pop()` 從堆疊頂部取出。為了說明一點，將 **Vector** 的操作也在 **Stack** 物件上執行， 這是可能的，因為憑藉繼承， **Stack** 是 **Vector** 。 因此，可以在 **Vector** 上執行的所有操作也可以在 **Stack** 上執行，例如 `elementAt()` 。
 
-如前所述，在需要栈行为时使用 **LinkedList** ，或者从 **LinkedList** 类创建的 **onjava.Stack** 类。
+如前所述，在需要堆疊行為時使用 **LinkedList** ，或者從 **LinkedList** 類建立的 **onjava.Stack** 類。
 
 <!-- BitSet -->
 ### BitSet
 
-**BitSet** 用于有效地存储大量的开关信息。仅从尺寸大小的角度来看它是有效的，如果你正在寻找有效的访问，它比使用本机数组（native array）稍慢。
+**BitSet** 用於有效地儲存大量的開關訊息。僅從尺寸大小的角度來看它是有效的，如果你正在尋找有效的訪問，它比使用本機陣列（native array）稍慢。
 
-此外， **BitSet** 的最小大小是 **long** ：64位。这意味着如果你要存储更小的东西，比如8位， **BitSet** 就是浪费，如果尺寸有问题，你最好创建自己的类，或者只是用一个数组来保存你的标志。（只有在你创建许多包含开关信息列表的对象时才会出现这种情况，并且只应根据分析和其他指标来决定。如果你做出此决定只是因为您认为 **BitSet** 太大，那么最终会产生不必要的复杂性并且浪费大量时间。）
+此外， **BitSet** 的最小大小是 **long** ：64位。這意味著如果你要儲存更小的東西，比如8位， **BitSet** 就是浪費，如果尺寸有問題，你最好建立自己的類，或者只是用一個陣列來儲存你的標誌。（只有在你建立許多包含開關訊息列表的物件時才會出現這種情況，並且只應根據分析和其他指標來決定。如果你做出此決定只是因為您認為 **BitSet** 太大，那麼最終會產生不必要的複雜性並且浪費大量時間。）
 
-当添加更多元素时，普通集合会扩展， **BitSet**也会这样做。以下示例显示了 **BitSet** 的工作原理：
+當添加更多元素時，普通集合會擴展， **BitSet**也會這樣做。以下範例顯示了 **BitSet** 的工作原理：
 
 ```java
 // collectiontopics/Bits.java
@@ -3211,26 +3211,25 @@ set bit 1023: {1023, 1024}
 */
 ```
 
-随机数生成器用于创建随机 **byte** ， **short** 和 **int** ，并且每个都在 **BitSet** 中转换为相应的位模式。这样可以正常工作，因为 **BitSet** 是64位，所以这些都不会导致它的大小增加，然后创建更大的 **BitSet** 。 请注意， **BitSet** 会根据需要进行扩展。
+隨機數生成器用於建立隨機 **byte** ， **short** 和 **int** ，並且每個都在 **BitSet** 中轉換為相應的位模式。這樣可以正常工作，因為 **BitSet** 是64位，所以這些都不會導致它的大小增加，然後建立更大的 **BitSet** 。 請注意， **BitSet** 會根據需要進行擴展。
 
-对于可以命名的固定标志集， **EnumSet** （参见[第二十二章：枚举]()章节）通常比 **BitSet** 更好，因为 **EnumSet** 允许操作名称而不是数字位位置，从而可以减少错误。 **EnumSet** 还可以防止意外地添加新的标记位置，这可能会导致一些严重的，难以发现的错误。使用 **BitSet** 而不是 **EnumSet** 的唯一原因是，不知道在运行时需要多少标志，或者为标志分配名称是不合理的，或者需要 **BitSet** 中的一个特殊操作（请参阅 **BitSet** 和 **EnumSet** 的 JDK 文档）。
+對於可以命名的固定標誌集， **EnumSet** （參見[第二十二章：列舉]()章節）通常比 **BitSet** 更好，因為 **EnumSet** 允許操作名稱而不是數字位位置，從而可以減少錯誤。 **EnumSet** 還可以防止意外地添加新的標記位置，這可能會導致一些嚴重的，難以發現的錯誤。使用 **BitSet** 而不是 **EnumSet** 的唯一原因是，不知道在執行時需要多少標誌，或者為標誌分配名稱是不合理的，或者需要 **BitSet** 中的一個特殊操作（請參閱 **BitSet** 和 **EnumSet** 的 JDK 文件）。
 
 <!-- Summary -->
-## 本章小结
+## 本章小結
 
-集合可以说是编程语言中最常用的工具。有些语言（例如Python）甚至将基本集合组件（列表，映射和集合）作为内置函数包含在其中。
+集合可以說是程式語言中最常用的工具。有些語言（例如Python）甚至將基本集合元件（列表，映射和集合）作為內建函數包含在其中。
 
-正如在[第十二章：集合]()章节中看到的那样，可以使用集合执行许多非常有用的操作，而不需要太多努力。但是，在某些时候，为了正确地使用它们而不得不更多地了解集合，特别是，必须充分了解散列操作以编写自己的 `hashCode()` 方法（并且必须知道何时需要），并且你必须充分了解各种集合实现，以根据你的需求选择合适的集合。本附录涵盖了这些概念，并讨论了有关集合库的其他有用详细信息。你现在应该已经准备好在日常编程任务中使用 Java 集合了。
+正如在[第十二章：集合]()章節中看到的那樣，可以使用集合執行許多非常有用的操作，而不需要太多努力。但是，在某些時候，為了正確地使用它們而不得不更多地了解集合，特別是，必須充分了解散列操作以編寫自己的 `hashCode()` 方法（並且必須知道何時需要），並且你必須充分了解各種集合實現，以根據你的需求選擇合適的集合。本附錄涵蓋了這些概念，並討論了有關集合庫的其他有用詳細訊息。你現在應該已經準備好在日常編程任務中使用 Java 集合了。
 
-集合库的设计很困难（大多数库设计问题都是如此）。在 C++ 中，集合类涵盖了许多不同类的基础。这比之前可用的 C++ 集合类更好，但它没有很好地转换为 Java 。在另一个极端，我看到了一个由单个类“collection”组成的集合库，它同时充当线性序列和关联数组。 Java 集合库试图在功能和复杂性之间取得平衡。结果在某些地方看起来有点奇怪。与早期 Java 库中的一些决策不同，这些奇怪的不是事故，而是在基于复杂性的权衡下而仔细考虑的决策。
+集合庫的設計很困難（大多數庫設計問題都是如此）。在 C++ 中，集合類涵蓋了許多不同類的基礎。這比之前可用的 C++ 集合類更好，但它沒有很好地轉換為 Java 。在另一個極端，我看到了一個由單個類“collection”組成的集合庫，它同時充當線性序列和關聯陣列。 Java 集合庫試圖在功能和複雜性之間取得平衡。結果在某些地方看起來有點奇怪。與早期 Java 庫中的一些決策不同，這些奇怪的不是事故，而是在基於複雜性的權衡下而仔細考慮的決策。
 
 
-[^1]: **java.util** 中的 **Map** 使用 **Map** 的 `getKey()` 和 `getValue()` 执行批量复制，因此这是有效的。如果自定义 **Map** 只是复制整个 **Map.Entry** ，那么这种方法就会出现问题。
+[^1]: **java.util** 中的 **Map** 使用 **Map** 的 `getKey()` 和 `getValue()` 執行批次複製，因此這是有效的。如果自訂 **Map** 只是複製整個 **Map.Entry** ，那麼這種方法就會出現問題。
 
-[^2]: 虽然当我用这种方式描述它的时候听起来很奇怪而且好像没什么用处，但在[第十九章 类型信息]()章节中已经看到过，这种动态行为也可以非常强大有用。
+[^2]: 雖然當我用這種方式描述它的時候聽起來很奇怪而且好像沒什麼用處，但在[第十九章 類型訊息]()章節中已經看到過，這種動態行為也可以非常強大有用。
 
-[^3]: 如果这些加速仍然无法满足性能需求，则可以通过编写自己的 **Map** 并将其自定义为特定类型来进一步加速表查找，以避免因向 **对象** 转换而导致的延迟。为了达到更高的性能水平，速度爱好者可以使用 Donald Knuth 的《计算机程序设计艺术（第3卷）：排序与查找》（第二版），将溢出桶列表（overflow bucket lists）替换为具有两个额外优势的阵列：它们可以针对磁盘存储进行优化，并且它们可以节省大部分创建和回收个别记录（individual records）的时间。
+[^3]: 如果這些加速仍然無法滿足性能需求，則可以透過編寫自己的 **Map** 並將其自訂為特定類型來進一步加速表尋找，以避免因向 **物件** 轉換而導致的延遲。為了達到更高的效能水平，速度愛好者可以使用 Donald Knuth 的《電腦程式設計藝術（第3卷）：排序與尋找》（第二版），將溢位桶列表（overflow bucket lists）取代為具有兩個額外優勢的陣列：它們可以針對磁碟儲存進行最佳化，並且它們可以節省大部分建立和回收個別記錄（individual records）的時間。
 
-<!-- 分页 -->
-
+<!-- 分頁 -->
 <div style="page-break-after: always;"></div>
